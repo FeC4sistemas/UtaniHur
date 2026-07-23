@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Design tokens — paleta inspirada no Exevo Pan.
+  Valores em canais RGB para permitir opacidade via Tailwind (rgb(var(--x) / a)).
+*/
+:root {
+  --background: 231 235 242;      /* #E7EBF2 */
+  --surface: 255 255 255;         /* #FFFFFF */
+  --surface-2: 242 244 250;       /* #F2F4FA — cabeçalho dos cards */
+  --on-surface: 33 33 33;         /* #212121 */
+  --separator: 205 210 222;       /* #CDD2DE */
+  --primary: 63 81 181;           /* #3F51B5 — índigo */
+  --primary-highlight: 48 63 159; /* #303F9F */
+  --primary-variant: 197 202 233; /* #C5CAE9 */
+  --green: 38 166 154;            /* #26A69A */
+  --red: 239 83 80;               /* #EF5350 */
+  --rare: 245 158 11;             /* #F59E0B */
+  --battle-green: 76 175 80;      /* #4CAF50 */
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.dark {
+  --background: 18 18 18;         /* #121212 */
+  --surface: 30 30 30;            /* #1E1E1E */
+  --surface-2: 39 39 42;          /* #27272A */
+  --on-surface: 237 237 240;      /* #EDEDF0 */
+  --separator: 63 63 70;          /* #3F3F46 */
+  --primary: 139 150 232;         /* #8B96E8 — índigo claro p/ contraste */
+  --primary-highlight: 165 174 240;
+  --primary-variant: 49 56 96;
+  --green: 77 182 172;
+  --red: 229 115 115;
+  --rare: 251 191 36;
+  --battle-green: 102 187 106;
+}
+
+html {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  scrollbar-gutter: stable;
+  @apply bg-background;
+}
+
+body {
+  @apply bg-background text-onSurface antialiased;
+}
+
+/* Sprites pixel-art (outfits e itens) não devem ser suavizados */
+.pixelated {
+  image-rendering: pixelated;
+}
+
+/* Feedback tátil de botão — escala sutil no press */
+.pressable {
+  transition: transform 160ms var(--ease-out-strong);
+}
+.pressable:active {
+  transform: scale(0.97);
+}
+
+/* Entrada dos cards em cascata */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.card-enter {
+  opacity: 0;
+  animation: card-in 300ms var(--ease-out-strong) forwards;
+}
+
+/* Entrada de menus/popovers — escala a partir do gatilho, nunca de zero */
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-enter {
+    animation-duration: 1ms;
+  }
+  .pressable,
+  .pressable:active {
+    transition: none;
+    transform: none;
+  }
+}
