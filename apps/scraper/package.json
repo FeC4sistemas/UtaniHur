@@ -1,0 +1,22 @@
+{
+  "name": "@utanihur/scraper",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "current": "ts-node src/scripts/scrapCurrentAuctions.ts",
+    "history": "ts-node src/scripts/scrapHistoryAuctions.ts"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2",
+    "p-limit": "^5.0.0",
+    "puppeteer": "^20.9.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0"
+  }
+}

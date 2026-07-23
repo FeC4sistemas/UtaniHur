@@ -1,0 +1,12 @@
+{
+  "name": "utanihur",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "scraper": "npm run start --workspace=apps/scraper"
+  }
+}
