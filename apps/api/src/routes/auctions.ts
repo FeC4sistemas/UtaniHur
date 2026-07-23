@@ -13,15 +13,49 @@ function loadAuctions() {
   return data.auctions || []
 }
 
+// Pares base → promovida (ex.: filtrar por Elite Knight inclui Knight)
+const VOCATION_FAMILY: Record<number, number[]> = {
+  1: [1, 5], 5: [1, 5],   // Sorcerer / Master Sorcerer
+  2: [2, 6], 6: [2, 6],   // Druid / Elder Druid
+  3: [3, 7], 7: [3, 7],   // Paladin / Royal Paladin
+  4: [4, 8], 8: [4, 8],   // Knight / Elite Knight
+  9: [9, 10], 10: [9, 10] // Monk / Exalted Monk
+}
+
+router.get('/options', (_req: Request, res: Response) => {
+  try {
+    const auctions = loadAuctions()
+    const worlds = [...new Set(auctions.map((a: any) => a.worldName as string))].sort()
+    const vocMap = new Map<number, string>()
+    for (const a of auctions) {
+      if (a.vocation > 0) vocMap.set(a.vocation, a.vocationName)
+    }
+    const vocations = [...vocMap.entries()]
+      .map(([id, name]) => ({ id, name }))
+      .sort((a, b) => a.id - b.id)
+    res.json({ worlds, vocations })
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao carregar opções de filtro' })
+  }
+})
+
 router.get('/', (req: Request, res: Response) => {
   try {
     let auctions = loadAuctions()
 
     // Filtros
-    const { vocation, world, minLevel, maxLevel, minMagLevel, page = '1', limit = '25', sortBy = 'auctionEnd', sortOrder = 'asc' } = req.query
+    const { search, vocation, world, sex, minLevel, maxLevel, minMagLevel, page = '1', limit = '25', sortBy = 'auctionEnd', sortOrder = 'asc' } = req.query
 
+    if (search) {
+      const term = String(search).toLowerCase()
+      auctions = auctions.filter((a: any) => a.name.toLowerCase().includes(term))
+    }
     if (vocation) {
-      auctions = auctions.filter((a: any) => a.vocation === Number(vocation))
+      const family = VOCATION_FAMILY[Number(vocation)] ?? [Number(vocation)]
+      auctions = auctions.filter((a: any) => family.includes(a.vocation))
+    }
+    if (sex !== undefined && sex !== '') {
+      auctions = auctions.filter((a: any) => a.sex === Number(sex))
     }
     if (world) {
       auctions = auctions.filter((a: any) => a.worldName.toLowerCase() === String(world).toLowerCase())
