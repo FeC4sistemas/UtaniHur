@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from 'react'
 import type { Auction } from '../types'
-import { auctionUrl, formatCoins, formatEndDate, itemUrl, outfitUrl, timeLeft } from '../lib/format'
+import { auctionUrl, formatCoins, formatEndDate, itemUrl, outfitSources, timeLeft } from '../lib/format'
 import { topSkills, vocationMeta } from '../lib/vocation'
 import {
   ClockIcon,
@@ -10,15 +10,16 @@ import {
   GlobeIcon,
   HeartIcon,
   MaleIcon,
-  SparkleIcon,
   TrophyIcon,
 } from './Icons'
 
 function OutfitImage({ auction }: { auction: Auction }) {
-  const [failed, setFailed] = useState(false)
+  // Percorre as fontes em ordem; quando todas falham, mostra o badge da vocação
+  const sources = outfitSources(auction)
+  const [sourceIndex, setSourceIndex] = useState(0)
   const short = vocationMeta(auction.vocationName).short
 
-  if (failed) {
+  if (sourceIndex >= sources.length) {
     return (
       <div
         aria-hidden
@@ -30,10 +31,10 @@ function OutfitImage({ auction }: { auction: Auction }) {
   }
   return (
     <img
-      src={outfitUrl(auction)}
+      src={sources[sourceIndex]}
       alt={`Outfit de ${auction.name}`}
       loading="lazy"
-      onError={() => setFailed(true)}
+      onError={() => setSourceIndex(i => i + 1)}
       className="pixelated h-16 w-16 shrink-0 object-contain"
     />
   )
@@ -189,7 +190,7 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
         <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[13px]">
           <div className="flex items-center justify-between gap-2">
             <span className="flex items-center gap-1 text-onSurface/60">
-              <SparkleIcon size={12} className="text-rare" />
+              <img src="/sprites/charms/Charm.png" alt="" aria-hidden className="pixelated h-3.5 w-3.5" />
               Charms
             </span>
             <strong className="font-semibold tabular-nums">{formatCoins(a.charmPoints)}</strong>

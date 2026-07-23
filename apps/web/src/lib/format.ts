@@ -38,25 +38,24 @@ export function timeLeft(unixSeconds: number, now = Date.now()): TimeLeft {
   return { expired: false, label, urgent: diff < 3600_000 }
 }
 
-/** URL da imagem do outfit (gerador padrão de servidores OT). Configurável via VITE_OUTFIT_URL. */
-export function outfitUrl(a: {
-  lookType: number
-  lookAddons: number
-  lookHead?: number
-  lookBody?: number
-  lookLegs?: number
-  lookFeet?: number
-}): string {
-  const template =
+import { namedOutfitPath } from '../data/outfitMap'
+
+/**
+ * Fontes de imagem do outfit, em ordem de preferência:
+ * 1. sprite local baixada por lookType (gerada por `npm run sprites`)
+ * 2. sprite local nomeada (mapa curado de outfits clássicos)
+ * 3. imagem oficial do char bazaar por lookType (remota)
+ * O componente tenta a próxima fonte quando uma falha; sem nenhuma, mostra o badge da vocação.
+ */
+export function outfitSources(a: { lookType: number; lookAddons: number }): string[] {
+  const sources = [`/sprites/looktypes/${a.lookType}_${a.lookAddons}.gif`]
+  const named = namedOutfitPath(a.lookType, a.lookAddons)
+  if (named) sources.push(named)
+  const remote =
     (import.meta.env.VITE_OUTFIT_URL as string | undefined) ??
-    'https://outfits.rubinot.com.br/animoutfit.php?id={type}&addons={addons}&head={head}&body={body}&legs={legs}&feet={feet}&mount=0&direction=3'
-  return template
-    .replace('{type}', String(a.lookType))
-    .replace('{addons}', String(a.lookAddons))
-    .replace('{head}', String(a.lookHead ?? 0))
-    .replace('{body}', String(a.lookBody ?? 0))
-    .replace('{legs}', String(a.lookLegs ?? 0))
-    .replace('{feet}', String(a.lookFeet ?? 0))
+    'https://static.tibia.com/images/charactertrade/outfits/{type}_{addons}.gif'
+  sources.push(remote.replace('{type}', String(a.lookType)).replace('{addons}', String(a.lookAddons)))
+  return sources
 }
 
 /** URL da imagem de um item. Configurável via VITE_ITEM_URL. */
