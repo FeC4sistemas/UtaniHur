@@ -4,17 +4,17 @@
   O CDN oficial do Tibia não tem os lookTypes/itens exclusivos do servidor
   (ex.: lookType 2590). Este script:
 
-  1. Abre o bazaar do RubinOT (Puppeteer+stealth, passa pela Cloudflare)
-     interceptando o tráfego de rede para descobrir de onde vêm as imagens
-     de outfit (a página as expõe como blob:, então o DOM não revela a URL).
-  2. Abre uma aba na origem do CDN (static.rubinot.com) e faz os downloads
-     de lá — fetch same-origin, sem bloqueio de CORS.
-  3. Para outfits, sonda padrões de URL prováveis e usa o tráfego
-     interceptado como plano B; se nada funcionar, grava um relatório em
+  1. Abre o bazaar do RubinOT (Puppeteer+stealth, passa pela Cloudflare).
+  2. Outfits: usa o gerador do próprio site (/api/outfit), que aceita as
+     cores do personagem (lookHead/Body/Legs/Feet) — cada sprite sai
+     idêntica à do jogo. O fetch roda na aba do bazaar (same-origin).
+  3. Itens: baixa do CDN (static.rubinot.com/objects/hd) por uma aba
+     ancorada na origem do CDN — fetch same-origin, sem bloqueio de CORS.
+  4. Se o gerador falhar, grava o tráfego de rede interceptado em
      output/networkSources.json para diagnóstico manual.
 
   Saída:
-    apps/web/public/sprites/looktypes/{lookType}_{addons}.{gif|png}
+    apps/web/public/sprites/looktypes/{type}_{addons}_{head}_{body}_{legs}_{feet}.{gif|png}
     apps/web/public/sprites/items/{clientId}.{gif|png}
 
   Uso: npm run sprites:rubinot   (na raiz do monorepo; idempotente)
@@ -32,39 +32,52 @@ const REPORT_FILE = path.resolve(__dirname, '../../output/networkSources.json')
 const OUTFIT_DIR = path.resolve(__dirname, '../../../web/public/sprites/looktypes')
 const ITEM_DIR = path.resolve(__dirname, '../../../web/public/sprites/items')
 const CDN_ORIGIN = 'https://static.rubinot.com'
-const DELAY_MS = 200
+const MAIN_ORIGIN = 'https://rubinot.com.br'
+const DELAY_MS = 300
 
-// Padrões prováveis de URL de outfit no CDN (o RubinOT espelha a estrutura
-// do tibia.com oficial: /charactertrade/..., /objects/hd/...)
-const OUTFIT_CANDIDATES = [
-  `${CDN_ORIGIN}/charactertrade/outfits/{type}_{addons}.gif`,
-  `${CDN_ORIGIN}/charactertrade/outfits/hd/{type}_{addons}.gif`,
-  `${CDN_ORIGIN}/outfits/hd/{type}_{addons}.gif`,
-  `${CDN_ORIGIN}/outfits/{type}_{addons}.gif`,
-  `${CDN_ORIGIN}/outfits/hd/{type}.gif`,
-  `${CDN_ORIGIN}/outfits/{type}.gif`,
-]
+// Gerador de outfits do próprio RubinOT (descoberto via tráfego de rede da
+// página do bazaar). Aceita as cores do personagem — a sprite sai idêntica
+// à do jogo.
+const OUTFIT_ENDPOINT = `${MAIN_ORIGIN}/api/outfit?type={type}&head={head}&body={body}&legs={legs}&feet={feet}&addons={addons}&direction=3&animated=1&walk=1&size=0`
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 
-interface OutfitPair {
+interface OutfitLook {
   lookType: number
   addons: number
+  head: number
+  body: number
+  legs: number
+  feet: number
+  /** Nome do arquivo: {type}_{addons}_{head}_{body}_{legs}_{feet} */
+  key: string
+}
+
+function lookKey(a: any): string {
+  return `${a.lookType}_${a.lookAddons ?? 0}_${a.lookHead ?? 0}_${a.lookBody ?? 0}_${a.lookLegs ?? 0}_${a.lookFeet ?? 0}`
 }
 
 function loadNeeds() {
   const data = JSON.parse(fs.readFileSync(CURRENT_FILE, 'utf-8'))
   const auctions: any[] = data.auctions ?? []
 
-  const pairKeys = new Set<string>()
-  const outfits: OutfitPair[] = []
+  const looks = new Map<string, OutfitLook>()
   const itemIds = new Set<number>()
 
   for (const a of auctions) {
-    const key = `${a.lookType}_${a.lookAddons ?? 0}`
-    if (a.lookType > 0 && !pairKeys.has(key)) {
-      pairKeys.add(key)
-      outfits.push({ lookType: a.lookType, addons: a.lookAddons ?? 0 })
+    if (a.lookType > 0) {
+      const key = lookKey(a)
+      if (!looks.has(key)) {
+        looks.set(key, {
+          lookType: a.lookType,
+          addons: a.lookAddons ?? 0,
+          head: a.lookHead ?? 0,
+          body: a.lookBody ?? 0,
+          legs: a.lookLegs ?? 0,
+          feet: a.lookFeet ?? 0,
+          key,
+        })
+      }
     }
     for (const item of a.highlightItems ?? []) {
       if (item.clientId > 0) itemIds.add(item.clientId)
@@ -76,7 +89,7 @@ function loadNeeds() {
 
   return {
     auctions,
-    missingOutfits: outfits.filter(o => !hasFile(OUTFIT_DIR, `${o.lookType}_${o.addons}`)),
+    missingOutfits: [...looks.values()].filter(o => !hasFile(OUTFIT_DIR, o.key)),
     missingItems: [...itemIds].filter(id => !hasFile(ITEM_DIR, String(id))),
   }
 }
@@ -149,57 +162,40 @@ async function main() {
     .catch(() => {})
   await sleep(1500)
 
-  // ── Outfits: descobre o template ────────────────────────────────────────
-  const samples = missingOutfits.slice(0, 3)
-  let outfitTemplate: string | null = null
+  // Escolhe a aba cuja origem casa com a URL — fetch precisa ser same-origin
+  const pageFor = (url: string) => (url.startsWith(CDN_ORIGIN) ? cdnPage : bazaarPage)
 
-  for (const candidate of OUTFIT_CANDIDATES) {
-    if (samples.length === 0) break
-    const probe = candidate
-      .replace('{type}', String(samples[0].lookType))
-      .replace('{addons}', String(samples[0].addons))
-    if (await fetchViaPage(cdnPage, probe)) {
-      outfitTemplate = candidate
-      break
-    }
+  const outfitUrl = (o: OutfitLook) =>
+    OUTFIT_ENDPOINT.replace('{type}', String(o.lookType))
+      .replace('{head}', String(o.head))
+      .replace('{body}', String(o.body))
+      .replace('{legs}', String(o.legs))
+      .replace('{feet}', String(o.feet))
+      .replace('{addons}', String(o.addons))
+
+  // ── Outfits: valida o gerador com uma amostra ───────────────────────────
+  let generatorOk = false
+  if (missingOutfits.length > 0) {
+    const probe = outfitUrl(missingOutfits[0])
+    generatorOk = (await fetchViaPage(pageFor(probe), probe)) !== null
+    console.log(`📐 Gerador de outfit (${MAIN_ORIGIN}/api/outfit): ${generatorOk ? 'OK' : 'FALHOU'}`)
   }
-
-  // Plano B: procura no tráfego interceptado uma URL de imagem com o lookType
-  // de algum leilão visível na primeira página
-  if (!outfitTemplate) {
-    const visibleLookTypes = new Set(auctions.slice(0, 25).map(a => a.lookType).filter((n: number) => n > 0))
-    outer: for (const lt of visibleLookTypes) {
-      const re = new RegExp(`(?<![0-9])${lt}(?![0-9])`)
-      for (const { url, type } of networkUrls) {
-        if (type.startsWith('image/') && re.test(url)) {
-          outfitTemplate = url.replace(re, '{type}')
-          const a = auctions.find(x => x.lookType === lt)
-          if (a && outfitTemplate.includes(`_${a.lookAddons}`)) {
-            outfitTemplate = outfitTemplate.replace(`_${a.lookAddons}`, '_{addons}')
-          }
-          break outer
-        }
-      }
-    }
-  }
-
-  console.log(`📐 Padrão de outfit: ${outfitTemplate ?? 'NÃO DETECTADO'}`)
 
   let ok = 0
   let fail = 0
-  if (outfitTemplate) {
+  if (generatorOk) {
     for (const o of missingOutfits) {
-      const url = outfitTemplate.replace('{type}', String(o.lookType)).replace('{addons}', String(o.addons))
-      const file = await fetchViaPage(cdnPage, url)
+      const url = outfitUrl(o)
+      const file = await fetchViaPage(pageFor(url), url)
       if (file) {
-        save(OUTFIT_DIR, `${o.lookType}_${o.addons}`, file)
+        save(OUTFIT_DIR, o.key, file)
         ok++
       } else fail++
       process.stdout.write(`\r🧍 Outfits — ok: ${ok} | falhas: ${fail}`)
       await sleep(DELAY_MS)
     }
     console.log()
-  } else {
+  } else if (missingOutfits.length > 0) {
     fs.writeFileSync(
       REPORT_FILE,
       JSON.stringify({ collectedAt: new Date().toISOString(), networkUrls }, null, 2),
