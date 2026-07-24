@@ -10,36 +10,40 @@ interface BoostedResponse {
   date: string | null
 }
 
-function bossSprite(name: string): string {
+// Pedestal do próprio Tibia (configurável). O app roda localmente e alcança o CDN.
+const PEDESTAL_URL =
+  (import.meta.env.VITE_PEDESTAL_URL as string | undefined) ??
+  'https://static.tibia.com/images/global/header/pedestal.gif'
+
+function creatureSprite(name: string): string {
   return `/sprites/bosses/${name}.gif`
 }
 
-function Entry({ label, name, accent }: { label: string; name: string; accent: string }) {
+/** Um personagem/boss sobre o pedestal, com rótulo abaixo. */
+function Pedestal({ label, name }: { label: string; name: string }) {
   const [failed, setFailed] = useState(false)
   return (
-    <div className="flex items-center gap-2.5">
+    <div className="flex flex-col items-center gap-1" title={`${label}: ${name}`}>
       <div
-        className="grid h-11 w-11 shrink-0 place-items-center rounded-md"
-        style={{ background: `rgb(var(--${accent}) / 0.12)` }}
+        className="relative grid h-[58px] w-[72px] place-items-end justify-center bg-bottom bg-no-repeat pb-1"
+        style={{ backgroundImage: `url("${PEDESTAL_URL}")`, backgroundSize: 'auto 24px' }}
       >
         {failed ? (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={`rgb(var(--${accent}))`} strokeWidth="2">
-            <path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.4L12 17l-6.3 4.4L8 14 2 9.4h7.6z" />
-          </svg>
+          <div className="mb-1 grid h-8 w-8 place-items-center rounded-full bg-onSurface/10 text-[10px] font-bold text-onSurface/40">
+            ?
+          </div>
         ) : (
           <img
-            src={bossSprite(name)}
+            src={creatureSprite(name)}
             alt={name}
             onError={() => setFailed(true)}
-            className="pixelated max-h-10 max-w-10"
+            className="pixelated relative z-10 mb-2 max-h-[40px] max-w-[52px] object-contain"
           />
         )}
       </div>
-      <div className="min-w-0">
-        <p className="text-[10px] font-bold uppercase tracking-wider" style={{ color: `rgb(var(--${accent}))` }}>
-          {label}
-        </p>
-        <p className="truncate text-sm font-semibold text-onSurface">{name}</p>
+      <div className="text-center leading-tight">
+        <p className="text-[9px] font-bold uppercase tracking-wide text-onSurface/45">{label}</p>
+        <p className="max-w-[96px] truncate text-[11px] font-semibold text-onSurface">{name}</p>
       </div>
     </div>
   )
@@ -59,19 +63,11 @@ export function BoostedToday() {
 
   return (
     <section
-      aria-label="Boost do dia"
-      className="flex flex-col gap-3 rounded-lg bg-surface p-4 shadow-card sm:flex-row sm:items-center sm:gap-8"
+      aria-label="Boost de hoje"
+      className="inline-flex items-end gap-5 rounded-lg bg-surface px-4 py-2 shadow-card"
     >
-      <div className="flex items-center gap-1.5">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgb(var(--rare))" strokeWidth="2">
-          <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" />
-        </svg>
-        <h2 className="text-xs font-bold uppercase tracking-wider text-onSurface/60">Boost de hoje</h2>
-      </div>
-      <div className="flex flex-1 flex-wrap gap-x-8 gap-y-3">
-        {data.boss && <Entry label="Boss" name={data.boss.name} accent="red" />}
-        {data.creature && <Entry label="Criatura" name={data.creature.name} accent="battle-green" />}
-      </div>
+      {data.creature && <Pedestal label="Criatura" name={data.creature.name} />}
+      {data.boss && <Pedestal label="Boss" name={data.boss.name} />}
     </section>
   )
 }

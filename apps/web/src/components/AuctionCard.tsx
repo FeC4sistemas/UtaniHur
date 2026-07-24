@@ -21,13 +21,13 @@ function OutfitImage({ auction }: { auction: Auction }) {
   const [frames, setFrames] = useState(1)
   const short = vocationMeta(auction.vocationName).short
 
-  // Quadradinho que emoldura e centraliza o personagem
+  // Quadradinho que emoldura o personagem
   const boxCls =
-    'grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-md border border-separator/70 bg-background'
+    'relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-separator/70 bg-background'
 
   if (sourceIndex >= sources.length) {
     return (
-      <div aria-hidden className={`${boxCls} text-lg font-extrabold text-primary`}>
+      <div aria-hidden className={`${boxCls} grid place-items-center text-lg font-extrabold text-primary`}>
         {short}
       </div>
     )
@@ -48,8 +48,10 @@ function OutfitImage({ auction }: { auction: Auction }) {
         }}
         className={
           frames > 1
-            ? 'outfit-sheet pixelated h-full w-auto max-w-none justify-self-start'
-            : 'pixelated max-h-full max-w-full object-contain'
+            ? // sprite sheet: tira alinhada à esquerda, animada por steps()
+              'outfit-sheet pixelated absolute left-0 top-0 h-full w-auto max-w-none'
+            : // imagem única: centralizada no quadradinho
+              'pixelated absolute inset-0 m-auto max-h-full max-w-full object-contain'
         }
         style={
           frames > 1
