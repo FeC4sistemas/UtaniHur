@@ -25,26 +25,52 @@ export function vocationMeta(vocationName: string): VocationMeta {
   )
 }
 
-export const SKILL_LABELS: Record<string, string> = {
-  club: 'Club',
-  sword: 'Sword',
-  axe: 'Axe',
-  dist: 'Distance',
-  shielding: 'Shielding',
+export interface SkillEntry {
+  key: string
+  label: string
+  value: number
+  /** skill principal da vocação — destacada no card */
+  highlight: boolean
 }
 
-/** Retorna as três skills de maior valor (magic level incluído). */
-export function topSkills(
+/** Qual skill é a "principal" de cada vocação (recebe destaque de cor). */
+function highlightKey(vocationName: string, skills: Record<string, number>): string {
+  const v = vocationName.toLowerCase()
+  if (v.includes('sorcerer') || v.includes('druid')) return 'magic'
+  if (v.includes('paladin')) return 'dist'
+  if (v.includes('monk')) return 'fist'
+  if (v.includes('knight')) {
+    // maior entre as skills de arma corpo a corpo
+    const melee = [
+      ['sword', skills.sword ?? 0],
+      ['axe', skills.axe ?? 0],
+      ['club', skills.club ?? 0],
+    ] as const
+    return melee.reduce((a, b) => (b[1] > a[1] ? b : a))[0]
+  }
+  return 'magic'
+}
+
+/**
+ * Todas as skills do personagem na ordem padrão do Tibia (8 no total),
+ * marcando a principal da vocação. Fist e Fishing não vêm no feed do bazar
+ * do RubinOT — quando ausentes, mostram o valor base 10.
+ */
+export function skillList(
+  vocationName: string,
   magLevel: number,
   skills: Record<string, number>,
-): Array<{ key: string; label: string; value: number }> {
-  const all = [
+): SkillEntry[] {
+  const hl = highlightKey(vocationName, skills)
+  const order: Array<{ key: string; label: string; value: number }> = [
     { key: 'magic', label: 'Magic', value: magLevel },
-    ...Object.entries(skills).map(([key, value]) => ({
-      key,
-      label: SKILL_LABELS[key] ?? key,
-      value,
-    })),
+    { key: 'fist', label: 'Fist', value: skills.fist ?? 10 },
+    { key: 'club', label: 'Club', value: skills.club ?? 10 },
+    { key: 'sword', label: 'Sword', value: skills.sword ?? 10 },
+    { key: 'axe', label: 'Axe', value: skills.axe ?? 10 },
+    { key: 'dist', label: 'Dist', value: skills.dist ?? 10 },
+    { key: 'shielding', label: 'Shield', value: skills.shielding ?? 10 },
+    { key: 'fishing', label: 'Fishing', value: skills.fishing ?? 10 },
   ]
-  return all.sort((a, b) => b.value - a.value).slice(0, 3)
+  return order.map(s => ({ ...s, highlight: s.key === hl }))
 }

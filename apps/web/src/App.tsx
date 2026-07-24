@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { Header } from './components/Header'
 import { AdSpace } from './components/AdSpace'
 import { AuctionCard } from './components/AuctionCard'
+import { BoostedToday } from './components/BoostedToday'
 import { FilterDrawer } from './components/FilterDrawer'
 import { Toolbar, type ActiveChip } from './components/Toolbar'
 import { useAuctions, useFilterOptions } from './hooks/useAuctions'
@@ -89,6 +90,10 @@ export default function App() {
         {/* Área de propaganda: banner topo */}
         <div className="mb-4">
           <AdSpace variant="leaderboard" slot="bazaar-top" />
+        </div>
+
+        <div className="mb-4">
+          <BoostedToday />
         </div>
 
         <Toolbar

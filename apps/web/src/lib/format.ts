@@ -42,31 +42,14 @@ import { namedOutfitPath } from '../data/outfitMap'
 
 /**
  * Fontes de imagem do outfit, em ordem de preferência:
- * 1. sprite do leilão com as cores exatas do personagem (gerada por `npm run sprites:rubinot`)
- * 2. sprite local por lookType (gerada por `npm run sprites` ou pelo fallback do sprites:rubinot)
- * 3. sprite local nomeada (mapa curado de outfits clássicos)
- * 4. imagem oficial do char bazaar por lookType (remota)
+ * 1. sprite local por lookType (gerada por `npm run sprites:rubinot` ou `npm run sprites`)
+ * 2. sprite local nomeada (mapa curado de outfits clássicos)
+ * 3. imagem oficial do char bazaar por lookType (remota)
  * O componente tenta a próxima fonte quando uma falha; sem nenhuma, mostra o badge da vocação.
  */
-export function outfitSources(a: {
-  id: number
-  lookType: number
-  lookAddons: number
-  lookHead?: number
-  lookBody?: number
-  lookLegs?: number
-  lookFeet?: number
-}): string[] {
-  const colored = `${a.lookType}_${a.lookAddons}_${a.lookHead ?? 0}_${a.lookBody ?? 0}_${a.lookLegs ?? 0}_${a.lookFeet ?? 0}`
+export function outfitSources(a: { lookType: number; lookAddons: number }): string[] {
   const base = `${a.lookType}_${a.lookAddons}`
-  const sources = [
-    `/sprites/auctions/${a.id}.png`,
-    `/sprites/auctions/${a.id}.gif`,
-    `/sprites/looktypes/${colored}.png`,
-    `/sprites/looktypes/${colored}.gif`,
-    `/sprites/looktypes/${base}.gif`,
-    `/sprites/looktypes/${base}.png`,
-  ]
+  const sources = [`/sprites/looktypes/${base}.png`, `/sprites/looktypes/${base}.gif`]
   const named = namedOutfitPath(a.lookType, a.lookAddons)
   if (named) sources.push(named)
   const remote =

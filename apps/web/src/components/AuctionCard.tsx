@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from 'react'
 import type { Auction } from '../types'
 import { auctionUrl, formatCoins, formatEndDate, itemSources, outfitSources, timeLeft } from '../lib/format'
-import { topSkills, vocationMeta } from '../lib/vocation'
+import { skillList, vocationMeta } from '../lib/vocation'
 import {
   ClockIcon,
   CoinIcon,
@@ -83,7 +83,7 @@ function ItemSlot({ clientId, name, count, tier }: { clientId: number; name: str
       {tier > 0 && (
         <span
           aria-label={`Tier ${tier}`}
-          className="absolute -left-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-rare px-0.5 text-[9px] font-extrabold leading-none text-black/80 shadow-sm ring-1 ring-black/20"
+          className="tier-badge absolute left-0 top-0 grid h-4 min-w-4 place-items-center px-0.5 text-[9px] font-extrabold leading-none"
         >
           {tier}
         </span>
@@ -95,15 +95,19 @@ function ItemSlot({ clientId, name, count, tier }: { clientId: number; name: str
   )
 }
 
-function SkillBar({ label, value, max }: { label: string; value: number; max: number }) {
-  const pct = Math.min(100, Math.round((value / max) * 100))
+function SkillCell({ label, value, highlight }: { label: string; value: number; highlight: boolean }) {
   return (
-    <div className="flex items-center gap-2">
-      <span className="w-[4.5rem] shrink-0 text-[11px] font-medium text-onSurface/60">{label}</span>
-      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-separator/50">
-        <div className="h-full rounded-full bg-primary/80" style={{ width: `${pct}%` }} />
-      </div>
-      <span className="w-8 shrink-0 text-right text-xs font-bold tabular-nums">{value}</span>
+    <div
+      className={`flex items-baseline justify-between gap-1 rounded px-1.5 py-1 ${
+        highlight ? 'bg-primary/10' : ''
+      }`}
+    >
+      <span className={`text-[11px] font-medium ${highlight ? 'text-primary' : 'text-onSurface/55'}`}>
+        {label}
+      </span>
+      <span className={`text-xs font-bold tabular-nums ${highlight ? 'text-primary' : 'text-onSurface/85'}`}>
+        {value}
+      </span>
     </div>
   )
 }
@@ -150,8 +154,7 @@ interface Props {
 export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Props) {
   const [favorite, setFavorite] = useState(() => readFavorites().has(a.id))
   const voc = vocationMeta(a.vocationName)
-  const skills = topSkills(a.magLevel, { ...a.skills })
-  const maxSkill = Math.max(...skills.map(s => s.value), 100)
+  const skills = skillList(a.vocationName, a.magLevel, { ...a.skills })
   const hasBid = a.currentValue > 0
   const bidValue = hasBid ? a.currentValue : a.startingValue
 
@@ -232,9 +235,9 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
           </div>
         </div>
 
-        <div className="flex flex-col gap-1">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
           {skills.map(s => (
-            <SkillBar key={s.key} label={s.label} value={s.value} max={maxSkill} />
+            <SkillCell key={s.key} label={s.label} value={s.value} highlight={s.highlight} />
           ))}
         </div>
 

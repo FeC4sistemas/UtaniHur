@@ -4,6 +4,7 @@ import compression from 'compression'
 import auctionsRouter from './routes/auctions'
 import historyRouter from './routes/history'
 import statsRouter from './routes/stats'
+import boostedRouter from './routes/boosted'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -15,6 +16,7 @@ app.use(express.json())
 app.use('/api/auctions', auctionsRouter)
 app.use('/api/history', historyRouter)
 app.use('/api/stats', statsRouter)
+app.use('/api/boosted', boostedRouter)
 
 app.get('/health', (_, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })

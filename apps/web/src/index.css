@@ -96,6 +96,19 @@ body {
   }
 }
 
+/* Selo de tier do item — quadrado, com brilho dourado */
+.tier-badge {
+  color: #3a2c00;
+  border-radius: 3px;
+  background: linear-gradient(160deg, #fff6c2 0%, #ffd83d 45%, #f0a800 100%);
+  border: 1px solid #fff2a0;
+  box-shadow:
+    0 0 4px rgba(255, 200, 40, 0.9),
+    inset 0 1px 1px rgba(255, 255, 255, 0.85),
+    inset 0 -1px 1px rgba(150, 100, 0, 0.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
 /* Entrada de menus/popovers — escala a partir do gatilho, nunca de zero */
 @keyframes menu-in {
   from {
