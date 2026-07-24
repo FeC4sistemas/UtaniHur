@@ -17,6 +17,8 @@ function OutfitImage({ auction }: { auction: Auction }) {
   // Percorre as fontes em ordem; quando todas falham, mostra o badge da vocação
   const sources = outfitSources(auction)
   const [sourceIndex, setSourceIndex] = useState(0)
+  // Nº de frames quando a fonte é uma sprite sheet horizontal (frames quadrados)
+  const [frames, setFrames] = useState(1)
   const short = vocationMeta(auction.vocationName).short
 
   if (sourceIndex >= sources.length) {
@@ -30,13 +32,29 @@ function OutfitImage({ auction }: { auction: Auction }) {
     )
   }
   return (
-    <img
-      src={sources[sourceIndex]}
-      alt={`Outfit de ${auction.name}`}
-      loading="lazy"
-      onError={() => setSourceIndex(i => i + 1)}
-      className="pixelated h-16 w-16 shrink-0 object-contain"
-    />
+    <div className="h-16 w-16 shrink-0 overflow-hidden">
+      <img
+        src={sources[sourceIndex]}
+        alt={`Outfit de ${auction.name}`}
+        loading="lazy"
+        onLoad={e => {
+          const img = e.currentTarget
+          setFrames(Math.max(1, Math.round(img.naturalWidth / img.naturalHeight)))
+        }}
+        onError={() => {
+          setFrames(1)
+          setSourceIndex(i => i + 1)
+        }}
+        className={
+          frames > 1 ? 'outfit-sheet pixelated h-full w-auto max-w-none' : 'pixelated h-16 w-16 object-contain'
+        }
+        style={
+          frames > 1
+            ? ({ '--frames': frames, animationDuration: `${frames * 0.15}s` } as React.CSSProperties)
+            : undefined
+        }
+      />
+    </div>
   )
 }
 
