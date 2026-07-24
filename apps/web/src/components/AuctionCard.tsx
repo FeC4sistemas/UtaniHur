@@ -50,7 +50,7 @@ function OutfitImage({ auction }: { auction: Auction }) {
         }
         style={
           frames > 1
-            ? ({ '--frames': frames, animationDuration: `${frames * 0.15}s` } as React.CSSProperties)
+            ? ({ '--frames': frames, animationDuration: `${frames * 0.09}s` } as React.CSSProperties)
             : undefined
         }
       />
@@ -58,13 +58,13 @@ function OutfitImage({ auction }: { auction: Auction }) {
   )
 }
 
-function ItemSlot({ clientId, name, count }: { clientId: number; name: string; count: number }) {
+function ItemSlot({ clientId, name, count, tier }: { clientId: number; name: string; count: number; tier: number }) {
   // Mesma estratégia do outfit: tenta cada fonte e cai na abreviação do nome
   const sources = itemSources(clientId)
   const [sourceIndex, setSourceIndex] = useState(0)
   return (
     <div
-      title={name}
+      title={tier > 0 ? `${name} (tier ${tier})` : name}
       className="relative grid h-10 w-10 place-items-center rounded border border-separator/80 bg-surface-2"
     >
       {sourceIndex >= sources.length ? (
@@ -79,6 +79,14 @@ function ItemSlot({ clientId, name, count }: { clientId: number; name: string; c
           onError={() => setSourceIndex(i => i + 1)}
           className="pixelated max-h-8 max-w-8"
         />
+      )}
+      {tier > 0 && (
+        <span
+          aria-label={`Tier ${tier}`}
+          className="absolute -left-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-rare px-0.5 text-[9px] font-extrabold leading-none text-black/80 shadow-sm ring-1 ring-black/20"
+        >
+          {tier}
+        </span>
       )}
       {count > 1 && (
         <span className="absolute bottom-0 right-0.5 text-[10px] font-bold text-onSurface/70">{count}</span>
@@ -233,7 +241,13 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
         {a.highlightItems.length > 0 && (
           <div className="flex items-center gap-1.5" aria-label="Itens em destaque">
             {a.highlightItems.slice(0, 4).map(item => (
-              <ItemSlot key={item.itemId} clientId={item.clientId} name={item.name} count={item.count} />
+              <ItemSlot
+                key={item.itemId}
+                clientId={item.clientId}
+                name={item.name}
+                count={item.count}
+                tier={item.tier}
+              />
             ))}
           </div>
         )}

@@ -42,13 +42,14 @@ import { namedOutfitPath } from '../data/outfitMap'
 
 /**
  * Fontes de imagem do outfit, em ordem de preferência:
- * 1. sprite local com as cores exatas do personagem (gerada por `npm run sprites:rubinot`)
- * 2. sprite local por lookType com cores padrão (gerada por `npm run sprites`)
+ * 1. sprite do leilão com as cores exatas do personagem (gerada por `npm run sprites:rubinot`)
+ * 2. sprite local por lookType (gerada por `npm run sprites` ou pelo fallback do sprites:rubinot)
  * 3. sprite local nomeada (mapa curado de outfits clássicos)
  * 4. imagem oficial do char bazaar por lookType (remota)
  * O componente tenta a próxima fonte quando uma falha; sem nenhuma, mostra o badge da vocação.
  */
 export function outfitSources(a: {
+  id: number
   lookType: number
   lookAddons: number
   lookHead?: number
@@ -59,8 +60,10 @@ export function outfitSources(a: {
   const colored = `${a.lookType}_${a.lookAddons}_${a.lookHead ?? 0}_${a.lookBody ?? 0}_${a.lookLegs ?? 0}_${a.lookFeet ?? 0}`
   const base = `${a.lookType}_${a.lookAddons}`
   const sources = [
-    `/sprites/looktypes/${colored}.gif`,
+    `/sprites/auctions/${a.id}.png`,
+    `/sprites/auctions/${a.id}.gif`,
     `/sprites/looktypes/${colored}.png`,
+    `/sprites/looktypes/${colored}.gif`,
     `/sprites/looktypes/${base}.gif`,
     `/sprites/looktypes/${base}.png`,
   ]
