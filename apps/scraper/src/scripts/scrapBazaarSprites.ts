@@ -32,7 +32,8 @@ const MAIN_ORIGIN = 'https://rubinot.com.br'
 const DELAY_MS = 250
 
 // Gerador de outfits do próprio RubinOT (descoberto via tráfego de rede).
-const OUTFIT_ENDPOINT = `${MAIN_ORIGIN}/api/outfit?type={type}&addons={addons}&direction=3&animated=1&walk=1&size=0`
+// animated=0 → um único frame (imagem estática), centralizável no card.
+const OUTFIT_ENDPOINT = `${MAIN_ORIGIN}/api/outfit?type={type}&addons={addons}&direction=3&animated=0&walk=0&size=0`
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 

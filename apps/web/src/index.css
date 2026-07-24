@@ -78,24 +78,6 @@ body {
   animation: card-in 300ms var(--ease-out-strong) forwards;
 }
 
-/*
-  Sprite sheets de outfit (PNG do gerador do RubinOT): os frames vêm lado a
-  lado; animamos a tira com steps() dentro de uma janela com overflow hidden.
-*/
-@keyframes outfit-walk {
-  to {
-    transform: translateX(-100%);
-  }
-}
-.outfit-sheet {
-  animation: outfit-walk 1.2s steps(var(--frames, 8)) infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .outfit-sheet {
-    animation: none; /* mostra o primeiro frame */
-  }
-}
-
 /* Selo de tier do item — quadrado, com brilho dourado */
 .tier-badge {
   color: #3a2c00;

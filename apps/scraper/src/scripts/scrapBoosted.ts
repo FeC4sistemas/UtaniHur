@@ -20,6 +20,7 @@ puppeteer.use(StealthPlugin())
 
 const OUT_FILE = path.resolve(__dirname, '../../output/Boosted.json')
 const REPORT_FILE = path.resolve(__dirname, '../../output/boostedSources.json')
+const SPRITE_DIR = path.resolve(__dirname, '../../../web/public/sprites')
 const MAIN_ORIGIN = 'https://rubinot.com.br'
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
@@ -55,40 +56,79 @@ async function main() {
   console.log('⏳ Aguardando Cloudflare...')
   await sleep(8000)
 
-  // Coleta TODOS os candidatos rotulados no DOM. Os rótulos "Boosted Boss:"
-  // e "Boosted Creature:" são inequívocos — usamos o texto ao redor para
-  // separar corretamente boss de criatura.
-  const hits: Array<{ kind: 'boss' | 'creature'; name: string; from: string }> = await page.evaluate(() => {
-    const out: Array<{ kind: 'boss' | 'creature'; name: string; from: string }> = []
-    const seen = new Set<string>()
-    document.querySelectorAll<HTMLElement>('img, [title], [alt]').forEach(el => {
-      // Considera alt/title do próprio elemento e o title do pai (comum em cards)
-      const texts = [
-        el.getAttribute('alt') ?? '',
-        el.getAttribute('title') ?? '',
-        el.parentElement?.getAttribute('title') ?? '',
-        el.parentElement?.textContent ?? '',
-      ]
-      for (const t of texts) {
-        const m = t.match(/boosted\s+(boss|creature|monster)\s*[:\-]?\s*([^\n|<>]{2,40})/i)
-        if (m) {
-          const kind = /boss/i.test(m[1]) ? 'boss' : 'creature'
-          const name = m[2].trim()
-          const key = `${kind}:${name}`
-          if (name && !seen.has(key)) {
-            seen.add(key)
-            out.push({ kind, name, from: t.slice(0, 80) })
+  // Coleta os candidatos rotulados no DOM. Os rótulos "Boosted Boss:" e
+  // "Boosted Creature:" são inequívocos; capturamos também a imagem associada
+  // (o próprio elemento se for <img>, ou a <img> mais próxima).
+  const hits: Array<{ kind: 'boss' | 'creature'; name: string; src: string; from: string }> =
+    await page.evaluate(() => {
+      const out: Array<{ kind: 'boss' | 'creature'; name: string; src: string; from: string }> = []
+      const seen = new Set<string>()
+      const nearestImg = (el: HTMLElement): string => {
+        const self = el as HTMLImageElement
+        if (self.tagName === 'IMG' && self.src) return self.src
+        const inside = el.querySelector('img') as HTMLImageElement | null
+        if (inside?.src) return inside.src
+        const parentImg = el.parentElement?.querySelector('img') as HTMLImageElement | null
+        return parentImg?.src ?? ''
+      }
+      document.querySelectorAll<HTMLElement>('img, [title], [alt]').forEach(el => {
+        const texts = [
+          el.getAttribute('alt') ?? '',
+          el.getAttribute('title') ?? '',
+          el.parentElement?.getAttribute('title') ?? '',
+          el.parentElement?.textContent ?? '',
+        ]
+        for (const t of texts) {
+          const m = t.match(/boosted\s+(boss|creature|monster)\s*[:\-]?\s*([^\n|<>]{2,40})/i)
+          if (m) {
+            const kind = /boss/i.test(m[1]) ? 'boss' : 'creature'
+            const name = m[2].trim()
+            const key = `${kind}:${name}`
+            if (name && !seen.has(key)) {
+              seen.add(key)
+              out.push({ kind, name, src: nearestImg(el), from: t.slice(0, 80) })
+            }
           }
         }
-      }
+      })
+      return out
     })
-    return out
-  })
 
   const bossHit = hits.find(h => h.kind === 'boss')
   const creatureHit = hits.find(h => h.kind === 'creature')
   const boss = bossHit ? { name: cleanName(bossHit.name) } : null
   const creature = creatureHit ? { name: cleanName(creatureHit.name) } : null
+
+  // Baixa a imagem exata que o site mostra (abre uma aba na origem da imagem
+  // para evitar CORS) e salva com nome fixo consumido pelo widget.
+  fs.mkdirSync(SPRITE_DIR, { recursive: true })
+  const downloadTo = async (src: string, base: string) => {
+    if (!src) return
+    try {
+      const imgPage = await browser.newPage()
+      await imgPage.goto(new URL(src).origin, { waitUntil: 'domcontentloaded', timeout: 20000 }).catch(() => {})
+      const file = await imgPage.evaluate(async (u: string) => {
+        const res = await fetch(u)
+        if (!res.ok) return null
+        const type = res.headers.get('content-type') || ''
+        const bytes = new Uint8Array(await res.arrayBuffer())
+        let bin = ''
+        for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i])
+        return { b64: btoa(bin), type }
+      }, src)
+      await imgPage.close()
+      if (file) {
+        const ext = file.type.includes('png') ? 'png' : 'gif'
+        // limpa versões antigas para não misturar extensões
+        for (const e of ['gif', 'png']) fs.rmSync(path.join(SPRITE_DIR, `${base}.${e}`), { force: true })
+        fs.writeFileSync(path.join(SPRITE_DIR, `${base}.${ext}`), Buffer.from(file.b64, 'base64'))
+      }
+    } catch {
+      /* mantém o fallback por nome no widget */
+    }
+  }
+  if (bossHit?.src) await downloadTo(bossHit.src, 'boosted-boss')
+  if (creatureHit?.src) await downloadTo(creatureHit.src, 'boosted-creature')
 
   const isoDate = new Date().toISOString().slice(0, 10)
 

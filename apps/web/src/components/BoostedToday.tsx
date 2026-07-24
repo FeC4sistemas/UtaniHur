@@ -15,28 +15,34 @@ const PEDESTAL_URL =
   (import.meta.env.VITE_PEDESTAL_URL as string | undefined) ??
   'https://static.tibia.com/images/global/header/pedestal.gif'
 
-function creatureSprite(name: string): string {
-  return `/sprites/bosses/${name}.gif`
+/**
+ * Fontes da sprite, em ordem: imagem exata baixada pelo scraper →
+ * sprite por nome na pasta de bosses → fallback "?".
+ */
+function spriteSources(kind: 'boss' | 'creature', name: string): string[] {
+  const fixed = kind === 'boss' ? 'boosted-boss' : 'boosted-creature'
+  return [`/sprites/${fixed}.gif`, `/sprites/${fixed}.png`, `/sprites/bosses/${name}.gif`]
 }
 
 /** Um personagem/boss sobre o pedestal, com rótulo abaixo. */
-function Pedestal({ label, name }: { label: string; name: string }) {
-  const [failed, setFailed] = useState(false)
+function Pedestal({ kind, label, name }: { kind: 'boss' | 'creature'; label: string; name: string }) {
+  const sources = spriteSources(kind, name)
+  const [index, setIndex] = useState(0)
   return (
     <div className="flex flex-col items-center gap-1" title={`${label}: ${name}`}>
       <div
         className="relative grid h-[58px] w-[72px] place-items-end justify-center bg-bottom bg-no-repeat pb-1"
         style={{ backgroundImage: `url("${PEDESTAL_URL}")`, backgroundSize: 'auto 24px' }}
       >
-        {failed ? (
+        {index >= sources.length ? (
           <div className="mb-1 grid h-8 w-8 place-items-center rounded-full bg-onSurface/10 text-[10px] font-bold text-onSurface/40">
             ?
           </div>
         ) : (
           <img
-            src={creatureSprite(name)}
+            src={sources[index]}
             alt={name}
-            onError={() => setFailed(true)}
+            onError={() => setIndex(i => i + 1)}
             className="pixelated relative z-10 mb-2 max-h-[40px] max-w-[52px] object-contain"
           />
         )}
@@ -66,8 +72,8 @@ export function BoostedToday() {
       aria-label="Boost de hoje"
       className="inline-flex items-end gap-5 rounded-lg bg-surface px-4 py-2 shadow-card"
     >
-      {data.creature && <Pedestal label="Criatura" name={data.creature.name} />}
-      {data.boss && <Pedestal label="Boss" name={data.boss.name} />}
+      {data.creature && <Pedestal kind="creature" label="Criatura" name={data.creature.name} />}
+      {data.boss && <Pedestal kind="boss" label="Boss" name={data.boss.name} />}
     </section>
   )
 }

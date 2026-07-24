@@ -17,17 +17,15 @@ function OutfitImage({ auction }: { auction: Auction }) {
   // Percorre as fontes em ordem; quando todas falham, mostra o badge da vocação
   const sources = outfitSources(auction)
   const [sourceIndex, setSourceIndex] = useState(0)
-  // Nº de frames quando a fonte é uma sprite sheet horizontal (frames quadrados)
-  const [frames, setFrames] = useState(1)
   const short = vocationMeta(auction.vocationName).short
 
-  // Quadradinho que emoldura o personagem
+  // Quadradinho que emoldura e centraliza o personagem (estilo Exevo Pan)
   const boxCls =
-    'relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-separator/70 bg-background'
+    'grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-md border border-separator/70 bg-background'
 
   if (sourceIndex >= sources.length) {
     return (
-      <div aria-hidden className={`${boxCls} grid place-items-center text-lg font-extrabold text-primary`}>
+      <div aria-hidden className={`${boxCls} text-lg font-extrabold text-primary`}>
         {short}
       </div>
     )
@@ -38,26 +36,8 @@ function OutfitImage({ auction }: { auction: Auction }) {
         src={sources[sourceIndex]}
         alt={`Outfit de ${auction.name}`}
         loading="lazy"
-        onLoad={e => {
-          const img = e.currentTarget
-          setFrames(Math.max(1, Math.round(img.naturalWidth / img.naturalHeight)))
-        }}
-        onError={() => {
-          setFrames(1)
-          setSourceIndex(i => i + 1)
-        }}
-        className={
-          frames > 1
-            ? // sprite sheet: tira alinhada à esquerda, animada por steps()
-              'outfit-sheet pixelated absolute left-0 top-0 h-full w-auto max-w-none'
-            : // imagem única: centralizada no quadradinho
-              'pixelated absolute inset-0 m-auto max-h-full max-w-full object-contain'
-        }
-        style={
-          frames > 1
-            ? ({ '--frames': frames, animationDuration: `${frames * 0.09}s` } as React.CSSProperties)
-            : undefined
-        }
+        onError={() => setSourceIndex(i => i + 1)}
+        className="pixelated max-h-full max-w-full scale-110 object-contain"
       />
     </div>
   )
