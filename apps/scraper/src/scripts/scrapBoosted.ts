@@ -22,19 +22,14 @@ const OUT_FILE = path.resolve(__dirname, '../../output/Boosted.json')
 const REPORT_FILE = path.resolve(__dirname, '../../output/boostedSources.json')
 const MAIN_ORIGIN = 'https://rubinot.com.br'
 
-const API_CANDIDATES = [
-  `${MAIN_ORIGIN}/api/boostedcreature`,
-  `${MAIN_ORIGIN}/api/boosted`,
-  `${MAIN_ORIGIN}/api/boostedboss`,
-  `${MAIN_ORIGIN}/api/server/boosted`,
-]
-
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 
-/** Extrai {name} de um objeto de API tolerando formatos diferentes. */
-function pickName(obj: any): string | null {
-  if (!obj || typeof obj !== 'object') return null
-  return obj.name ?? obj.boss?.name ?? obj.creature?.name ?? obj.raceName ?? null
+/** Remove prefixos como "Boosted Boss:" / "Boosted Creature:" e espaços. */
+function cleanName(raw: string): string {
+  return raw
+    .replace(/boosted\s+(boss|creature|monster)\s*[:\-]?/i, '')
+    .replace(/\s+/g, ' ')
+    .trim()
 }
 
 async function main() {
@@ -60,53 +55,55 @@ async function main() {
   console.log('⏳ Aguardando Cloudflare...')
   await sleep(8000)
 
-  let boss: { name: string } | null = null
-  let creature: { name: string } | null = null
-
-  // 1. Rotas de API
-  for (const url of API_CANDIDATES) {
-    const body = await page.evaluate(async (u: string) => {
-      try {
-        const res = await fetch(u)
-        return res.ok ? await res.json() : null
-      } catch {
-        return null
-      }
-    }, url)
-    if (body) {
-      const name = pickName(body)
-      if (name && /boss/i.test(url) && !boss) boss = { name }
-      else if (name && !creature) creature = { name }
-    }
-  }
-
-  // 2. Heurística no DOM (elementos com "boost" no alt/title/texto próximo)
-  if (!boss || !creature) {
-    const found = await page.evaluate(() => {
-      const hits: Array<{ kind: string; name: string }> = []
-      document.querySelectorAll<HTMLElement>('*').forEach(el => {
-        const label = `${el.getAttribute('alt') ?? ''} ${el.getAttribute('title') ?? ''}`.toLowerCase()
-        if (label.includes('boost')) {
-          const name = (el.getAttribute('alt') || el.getAttribute('title') || el.textContent || '').trim()
-          if (name) hits.push({ kind: label.includes('boss') ? 'boss' : 'creature', name })
+  // Coleta TODOS os candidatos rotulados no DOM. Os rótulos "Boosted Boss:"
+  // e "Boosted Creature:" são inequívocos — usamos o texto ao redor para
+  // separar corretamente boss de criatura.
+  const hits: Array<{ kind: 'boss' | 'creature'; name: string; from: string }> = await page.evaluate(() => {
+    const out: Array<{ kind: 'boss' | 'creature'; name: string; from: string }> = []
+    const seen = new Set<string>()
+    document.querySelectorAll<HTMLElement>('img, [title], [alt]').forEach(el => {
+      // Considera alt/title do próprio elemento e o title do pai (comum em cards)
+      const texts = [
+        el.getAttribute('alt') ?? '',
+        el.getAttribute('title') ?? '',
+        el.parentElement?.getAttribute('title') ?? '',
+        el.parentElement?.textContent ?? '',
+      ]
+      for (const t of texts) {
+        const m = t.match(/boosted\s+(boss|creature|monster)\s*[:\-]?\s*([^\n|<>]{2,40})/i)
+        if (m) {
+          const kind = /boss/i.test(m[1]) ? 'boss' : 'creature'
+          const name = m[2].trim()
+          const key = `${kind}:${name}`
+          if (name && !seen.has(key)) {
+            seen.add(key)
+            out.push({ kind, name, from: t.slice(0, 80) })
+          }
         }
-      })
-      return hits
+      }
     })
-    for (const h of found) {
-      if (h.kind === 'boss' && !boss) boss = { name: h.name }
-      if (h.kind === 'creature' && !creature) creature = { name: h.name }
-    }
-  }
+    return out
+  })
+
+  const bossHit = hits.find(h => h.kind === 'boss')
+  const creatureHit = hits.find(h => h.kind === 'creature')
+  const boss = bossHit ? { name: cleanName(bossHit.name) } : null
+  const creature = creatureHit ? { name: cleanName(creatureHit.name) } : null
 
   const isoDate = new Date().toISOString().slice(0, 10)
+
+  // Diagnóstico sempre gravado — se boss/criatura vierem errados, me mande este arquivo
+  fs.writeFileSync(
+    REPORT_FILE,
+    JSON.stringify({ collectedAt: new Date().toISOString(), hits, network }, null, 2),
+  )
 
   if (boss || creature) {
     fs.writeFileSync(OUT_FILE, JSON.stringify({ boss, creature, date: isoDate }, null, 2))
     console.log(`✅ Boost do dia salvo: boss=${boss?.name ?? '—'} | criatura=${creature?.name ?? '—'}`)
+    console.log('ℹ️  Se algo veio errado, me mande output/boostedSources.json')
   } else {
-    fs.writeFileSync(REPORT_FILE, JSON.stringify({ collectedAt: new Date().toISOString(), network }, null, 2))
-    console.log('⚠️  Não encontrei o boost. Tráfego salvo em output/boostedSources.json — me mande esse arquivo.')
+    console.log('⚠️  Não encontrei o boost. Diagnóstico salvo em output/boostedSources.json — me mande esse arquivo.')
   }
 
   await browser.close()

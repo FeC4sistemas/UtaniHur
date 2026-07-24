@@ -21,18 +21,19 @@ function OutfitImage({ auction }: { auction: Auction }) {
   const [frames, setFrames] = useState(1)
   const short = vocationMeta(auction.vocationName).short
 
+  // Quadradinho que emoldura e centraliza o personagem
+  const boxCls =
+    'grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-md border border-separator/70 bg-background'
+
   if (sourceIndex >= sources.length) {
     return (
-      <div
-        aria-hidden
-        className="grid h-16 w-16 shrink-0 place-items-center rounded-md bg-primary/10 text-lg font-extrabold text-primary"
-      >
+      <div aria-hidden className={`${boxCls} text-lg font-extrabold text-primary`}>
         {short}
       </div>
     )
   }
   return (
-    <div className="h-16 w-16 shrink-0 overflow-hidden">
+    <div className={boxCls}>
       <img
         src={sources[sourceIndex]}
         alt={`Outfit de ${auction.name}`}
@@ -46,7 +47,9 @@ function OutfitImage({ auction }: { auction: Auction }) {
           setSourceIndex(i => i + 1)
         }}
         className={
-          frames > 1 ? 'outfit-sheet pixelated h-full w-auto max-w-none' : 'pixelated h-16 w-16 object-contain'
+          frames > 1
+            ? 'outfit-sheet pixelated h-full w-auto max-w-none justify-self-start'
+            : 'pixelated max-h-full max-w-full object-contain'
         }
         style={
           frames > 1
@@ -83,7 +86,7 @@ function ItemSlot({ clientId, name, count, tier }: { clientId: number; name: str
       {tier > 0 && (
         <span
           aria-label={`Tier ${tier}`}
-          className="tier-badge absolute left-0 top-0 grid h-4 min-w-4 place-items-center px-0.5 text-[9px] font-extrabold leading-none"
+          className="tier-badge absolute -right-1 -top-1 grid h-3.5 min-w-3.5 place-items-center px-0.5 text-[8px] font-extrabold leading-none"
         >
           {tier}
         </span>
