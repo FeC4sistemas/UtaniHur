@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from 'react'
 import type { Auction } from '../types'
-import { auctionUrl, formatCoins, formatEndDate, itemUrl, outfitSources, timeLeft } from '../lib/format'
+import { auctionUrl, formatCoins, formatEndDate, itemSources, outfitSources, timeLeft } from '../lib/format'
 import { topSkills, vocationMeta } from '../lib/vocation'
 import {
   ClockIcon,
@@ -41,22 +41,24 @@ function OutfitImage({ auction }: { auction: Auction }) {
 }
 
 function ItemSlot({ clientId, name, count }: { clientId: number; name: string; count: number }) {
-  const [failed, setFailed] = useState(false)
+  // Mesma estratégia do outfit: tenta cada fonte e cai na abreviação do nome
+  const sources = itemSources(clientId)
+  const [sourceIndex, setSourceIndex] = useState(0)
   return (
     <div
       title={name}
       className="relative grid h-10 w-10 place-items-center rounded border border-separator/80 bg-surface-2"
     >
-      {failed ? (
+      {sourceIndex >= sources.length ? (
         <span className="text-[9px] font-semibold uppercase leading-none text-onSurface/40">
           {name.slice(0, 3)}
         </span>
       ) : (
         <img
-          src={itemUrl(clientId)}
+          src={sources[sourceIndex]}
           alt={name}
           loading="lazy"
-          onError={() => setFailed(true)}
+          onError={() => setSourceIndex(i => i + 1)}
           className="pixelated max-h-8 max-w-8"
         />
       )}

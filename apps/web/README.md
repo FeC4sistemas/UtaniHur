@@ -35,9 +35,11 @@ As instruções para plugar o Google AdSense estão comentadas no próprio arqui
 
 A imagem do personagem é resolvida em cadeia, na ordem:
 
-1. `public/sprites/looktypes/{lookType}_{addons}.gif` — sprites baixadas por lookType. Gere-as com `npm run sprites` na raiz (lê os lookTypes presentes nos dados coletados e baixa as imagens oficiais do char bazaar; idempotente).
+1. `public/sprites/looktypes/{lookType}_{addons}.{gif,png}` — sprites baixadas por lookType. Gere-as com `npm run sprites` (imagens oficiais do char bazaar) e `npm run sprites:rubinot` (sprites custom do RubinOT, ex. lookTypes que só existem lá). Ambos são idempotentes.
 2. `public/sprites/outfits/{male|female}/{Nome}_{addons}.gif` — sprites nomeadas, correlacionadas pelo mapa curado em `src/data/outfitMap.ts` (outfits clássicos).
 3. URL remota (configurável via `VITE_OUTFIT_URL` no `.env`).
 4. Badge da vocação (fallback final).
+
+Itens em destaque seguem a mesma cadeia: `public/sprites/items/{clientId}.{gif,png}` (baixados por `npm run sprites:rubinot`) → URL remota (`VITE_ITEM_URL`) → abreviação do nome.
 
 Sprites de monstros/bosses/mounts/charms em `public/sprites/` ficam disponíveis para páginas futuras (o card já usa `charms/Charm.png`).

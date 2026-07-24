@@ -11,6 +11,7 @@
     "api": "npm run dev --workspace=apps/api",
     "web": "npm run dev --workspace=apps/web",
     "sprites": "npm run sprites --workspace=apps/scraper",
+    "sprites:rubinot": "npm run sprites:rubinot --workspace=apps/scraper",
     "build:web": "npm run build --workspace=apps/web"
   }
 }
