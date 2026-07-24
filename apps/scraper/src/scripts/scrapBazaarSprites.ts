@@ -24,12 +24,6 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 import fs from 'fs'
 import path from 'path'
 
-/** Subconjunto da Page do puppeteer usado aqui (evita depender dos tipos). */
-interface Page {
-  evaluate: (fn: any, ...args: any[]) => Promise<any>
-  goto: (url: string, opts?: any) => Promise<any>
-  on: (event: string, handler: (arg: any) => void) => void
-}
 
 puppeteer.use(StealthPlugin())
 
@@ -88,7 +82,7 @@ function loadNeeds() {
 }
 
 /** fetch executado dentro de uma aba já aberta na origem da URL (sem CORS). */
-async function fetchViaPage(page: Page, url: string): Promise<{ b64: string; type: string } | null> {
+async function fetchViaPage(page: any, url: string): Promise<{ b64: string; type: string } | null> {
   return page.evaluate(async (u: string) => {
     try {
       const res = await fetch(u)
@@ -131,7 +125,7 @@ async function main() {
 
   // Intercepta o tráfego do bazaar para descobrir a fonte real dos outfits
   const networkUrls: Array<{ url: string; type: string }> = []
-  const bazaarPage: Page = await browser.newPage()
+  const bazaarPage = await browser.newPage()
   bazaarPage.on('response', (res: any) => {
     const type = res.headers()['content-type'] || ''
     const url = res.url()
