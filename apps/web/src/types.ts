@@ -114,6 +114,8 @@ export interface AuctionFilters {
   minMounts: string
   minOutfits: string
   charmExpansion: boolean
+  outfits: string[]
+  mounts: string[]
 }
 
 export const EMPTY_FILTERS: AuctionFilters = {
@@ -136,4 +138,6 @@ export const EMPTY_FILTERS: AuctionFilters = {
   minMounts: '',
   minOutfits: '',
   charmExpansion: false,
+  outfits: [],
+  mounts: [],
 }

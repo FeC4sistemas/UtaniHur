@@ -50,6 +50,8 @@ export function useAuctions({ filters, sortBy, sortOrder, page, limit }: Params)
     if (filters.minMounts) params.set('minMounts', filters.minMounts)
     if (filters.minOutfits) params.set('minOutfits', filters.minOutfits)
     if (filters.charmExpansion) params.set('charmExpansion', 'true')
+    if (filters.outfits.length) params.set('outfits', filters.outfits.join(','))
+    if (filters.mounts.length) params.set('mounts', filters.mounts.join(','))
 
     setState(s => ({ ...s, loading: true, error: null }))
 

@@ -7,7 +7,7 @@ const router = Router()
 const DATA_FILE = path.resolve(__dirname, '../../../scraper/output/CurrentAuctions.json')
 const DETAILS_FILE = path.resolve(__dirname, '../../../scraper/output/AuctionDetails.json')
 
-function loadDetails(): Record<string, { skills?: any; extra?: any }> {
+function loadDetails(): Record<string, { skills?: any; extra?: any; outfits?: string[]; mounts?: string[] }> {
   if (!fs.existsSync(DETAILS_FILE)) return {}
   try {
     return JSON.parse(fs.readFileSync(DETAILS_FILE, 'utf-8')).byId || {}
@@ -87,7 +87,7 @@ router.get('/', (req: Request, res: Response) => {
       skillKey, minSkill,
       minPrice, maxPrice, hasBid,
       minCharm, minBoss, minMounts, minOutfits,
-      charmExpansion,
+      charmExpansion, outfits, mounts,
       page = '1', limit = '25', sortBy = 'auctionEnd', sortOrder = 'asc',
     } = req.query
 
@@ -122,6 +122,19 @@ router.get('/', (req: Request, res: Response) => {
     if (q(minMounts)) auctions = auctions.filter((a: any) => (a.extra?.mountsCount ?? -1) >= Number(minMounts))
     if (q(minOutfits)) auctions = auctions.filter((a: any) => (a.extra?.outfitsCount ?? -1) >= Number(minOutfits))
     if (charmExpansion === 'true') auctions = auctions.filter((a: any) => a.extra?.charmExpansion === true)
+    // Filtro por posse de outfits/mounts (nomes separados por vírgula; precisa ter todos)
+    if (q(outfits) || q(mounts)) {
+      const byId = loadDetails()
+      const wantOutfits = q(outfits) ? String(outfits).split(',').filter(Boolean) : []
+      const wantMounts = q(mounts) ? String(mounts).split(',').filter(Boolean) : []
+      auctions = auctions.filter((a: any) => {
+        const d = byId[a.id]
+        if (!d) return false
+        const ownedO = new Set(d.outfits ?? [])
+        const ownedM = new Set(d.mounts ?? [])
+        return wantOutfits.every(o => ownedO.has(o)) && wantMounts.every(m => ownedM.has(m))
+      })
+    }
 
     // Ordenação
     auctions.sort((a: any, b: any) => {

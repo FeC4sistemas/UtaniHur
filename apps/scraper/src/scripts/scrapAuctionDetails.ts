@@ -29,10 +29,20 @@ const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 const num = (v: any): number | undefined => (typeof v === 'number' ? v : undefined)
 const bool = (v: any): boolean | undefined => (typeof v === 'boolean' ? v : undefined)
 
-function extractExtra(general: any) {
+function extractExtra(body: any) {
+  const general = body?.general
   if (!general) return null
   const s = general.skills ?? {}
+  // Outfits/mounts possuídos (para o filtro visual)
+  const outfits = Array.isArray(body.outfits)
+    ? [...new Set(body.outfits.filter((o: any) => o?.info?.unlocked).map((o: any) => o.info.name).filter(Boolean))]
+    : []
+  const mounts = Array.isArray(body.mounts)
+    ? [...new Set(body.mounts.map((m: any) => m?.name).filter(Boolean))]
+    : []
   return {
+    outfits,
+    mounts,
     skills: { fist: num(s.fist), fishing: num(s.fishing) },
     extra: {
       mountsCount: num(general.mountsCount),
@@ -123,7 +133,7 @@ async function main() {
   let processed = 0
   for (const a of pending) {
     const body = await fetchDetail(a.id)
-    const parsed = extractExtra(body?.general)
+    const parsed = extractExtra(body)
     if (parsed) {
       byId[a.id] = parsed
       ok++

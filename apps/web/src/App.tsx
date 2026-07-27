@@ -47,8 +47,13 @@ export default function App() {
     setPage(1)
   }, [])
 
-  const removeChip = useCallback((key: keyof AuctionFilters) => {
-    setFilters(f => ({ ...f, [key]: EMPTY_FILTERS[key] }))
+  const removeChip = useCallback((key: string) => {
+    setFilters(f => {
+      if (key.startsWith('outfit:')) return { ...f, outfits: f.outfits.filter(o => o !== key.slice(7)) }
+      if (key.startsWith('mount:')) return { ...f, mounts: f.mounts.filter(m => m !== key.slice(6)) }
+      const k = key as keyof AuctionFilters
+      return { ...f, [k]: EMPTY_FILTERS[k] }
+    })
     setPage(1)
   }, [])
 
@@ -91,6 +96,8 @@ export default function App() {
     if (filters.minMounts) chips.push({ key: 'minMounts', label: `Mounts ≥ ${filters.minMounts}` })
     if (filters.minOutfits) chips.push({ key: 'minOutfits', label: `Outfits ≥ ${filters.minOutfits}` })
     if (filters.charmExpansion) chips.push({ key: 'charmExpansion', label: 'Charm Expansion' })
+    filters.outfits.forEach(o => chips.push({ key: `outfit:${o}`, label: `Outfit: ${o}` }))
+    filters.mounts.forEach(m => chips.push({ key: `mount:${m}`, label: `Mount: ${m}` }))
     return chips
   }, [filters, options.vocations])
 

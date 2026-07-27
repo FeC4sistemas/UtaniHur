@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { AuctionFilters, FilterOptions } from '../types'
 import { EMPTY_FILTERS } from '../types'
 import { CloseIcon, FemaleIcon, MaleIcon, SearchIcon } from './Icons'
+import { WardrobePicker, useWardrobe } from './WardrobePicker'
 
 const VOCATION_CHIPS = [
   { id: 8, label: 'EK', title: 'Knight' },
@@ -90,6 +91,7 @@ interface Props {
 
 export function FilterDrawer({ open, onClose, filters, onApply, options }: Props) {
   const [draft, setDraft] = useState<AuctionFilters>(filters)
+  const wardrobe = useWardrobe()
   const panelRef = useRef<HTMLDivElement>(null)
 
   // Sincroniza o rascunho quando o drawer abre
@@ -307,6 +309,42 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
               />
               Com Charm Expansion
             </label>
+          </Section>
+
+          <Section title="Outfits e mounts">
+            <p className="-mt-1 mb-1 text-[11px] text-onSurface/45">
+              Filtra por posse (o personagem deve ter os selecionados). Requer npm run details.
+            </p>
+            <div className="flex flex-col gap-2">
+              <WardrobePicker
+                title="Outfits"
+                kind="outfit"
+                items={wardrobe.outfits.filter(o => !o.store)}
+                selected={draft.outfits}
+                onChange={v => set('outfits', v)}
+              />
+              <WardrobePicker
+                title="Store Outfits"
+                kind="outfit"
+                items={wardrobe.outfits.filter(o => o.store)}
+                selected={draft.outfits}
+                onChange={v => set('outfits', v)}
+              />
+              <WardrobePicker
+                title="Mounts"
+                kind="mount"
+                items={wardrobe.mounts.filter(m => !m.store)}
+                selected={draft.mounts}
+                onChange={v => set('mounts', v)}
+              />
+              <WardrobePicker
+                title="Store Mounts"
+                kind="mount"
+                items={wardrobe.mounts.filter(m => m.store)}
+                selected={draft.mounts}
+                onChange={v => set('mounts', v)}
+              />
+            </div>
           </Section>
         </div>
 

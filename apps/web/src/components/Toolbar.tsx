@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { AuctionFilters, Pagination, SortBy, SortOrder } from '../types'
+import type { Pagination, SortBy, SortOrder } from '../types'
 import {
   ChevronLeft,
   ChevronRight,
@@ -132,7 +132,7 @@ interface ToolbarProps {
   onPage: (p: number) => void
   onOpenFilters: () => void
   activeChips: ActiveChip[]
-  onRemoveChip: (key: keyof AuctionFilters) => void
+  onRemoveChip: (key: string) => void
   filterCount: number
 }
 
@@ -179,7 +179,7 @@ export function Toolbar({
               {chip.label}
               <button
                 type="button"
-                onClick={() => onRemoveChip(chip.key as keyof AuctionFilters)}
+                onClick={() => onRemoveChip(chip.key)}
                 aria-label={`Remover filtro ${chip.label}`}
                 className="grid h-5 w-5 place-items-center rounded-full p-0.5 transition-colors duration-100 hover:bg-primary/20"
               >
