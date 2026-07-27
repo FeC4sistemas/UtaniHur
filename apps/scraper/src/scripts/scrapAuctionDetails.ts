@@ -132,8 +132,9 @@ async function main() {
   fs.writeFileSync(SAMPLE_FILE, JSON.stringify(sample, null, 2))
   console.log('📐 Rota OK: /api/bazaar/{id} (campo `general` presente)')
 
-  const pending = auctions.filter(a => !byId[a.id])
-  console.log(`📋 ${auctions.length} leilões | ${Object.keys(byId).length} já salvos | ${pending.length} a buscar`)
+  // Re-busca também entradas antigas que foram salvas sem a posse de outfits
+  const pending = auctions.filter(a => !byId[a.id] || byId[a.id].outfits === undefined)
+  console.log(`📋 ${auctions.length} leilões | ${Object.keys(byId).length} já salvos | ${pending.length} a (re)buscar`)
 
   let ok = 0
   let fail = 0

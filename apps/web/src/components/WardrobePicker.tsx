@@ -80,7 +80,7 @@ function Thumb({
           alt={item.name}
           loading="lazy"
           onError={() => (kind === 'outfit' && addonIdx < addons.length - 1 ? setAddonIdx(i => i + 1) : setFailed(true))}
-          className="pixelated max-h-8 max-w-8"
+          className="pixelated h-12 w-12 object-contain"
         />
       )}
     </button>
@@ -160,7 +160,7 @@ export function WardrobePicker({ title, kind, items, selected, onChange, preview
             </button>
           )}
 
-          <div className="grid max-h-64 grid-cols-6 gap-1 overflow-y-auto">
+          <div className="grid max-h-72 grid-cols-4 gap-1.5 overflow-y-auto">
             {filtered.map(item => (
               <Thumb
                 key={item.name}

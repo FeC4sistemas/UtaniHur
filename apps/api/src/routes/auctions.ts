@@ -127,19 +127,20 @@ router.get('/', (req: Request, res: Response) => {
     // oAddon1/oAddon2 exigem que o outfit possuído tenha aquele(s) addon(s).
     if (q(outfits) || q(mounts)) {
       const byId = loadDetails()
-      const wantOutfits = q(outfits) ? String(outfits).split(',').filter(Boolean) : []
-      const wantMounts = q(mounts) ? String(mounts).split(',').filter(Boolean) : []
+      const norm = (s: string) => s.trim().toLowerCase()
+      const wantOutfits = q(outfits) ? String(outfits).split(',').filter(Boolean).map(norm) : []
+      const wantMounts = q(mounts) ? String(mounts).split(',').filter(Boolean).map(norm) : []
       const reqMask = (oAddon1 === 'true' ? 1 : 0) | (oAddon2 === 'true' ? 2 : 0)
       auctions = auctions.filter((a: any) => {
         const d = byId[a.id]
         if (!d) return false
-        // mapa nome → addons do que o personagem possui (tolera formato antigo string)
+        // mapa nome(minúsculo) → addons do que o personagem possui (tolera formato antigo string)
         const ownedO = new Map<string, number>()
         for (const o of d.outfits ?? []) {
-          if (typeof o === 'string') ownedO.set(o, 0)
-          else ownedO.set(o.name, o.addons ?? 0)
+          if (typeof o === 'string') ownedO.set(norm(o), 0)
+          else ownedO.set(norm(o.name), o.addons ?? 0)
         }
-        const ownedM = new Set(d.mounts ?? [])
+        const ownedM = new Set((d.mounts ?? []).map(norm))
         const outfitsOk = wantOutfits.every(o => ownedO.has(o) && (ownedO.get(o)! & reqMask) === reqMask)
         const mountsOk = wantMounts.every(m => ownedM.has(m))
         return outfitsOk && mountsOk
