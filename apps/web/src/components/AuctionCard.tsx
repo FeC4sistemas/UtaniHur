@@ -3,6 +3,7 @@ import type { Auction } from '../types'
 import { auctionUrl, formatCoins, formatEndDate, itemSources, outfitSources, timeLeft } from '../lib/format'
 import { skillList, vocationMeta } from '../lib/vocation'
 import { AUGMENT_TAG_CLASS, formatAugment } from '../lib/augment'
+import { DERIVED_TAG_CLASS, deriveTags } from '../lib/tags'
 import {
   ClockIcon,
   CoinIcon,
@@ -132,27 +133,6 @@ function SkillBar({
   )
 }
 
-/** Caixa de informação (servidor, fim do leilão, lance…) no estilo do card. */
-function InfoBox({
-  label,
-  icon,
-  children,
-}: {
-  label: string
-  icon: React.ReactNode
-  children: React.ReactNode
-}) {
-  return (
-    <div className="rounded-md border border-separator/70 bg-background px-2.5 py-1.5">
-      <p className="text-[9px] font-bold uppercase tracking-wider text-onSurface/45">{label}</p>
-      <div className="mt-0.5 flex items-center gap-1.5 text-[13px] font-semibold text-onSurface">
-        {icon}
-        {children}
-      </div>
-    </div>
-  )
-}
-
 /** Linha da grade de estatísticas (charms, boss points…). */
 function StatRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
@@ -215,6 +195,7 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
   const augmentBadges = a.highlightAugments
     .map(formatAugment)
     .filter(b => !new Set(['level', 'magic', 'charm']).has(b.tone))
+  const derivedTags = deriveTags(a)
 
   const toggleFavorite = () => {
     const favs = readFavorites()
@@ -276,22 +257,6 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
 
       {/* Corpo */}
       <div className="flex flex-1 flex-col gap-3 p-3">
-        {/* Caixas de informação */}
-        <div className="grid grid-cols-2 gap-2">
-          <InfoBox label="Servidor" icon={<GlobeIcon size={13} className="text-battleGreen" />}>
-            {a.worldName}
-          </InfoBox>
-          <InfoBox label="Fim do leilão" icon={null}>
-            <Countdown end={a.auctionEnd} />
-          </InfoBox>
-          <InfoBox label="Lance atual" icon={<CoinIcon size={14} />}>
-            {hasBid ? formatCoins(a.currentValue) : <span className="text-onSurface/45">Sem lances</span>}
-          </InfoBox>
-          <InfoBox label="Lance inicial" icon={<CoinIcon size={14} />}>
-            {formatCoins(a.startingValue)}
-          </InfoBox>
-        </div>
-
         {/* Itens em destaque — sempre 4 slots */}
         <div className="flex items-center gap-1.5" aria-label="Itens em destaque">
           {Array.from({ length: 4 }).map((_, i) => {
@@ -331,9 +296,13 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
             label="Achievements"
             value={formatCoins(a.achievementPoints)}
           />
+          {/* Campos extras vindos do detalhe do leilão (quando disponíveis) */}
+          {a.details?.map(d => (
+            <StatRow key={d.label} icon={<span className="text-onSurface/40">•</span>} label={d.label} value={d.value} />
+          ))}
         </div>
 
-        {/* Badges de destaque (tags) */}
+        {/* Badges quantitativos (augments) */}
         {augmentBadges.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {augmentBadges.map((badge, i) => (
@@ -343,19 +312,43 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
             ))}
           </div>
         )}
+
+        {/* Tags qualitativas derivadas */}
+        {derivedTags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {derivedTags.map(tag => (
+              <span key={tag.label} title={tag.title} className={DERIVED_TAG_CLASS}>
+                {tag.label}
+                {tag.emoji && <span className="ml-0.5">{tag.emoji}</span>}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Rodapé: botão de lance */}
-      <footer className="border-t border-separator/60 px-3 py-2.5">
-        <a
-          href={auctionUrl(a.id)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="pressable flex w-full items-center justify-center gap-1.5 rounded-md bg-green py-2 text-sm font-bold text-white transition-colors duration-150 [@media(hover:hover)]:hover:brightness-110"
-        >
-          Dar lance
-          <ExternalIcon size={13} />
-        </a>
+      {/* Rodapé: countdown + lance */}
+      <footer className="flex items-center justify-between gap-2 border-t border-separator/60 px-3 py-2.5">
+        <Countdown end={a.auctionEnd} />
+        <div className="flex items-center gap-2.5">
+          <div className="text-right">
+            <p className="text-[10px] font-medium uppercase tracking-wide text-onSurface/50">
+              {hasBid ? 'Lance atual' : 'Lance inicial'}
+            </p>
+            <p className="flex items-center justify-end gap-1 text-sm font-bold tabular-nums">
+              <CoinIcon size={14} />
+              {formatCoins(hasBid ? a.currentValue : a.startingValue)}
+            </p>
+          </div>
+          <a
+            href={auctionUrl(a.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="pressable inline-flex items-center gap-1.5 rounded-md bg-green px-3 py-1.5 text-xs font-bold text-white transition-colors duration-150 [@media(hover:hover)]:hover:brightness-110"
+          >
+            Dar lance
+            <ExternalIcon size={11} />
+          </a>
+        </div>
       </footer>
     </article>
   )

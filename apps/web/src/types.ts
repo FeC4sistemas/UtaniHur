@@ -45,6 +45,8 @@ export interface Auction {
   skills: AuctionSkills
   highlightItems: HighlightItem[]
   highlightAugments: HighlightAugment[]
+  /** Campos extras vindos do detalhe do leilão (imbuements, prey, gems…). */
+  details?: Array<{ label: string; value: string }>
 }
 
 export interface Pagination {

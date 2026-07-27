@@ -5,12 +5,33 @@ import path from 'path'
 const router = Router()
 
 const DATA_FILE = path.resolve(__dirname, '../../../scraper/output/CurrentAuctions.json')
+const DETAILS_FILE = path.resolve(__dirname, '../../../scraper/output/AuctionDetails.json')
+
+function loadDetails(): Record<string, { highlightAugments?: any[]; details?: any[] }> {
+  if (!fs.existsSync(DETAILS_FILE)) return {}
+  try {
+    return JSON.parse(fs.readFileSync(DETAILS_FILE, 'utf-8')).byId || {}
+  } catch {
+    return {}
+  }
+}
 
 function loadAuctions() {
   if (!fs.existsSync(DATA_FILE)) return []
   const raw = fs.readFileSync(DATA_FILE, 'utf-8')
   const data = JSON.parse(raw)
-  return data.auctions || []
+  const auctions = data.auctions || []
+  // Mescla o detalhe (augments completos + campos extras), quando disponível
+  const byId = loadDetails()
+  return auctions.map((a: any) => {
+    const d = byId[a.id]
+    if (!d) return a
+    return {
+      ...a,
+      highlightAugments: d.highlightAugments?.length ? d.highlightAugments : a.highlightAugments,
+      details: d.details ?? undefined,
+    }
+  })
 }
 
 // Pares base → promovida (ex.: filtrar por Elite Knight inclui Knight)

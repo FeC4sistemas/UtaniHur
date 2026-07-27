@@ -8,7 +8,8 @@
     "history": "ts-node src/scripts/scrapHistoryAuctions.ts",
     "sprites": "ts-node src/scripts/downloadOutfitSprites.ts",
     "sprites:rubinot": "ts-node src/scripts/scrapBazaarSprites.ts",
-    "boosted": "ts-node src/scripts/scrapBoosted.ts"
+    "boosted": "ts-node src/scripts/scrapBoosted.ts",
+    "details": "ts-node src/scripts/scrapAuctionDetails.ts"
   },
   "dependencies": {
     "node-fetch": "^3.3.2",
