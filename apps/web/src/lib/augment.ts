@@ -76,6 +76,10 @@ export function formatAugment(a: HighlightAugment): AugmentBadge {
   return { label: text, title, tone: 'default' }
 }
 
+/** Estilo unificado de "tag" laranja para os badges de destaque. */
+export const AUGMENT_TAG_CLASS =
+  'rounded-md border border-amber-500/35 bg-amber-500/12 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300'
+
 export const AUGMENT_TONE_CLASS: Record<AugmentTone, string> = {
   level: 'bg-primary/12 text-primary',
   magic: 'bg-primary/12 text-primary',

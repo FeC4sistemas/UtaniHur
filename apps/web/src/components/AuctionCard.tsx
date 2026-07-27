@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from 'react'
 import type { Auction } from '../types'
 import { auctionUrl, formatCoins, formatEndDate, itemSources, outfitSources, timeLeft } from '../lib/format'
 import { skillList, vocationMeta } from '../lib/vocation'
-import { AUGMENT_TONE_CLASS, formatAugment } from '../lib/augment'
+import { AUGMENT_TAG_CLASS, formatAugment } from '../lib/augment'
 import {
   ClockIcon,
   CoinIcon,
@@ -96,19 +96,72 @@ function ItemSlot({ clientId, name, count, tier }: { clientId: number; name: str
   )
 }
 
-function SkillCell({ label, value, highlight }: { label: string; value: number; highlight: boolean }) {
+function SkillBar({
+  label,
+  value,
+  max,
+  highlight,
+}: {
+  label: string
+  value: number
+  max: number
+  highlight: boolean
+}) {
+  const pct = Math.max(4, Math.min(100, Math.round((value / max) * 100)))
   return (
-    <div
-      className={`flex items-baseline justify-between gap-1 rounded px-1.5 py-1 ${
-        highlight ? 'bg-primary/10' : ''
-      }`}
-    >
-      <span className={`text-[11px] font-medium ${highlight ? 'text-primary' : 'text-onSurface/55'}`}>
-        {label}
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center gap-1.5">
+        <span
+          className={`grid h-5 min-w-[1.5rem] place-items-center rounded px-1 text-[11px] font-bold tabular-nums text-white ${
+            highlight ? 'bg-battleGreen' : 'bg-amber-500'
+          }`}
+        >
+          {value}
+        </span>
+        <span className={`text-[12px] font-medium ${highlight ? 'text-battleGreen' : 'text-onSurface/70'}`}>
+          {label}
+        </span>
+      </div>
+      <div className="h-1 overflow-hidden rounded-full bg-onSurface/10">
+        <div
+          className={`h-full rounded-full ${highlight ? 'bg-battleGreen' : 'bg-amber-500/70'}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  )
+}
+
+/** Caixa de informação (servidor, fim do leilão, lance…) no estilo do card. */
+function InfoBox({
+  label,
+  icon,
+  children,
+}: {
+  label: string
+  icon: React.ReactNode
+  children: React.ReactNode
+}) {
+  return (
+    <div className="rounded-md border border-separator/70 bg-background px-2.5 py-1.5">
+      <p className="text-[9px] font-bold uppercase tracking-wider text-onSurface/45">{label}</p>
+      <div className="mt-0.5 flex items-center gap-1.5 text-[13px] font-semibold text-onSurface">
+        {icon}
+        {children}
+      </div>
+    </div>
+  )
+}
+
+/** Linha da grade de estatísticas (charms, boss points…). */
+function StatRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-2 text-[12px]">
+      <span className="flex min-w-0 items-center gap-1.5 text-onSurface/60">
+        {icon}
+        <span className="truncate">{label}</span>
       </span>
-      <span className={`text-xs font-bold tabular-nums ${highlight ? 'text-primary' : 'text-onSurface/85'}`}>
-        {value}
-      </span>
+      <strong className="shrink-0 font-semibold tabular-nums">{value}</strong>
     </div>
   )
 }
@@ -156,8 +209,12 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
   const [favorite, setFavorite] = useState(() => readFavorites().has(a.id))
   const voc = vocationMeta(a.vocationName)
   const skills = skillList(a.vocationName, a.magLevel, { ...a.skills })
+  const maxSkill = Math.max(...skills.map(s => s.value), 120)
   const hasBid = a.currentValue > 0
-  const bidValue = hasBid ? a.currentValue : a.startingValue
+  // Level/Magic/Charms já aparecem no cabeçalho, skills e stats — filtra duplicados
+  const augmentBadges = a.highlightAugments
+    .map(formatAugment)
+    .filter(b => !new Set(['level', 'magic', 'charm']).has(b.tone))
 
   const toggleFavorite = () => {
     const favs = readFavorites()
@@ -219,52 +276,27 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
 
       {/* Corpo */}
       <div className="flex flex-1 flex-col gap-3 p-3">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[13px]">
-          <div className="flex items-center justify-between gap-2">
-            <span className="flex items-center gap-1 text-onSurface/60">
-              <img src="/sprites/charms/Charm.png" alt="" aria-hidden className="pixelated h-3.5 w-3.5" />
-              Charms
-            </span>
-            <strong className="font-semibold tabular-nums">{formatCoins(a.charmPoints)}</strong>
-          </div>
-          <div className="flex items-center justify-between gap-2">
-            <span className="flex items-center gap-1 text-onSurface/60">
-              <TrophyIcon size={12} className="text-primary" />
-              Achievements
-            </span>
-            <strong className="font-semibold tabular-nums">{formatCoins(a.achievementPoints)}</strong>
-          </div>
+        {/* Caixas de informação */}
+        <div className="grid grid-cols-2 gap-2">
+          <InfoBox label="Servidor" icon={<GlobeIcon size={13} className="text-battleGreen" />}>
+            {a.worldName}
+          </InfoBox>
+          <InfoBox label="Fim do leilão" icon={null}>
+            <Countdown end={a.auctionEnd} />
+          </InfoBox>
+          <InfoBox label="Lance atual" icon={<CoinIcon size={14} />}>
+            {hasBid ? formatCoins(a.currentValue) : <span className="text-onSurface/45">Sem lances</span>}
+          </InfoBox>
+          <InfoBox label="Lance inicial" icon={<CoinIcon size={14} />}>
+            {formatCoins(a.startingValue)}
+          </InfoBox>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
-          {skills.map(s => (
-            <SkillCell key={s.key} label={s.label} value={s.value} highlight={s.highlight} />
-          ))}
-        </div>
-
-        {(() => {
-          // Level/Magic/Charms já aparecem no cabeçalho, skills e linha de stats
-          const redundant = new Set(['level', 'magic', 'charm'])
-          const badges = a.highlightAugments.map(formatAugment).filter(b => !redundant.has(b.tone))
-          if (badges.length === 0) return null
-          return (
-            <div className="flex flex-wrap gap-1">
-              {badges.map((badge, i) => (
-                <span
-                  key={i}
-                  title={badge.title}
-                  className={`inline-flex max-w-full items-center truncate rounded px-1.5 py-0.5 text-[11px] font-semibold ${AUGMENT_TONE_CLASS[badge.tone]}`}
-                >
-                  {badge.label}
-                </span>
-              ))}
-            </div>
-          )
-        })()}
-
-        {a.highlightItems.length > 0 && (
-          <div className="flex items-center gap-1.5" aria-label="Itens em destaque">
-            {a.highlightItems.slice(0, 4).map(item => (
+        {/* Itens em destaque — sempre 4 slots */}
+        <div className="flex items-center gap-1.5" aria-label="Itens em destaque">
+          {Array.from({ length: 4 }).map((_, i) => {
+            const item = a.highlightItems[i]
+            return item ? (
               <ItemSlot
                 key={item.itemId}
                 clientId={item.clientId}
@@ -272,34 +304,58 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
                 count={item.count}
                 tier={item.tier}
               />
+            ) : (
+              <div key={`empty-${i}`} className="h-10 w-10 rounded border border-separator/60 bg-surface-2" />
+            )
+          })}
+        </div>
+
+        {/* Skills em duas colunas com barras */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+          {skills.map(s => (
+            <SkillBar key={s.key} label={s.label} value={s.value} max={maxSkill} highlight={s.highlight} />
+          ))}
+        </div>
+
+        <hr className="border-separator/60" />
+
+        {/* Estatísticas */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+          <StatRow
+            icon={<img src="/sprites/charms/Charm.png" alt="" aria-hidden className="pixelated h-3.5 w-3.5" />}
+            label="Charm points"
+            value={formatCoins(a.charmPoints)}
+          />
+          <StatRow
+            icon={<TrophyIcon size={13} className="text-primary" />}
+            label="Achievements"
+            value={formatCoins(a.achievementPoints)}
+          />
+        </div>
+
+        {/* Badges de destaque (tags) */}
+        {augmentBadges.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {augmentBadges.map((badge, i) => (
+              <span key={i} title={badge.title} className={`truncate ${AUGMENT_TAG_CLASS}`}>
+                {badge.label}
+              </span>
             ))}
           </div>
         )}
       </div>
 
-      {/* Rodapé: countdown + lance */}
-      <footer className="flex items-center justify-between gap-2 border-t border-separator/60 px-3 py-2.5">
-        <Countdown end={a.auctionEnd} />
-        <div className="flex items-center gap-2.5">
-          <div className="text-right">
-            <p className="text-[10px] font-medium uppercase tracking-wide text-onSurface/50">
-              {hasBid ? 'Lance atual' : 'Lance inicial'}
-            </p>
-            <p className="flex items-center justify-end gap-1 text-sm font-bold tabular-nums">
-              <CoinIcon size={14} />
-              {formatCoins(bidValue)}
-            </p>
-          </div>
-          <a
-            href={auctionUrl(a.id)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="pressable inline-flex items-center gap-1.5 rounded-md bg-green px-3 py-1.5 text-xs font-bold text-white transition-colors duration-150 [@media(hover:hover)]:hover:brightness-110"
-          >
-            Dar lance
-            <ExternalIcon size={11} />
-          </a>
-        </div>
+      {/* Rodapé: botão de lance */}
+      <footer className="border-t border-separator/60 px-3 py-2.5">
+        <a
+          href={auctionUrl(a.id)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="pressable flex w-full items-center justify-center gap-1.5 rounded-md bg-green py-2 text-sm font-bold text-white transition-colors duration-150 [@media(hover:hover)]:hover:brightness-110"
+        >
+          Dar lance
+          <ExternalIcon size={13} />
+        </a>
       </footer>
     </article>
   )
