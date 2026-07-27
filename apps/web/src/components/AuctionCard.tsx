@@ -2,6 +2,7 @@ import { memo, useEffect, useState } from 'react'
 import type { Auction } from '../types'
 import { auctionUrl, formatCoins, formatEndDate, itemSources, outfitSources, timeLeft } from '../lib/format'
 import { skillList, vocationMeta } from '../lib/vocation'
+import { AUGMENT_TONE_CLASS, formatAugment } from '../lib/augment'
 import {
   ClockIcon,
   CoinIcon,
@@ -240,6 +241,26 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
             <SkillCell key={s.key} label={s.label} value={s.value} highlight={s.highlight} />
           ))}
         </div>
+
+        {(() => {
+          // Level/Magic/Charms já aparecem no cabeçalho, skills e linha de stats
+          const redundant = new Set(['level', 'magic', 'charm'])
+          const badges = a.highlightAugments.map(formatAugment).filter(b => !redundant.has(b.tone))
+          if (badges.length === 0) return null
+          return (
+            <div className="flex flex-wrap gap-1">
+              {badges.map((badge, i) => (
+                <span
+                  key={i}
+                  title={badge.title}
+                  className={`inline-flex max-w-full items-center truncate rounded px-1.5 py-0.5 text-[11px] font-semibold ${AUGMENT_TONE_CLASS[badge.tone]}`}
+                >
+                  {badge.label}
+                </span>
+              ))}
+            </div>
+          )
+        })()}
 
         {a.highlightItems.length > 0 && (
           <div className="flex items-center gap-1.5" aria-label="Itens em destaque">
