@@ -160,7 +160,7 @@ export function WardrobePicker({ title, kind, items, selected, onChange, preview
             </button>
           )}
 
-          <div className="grid max-h-72 grid-cols-4 gap-1.5 overflow-y-auto">
+          <div className="grid max-h-72 grid-cols-3 gap-1.5 overflow-y-auto">
             {filtered.map(item => (
               <Thumb
                 key={item.name}

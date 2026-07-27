@@ -91,6 +91,7 @@ interface Props {
 
 export function FilterDrawer({ open, onClose, filters, onApply, options }: Props) {
   const [draft, setDraft] = useState<AuctionFilters>(filters)
+  const [tab, setTab] = useState<'geral' | 'skills' | 'extras'>('geral')
   const wardrobe = useWardrobe()
   const previewAddon = (draft.reqAddon1 ? 1 : 0) | (draft.reqAddon2 ? 2 : 0) || 3
   const panelRef = useRef<HTMLDivElement>(null)
@@ -153,7 +154,27 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
           </button>
         </header>
 
+        <div className="flex shrink-0 border-b border-separator/60 px-2" role="tablist">
+          {(['geral', 'skills', 'extras'] as const).map(t => (
+            <button
+              key={t}
+              type="button"
+              role="tab"
+              aria-selected={tab === t}
+              onClick={() => setTab(t)}
+              className={`relative px-4 py-2.5 text-sm font-semibold capitalize transition-colors duration-150 ${
+                tab === t ? 'text-primary' : 'text-onSurface/50 hover:text-onSurface/80'
+              }`}
+            >
+              {t}
+              {tab === t && <span className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-primary" />}
+            </button>
+          ))}
+        </div>
+
         <div className="flex flex-1 flex-col gap-5 overflow-y-auto p-4">
+          {tab === 'geral' && (
+            <>
           <Section title="Nome do personagem">
             <div className="relative">
               <SearchIcon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-onSurface/35" />
@@ -241,6 +262,25 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
             <Range minVal={draft.minLevel} maxVal={draft.maxLevel} onMin={v => set('minLevel', v)} onMax={v => set('maxLevel', v)} label="Level" />
           </Section>
 
+          <Section title="Preço (lance)">
+            <Range minVal={draft.minPrice} maxVal={draft.maxPrice} onMin={v => set('minPrice', v)} onMax={v => set('maxPrice', v)} label="Preço" />
+          </Section>
+
+          <Section title="Lances">
+            <div className="flex gap-1.5">
+              <button type="button" aria-pressed={draft.hasBid === 'yes'} onClick={() => set('hasBid', draft.hasBid === 'yes' ? null : 'yes')} className={chipCls(draft.hasBid === 'yes')}>
+                Com lance
+              </button>
+              <button type="button" aria-pressed={draft.hasBid === 'no'} onClick={() => set('hasBid', draft.hasBid === 'no' ? null : 'no')} className={chipCls(draft.hasBid === 'no')}>
+                Sem lance
+              </button>
+            </div>
+          </Section>
+            </>
+          )}
+
+          {tab === 'skills' && (
+            <>
           <Section title="Magic level">
             <Range minVal={draft.minMagLevel} maxVal={draft.maxMagLevel} onMin={v => set('minMagLevel', v)} onMax={v => set('maxMagLevel', v)} label="Magic level" />
           </Section>
@@ -272,22 +312,11 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
               />
             </div>
           </Section>
+            </>
+          )}
 
-          <Section title="Preço (lance)">
-            <Range minVal={draft.minPrice} maxVal={draft.maxPrice} onMin={v => set('minPrice', v)} onMax={v => set('maxPrice', v)} label="Preço" />
-          </Section>
-
-          <Section title="Lances">
-            <div className="flex gap-1.5">
-              <button type="button" aria-pressed={draft.hasBid === 'yes'} onClick={() => set('hasBid', draft.hasBid === 'yes' ? null : 'yes')} className={chipCls(draft.hasBid === 'yes')}>
-                Com lance
-              </button>
-              <button type="button" aria-pressed={draft.hasBid === 'no'} onClick={() => set('hasBid', draft.hasBid === 'no' ? null : 'no')} className={chipCls(draft.hasBid === 'no')}>
-                Sem lance
-              </button>
-            </div>
-          </Section>
-
+          {tab === 'extras' && (
+            <>
           <Section title="Charm points mínimo">
             <input type="number" min={0} inputMode="numeric" value={draft.minCharm} onChange={e => set('minCharm', e.target.value)} placeholder="Ex.: 3000" className={inputCls} />
           </Section>
@@ -359,6 +388,8 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
               />
             </div>
           </Section>
+            </>
+          )}
         </div>
 
         <footer className="flex shrink-0 gap-2 border-t border-separator/60 p-4">
