@@ -11,6 +11,23 @@ const VOCATION_CHIPS = [
   { id: 10, label: 'EM', title: 'Monk' },
 ]
 
+const PVP_CHIPS: Array<{ value: NonNullable<AuctionFilters['pvp']>; label: string }> = [
+  { value: 'pvp', label: 'Open PvP' },
+  { value: 'no-pvp', label: 'Optional' },
+  { value: 'pvp-enforced', label: 'Retro' },
+]
+
+const SKILL_OPTIONS: Array<{ key: NonNullable<AuctionFilters['skillKey']>; label: string }> = [
+  { key: 'magic', label: 'Magic Level' },
+  { key: 'fist', label: 'Fist' },
+  { key: 'club', label: 'Club' },
+  { key: 'sword', label: 'Sword' },
+  { key: 'axe', label: 'Axe' },
+  { key: 'dist', label: 'Distance' },
+  { key: 'shielding', label: 'Shielding' },
+  { key: 'fishing', label: 'Fishing' },
+]
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <fieldset className="flex flex-col gap-2 border-0 p-0">
@@ -22,6 +39,39 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 const inputCls =
   'h-9 w-full rounded-md border border-separator bg-surface px-3 text-sm outline-none transition-colors duration-150 placeholder:text-onSurface/35 focus:border-primary focus:ring-2 focus:ring-primary/20'
+
+/** Par de inputs mín/máx. */
+function Range({
+  minVal,
+  maxVal,
+  onMin,
+  onMax,
+  label,
+}: {
+  minVal: string
+  maxVal: string
+  onMin: (v: string) => void
+  onMax: (v: string) => void
+  label: string
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <input type="number" min={0} inputMode="numeric" value={minVal} onChange={e => onMin(e.target.value)} placeholder="Mín." aria-label={`${label} mínimo`} className={inputCls} />
+      <span className="text-onSurface/40">–</span>
+      <input type="number" min={0} inputMode="numeric" value={maxVal} onChange={e => onMax(e.target.value)} placeholder="Máx." aria-label={`${label} máximo`} className={inputCls} />
+    </div>
+  )
+}
+
+/** Input numérico com rótulo pequeno em cima. */
+function LabeledNum({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <label className="flex flex-col gap-1">
+      <span className="text-[10px] font-medium uppercase tracking-wide text-onSurface/45">{label}</span>
+      <input type="number" min={0} inputMode="numeric" value={value} onChange={e => onChange(e.target.value)} placeholder="Mín." className={inputCls} />
+    </label>
+  )
+}
 
 const chipCls = (active: boolean) =>
   `pressable inline-flex h-9 min-w-11 items-center justify-center gap-1.5 rounded-md border px-2.5 text-sm font-bold transition-colors duration-150 ${
@@ -168,43 +218,95 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
             </select>
           </Section>
 
+          <Section title="Tipo de PvP">
+            <div className="flex flex-wrap gap-1.5">
+              {PVP_CHIPS.map(p => (
+                <button
+                  key={p.value}
+                  type="button"
+                  aria-pressed={draft.pvp === p.value}
+                  onClick={() => set('pvp', draft.pvp === p.value ? null : p.value)}
+                  className={chipCls(draft.pvp === p.value)}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </Section>
+
           <Section title="Level">
+            <Range minVal={draft.minLevel} maxVal={draft.maxLevel} onMin={v => set('minLevel', v)} onMax={v => set('maxLevel', v)} label="Level" />
+          </Section>
+
+          <Section title="Magic level">
+            <Range minVal={draft.minMagLevel} maxVal={draft.maxMagLevel} onMin={v => set('minMagLevel', v)} onMax={v => set('maxMagLevel', v)} label="Magic level" />
+          </Section>
+
+          <Section title="Skill mínima">
             <div className="flex items-center gap-2">
+              <select
+                value={draft.skillKey ?? ''}
+                onChange={e => set('skillKey', (e.target.value || null) as AuctionFilters['skillKey'])}
+                className={inputCls}
+              >
+                <option value="">Escolher skill…</option>
+                {SKILL_OPTIONS.map(s => (
+                  <option key={s.key} value={s.key}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
               <input
                 type="number"
                 min={0}
                 inputMode="numeric"
-                value={draft.minLevel}
-                onChange={e => set('minLevel', e.target.value)}
+                value={draft.minSkill}
+                onChange={e => set('minSkill', e.target.value)}
                 placeholder="Mín."
-                aria-label="Level mínimo"
-                className={inputCls}
-              />
-              <span className="text-onSurface/40">–</span>
-              <input
-                type="number"
-                min={0}
-                inputMode="numeric"
-                value={draft.maxLevel}
-                onChange={e => set('maxLevel', e.target.value)}
-                placeholder="Máx."
-                aria-label="Level máximo"
-                className={inputCls}
+                aria-label="Valor mínimo da skill"
+                disabled={!draft.skillKey}
+                className={`${inputCls} w-24 disabled:opacity-40`}
               />
             </div>
           </Section>
 
-          <Section title="Magic level mínimo">
-            <input
-              type="number"
-              min={0}
-              inputMode="numeric"
-              value={draft.minMagLevel}
-              onChange={e => set('minMagLevel', e.target.value)}
-              placeholder="Ex.: 100"
-              aria-label="Magic level mínimo"
-              className={inputCls}
-            />
+          <Section title="Preço (lance)">
+            <Range minVal={draft.minPrice} maxVal={draft.maxPrice} onMin={v => set('minPrice', v)} onMax={v => set('maxPrice', v)} label="Preço" />
+          </Section>
+
+          <Section title="Lances">
+            <div className="flex gap-1.5">
+              <button type="button" aria-pressed={draft.hasBid === 'yes'} onClick={() => set('hasBid', draft.hasBid === 'yes' ? null : 'yes')} className={chipCls(draft.hasBid === 'yes')}>
+                Com lance
+              </button>
+              <button type="button" aria-pressed={draft.hasBid === 'no'} onClick={() => set('hasBid', draft.hasBid === 'no' ? null : 'no')} className={chipCls(draft.hasBid === 'no')}>
+                Sem lance
+              </button>
+            </div>
+          </Section>
+
+          <Section title="Charm points mínimo">
+            <input type="number" min={0} inputMode="numeric" value={draft.minCharm} onChange={e => set('minCharm', e.target.value)} placeholder="Ex.: 3000" className={inputCls} />
+          </Section>
+
+          <Section title="Coleção e progresso">
+            <p className="-mt-1 mb-1 text-[11px] text-onSurface/45">
+              Requer o detalhe (npm run details). Leilões sem esse dado são ocultados quando o filtro é usado.
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              <LabeledNum label="Boss pts" value={draft.minBoss} onChange={v => set('minBoss', v)} />
+              <LabeledNum label="Mounts" value={draft.minMounts} onChange={v => set('minMounts', v)} />
+              <LabeledNum label="Outfits" value={draft.minOutfits} onChange={v => set('minOutfits', v)} />
+            </div>
+            <label className="mt-2 flex cursor-pointer items-center gap-2 text-sm text-onSurface/80">
+              <input
+                type="checkbox"
+                checked={draft.charmExpansion}
+                onChange={e => set('charmExpansion', e.target.checked)}
+                className="h-4 w-4 accent-primary"
+              />
+              Com Charm Expansion
+            </label>
           </Section>
         </div>
 

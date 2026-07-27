@@ -90,22 +90,50 @@ export interface FilterOptions {
 export type SortBy = 'auctionEnd' | 'level' | 'price' | 'magLevel'
 export type SortOrder = 'asc' | 'desc'
 
+export type SkillKey = 'magic' | 'club' | 'sword' | 'axe' | 'dist' | 'shielding' | 'fist' | 'fishing'
+export type PvpType = 'pvp' | 'no-pvp' | 'pvp-enforced'
+export type HasBid = 'yes' | 'no'
+
 export interface AuctionFilters {
   search: string
   vocation: number | null
   world: string | null
+  pvp: PvpType | null
   sex: number | null
   minLevel: string
   maxLevel: string
   minMagLevel: string
+  maxMagLevel: string
+  skillKey: SkillKey | null
+  minSkill: string
+  minPrice: string
+  maxPrice: string
+  hasBid: HasBid | null
+  minCharm: string
+  minBoss: string
+  minMounts: string
+  minOutfits: string
+  charmExpansion: boolean
 }
 
 export const EMPTY_FILTERS: AuctionFilters = {
   search: '',
   vocation: null,
   world: null,
+  pvp: null,
   sex: null,
   minLevel: '',
   maxLevel: '',
   minMagLevel: '',
+  maxMagLevel: '',
+  skillKey: null,
+  minSkill: '',
+  minPrice: '',
+  maxPrice: '',
+  hasBid: null,
+  minCharm: '',
+  minBoss: '',
+  minMounts: '',
+  minOutfits: '',
+  charmExpansion: false,
 }

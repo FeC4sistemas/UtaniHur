@@ -72,10 +72,25 @@ export default function App() {
       chips.push({ key: 'vocation', label: vocationMeta(name).label })
     }
     if (filters.world) chips.push({ key: 'world', label: filters.world })
+    if (filters.pvp) {
+      const pvpLabel = { pvp: 'Open PvP', 'no-pvp': 'Optional PvP', 'pvp-enforced': 'Retro PvP' }[filters.pvp]
+      chips.push({ key: 'pvp', label: pvpLabel })
+    }
     if (filters.sex !== null) chips.push({ key: 'sex', label: filters.sex === 0 ? 'Masculino' : 'Feminino' })
     if (filters.minLevel) chips.push({ key: 'minLevel', label: `Level ≥ ${filters.minLevel}` })
     if (filters.maxLevel) chips.push({ key: 'maxLevel', label: `Level ≤ ${filters.maxLevel}` })
     if (filters.minMagLevel) chips.push({ key: 'minMagLevel', label: `ML ≥ ${filters.minMagLevel}` })
+    if (filters.maxMagLevel) chips.push({ key: 'maxMagLevel', label: `ML ≤ ${filters.maxMagLevel}` })
+    if (filters.skillKey && filters.minSkill)
+      chips.push({ key: 'minSkill', label: `${filters.skillKey} ≥ ${filters.minSkill}` })
+    if (filters.minPrice) chips.push({ key: 'minPrice', label: `Preço ≥ ${filters.minPrice}` })
+    if (filters.maxPrice) chips.push({ key: 'maxPrice', label: `Preço ≤ ${filters.maxPrice}` })
+    if (filters.hasBid) chips.push({ key: 'hasBid', label: filters.hasBid === 'yes' ? 'Com lance' : 'Sem lance' })
+    if (filters.minCharm) chips.push({ key: 'minCharm', label: `Charms ≥ ${filters.minCharm}` })
+    if (filters.minBoss) chips.push({ key: 'minBoss', label: `Boss ≥ ${filters.minBoss}` })
+    if (filters.minMounts) chips.push({ key: 'minMounts', label: `Mounts ≥ ${filters.minMounts}` })
+    if (filters.minOutfits) chips.push({ key: 'minOutfits', label: `Outfits ≥ ${filters.minOutfits}` })
+    if (filters.charmExpansion) chips.push({ key: 'charmExpansion', label: 'Charm Expansion' })
     return chips
   }, [filters, options.vocations])
 

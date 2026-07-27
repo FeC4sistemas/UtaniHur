@@ -22,7 +22,7 @@ const CURRENT_FILE = path.resolve(__dirname, '../../output/CurrentAuctions.json'
 const OUT_FILE = path.resolve(__dirname, '../../output/AuctionDetails.json')
 const SAMPLE_FILE = path.resolve(__dirname, '../../output/auctionDetailSample.json')
 const MAIN_ORIGIN = 'https://rubinot.com.br'
-const DELAY_MS = 200
+const DELAY_MS = 300
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 
@@ -76,15 +76,33 @@ async function main() {
   console.log('⏳ Aguardando Cloudflare...')
   await sleep(8000)
 
-  const fetchDetail = (id: number) =>
-    page.evaluate(async (u: string) => {
-      try {
-        const res = await fetch(u)
-        return res.ok ? await res.json() : null
-      } catch {
-        return null
-      }
-    }, `${MAIN_ORIGIN}/api/bazaar/${id}`)
+  // Retoma: mantém o que já foi salvo e busca só o que falta
+  let byId: Record<number, any> = {}
+  if (fs.existsSync(OUT_FILE)) {
+    try {
+      byId = JSON.parse(fs.readFileSync(OUT_FILE, 'utf-8')).byId ?? {}
+    } catch {
+      byId = {}
+    }
+  }
+
+  // fetch com retry + backoff (as falhas costumam ser throttling)
+  const fetchDetail = async (id: number): Promise<any> => {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const body = await page.evaluate(async (u: string) => {
+        try {
+          const res = await fetch(u)
+          if (!res.ok) return { __status: res.status }
+          return await res.json()
+        } catch (e: any) {
+          return { __error: e.message }
+        }
+      }, `${MAIN_ORIGIN}/api/bazaar/${id}`)
+      if (body?.general) return body
+      await sleep(600 * (attempt + 1)) // backoff: 0.6s, 1.2s
+    }
+    return null
+  }
 
   // valida com o primeiro e grava amostra
   const sample = await fetchDetail(auctions[0].id)
@@ -97,22 +115,31 @@ async function main() {
   fs.writeFileSync(SAMPLE_FILE, JSON.stringify(sample, null, 2))
   console.log('📐 Rota OK: /api/bazaar/{id} (campo `general` presente)')
 
-  const byId: Record<number, any> = {}
+  const pending = auctions.filter(a => !byId[a.id])
+  console.log(`📋 ${auctions.length} leilões | ${Object.keys(byId).length} já salvos | ${pending.length} a buscar`)
+
   let ok = 0
   let fail = 0
-  for (const a of auctions) {
+  let processed = 0
+  for (const a of pending) {
     const body = await fetchDetail(a.id)
     const parsed = extractExtra(body?.general)
     if (parsed) {
       byId[a.id] = parsed
       ok++
     } else fail++
-    if ((ok + fail) % 25 === 0) process.stdout.write(`\r🔎 detalhes — ok: ${ok} | falhas: ${fail} | ${ok + fail}/${auctions.length}`)
+    processed++
+    if (processed % 25 === 0) {
+      process.stdout.write(`\r🔎 novos ok: ${ok} | falhas: ${fail} | ${processed}/${pending.length}`)
+      // salva progresso parcial para não perder em caso de interrupção
+      fs.writeFileSync(OUT_FILE, JSON.stringify({ enrichedAt: new Date().toISOString(), byId }, null, 2))
+    }
     await sleep(DELAY_MS)
   }
 
   fs.writeFileSync(OUT_FILE, JSON.stringify({ enrichedAt: new Date().toISOString(), byId }, null, 2))
-  console.log(`\n✅ ${ok} detalhes salvos em AuctionDetails.json (${fail} falhas)`)
+  console.log(`\n✅ Total salvo: ${Object.keys(byId).length} (novos: ${ok}, ainda faltando: ${fail})`)
+  if (fail > 0) console.log('   Rode novamente para tentar os que faltaram (retoma de onde parou).')
 
   await browser.close()
 }
