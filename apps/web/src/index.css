@@ -79,20 +79,37 @@ body {
 }
 
 /*
-  Sprite sheet de outfit (tira horizontal do gerador do RubinOT): mostramos
-  uma janela de um frame e animamos a tira com steps() para o personagem andar.
+  Sprite sheet de outfit (tira horizontal do gerador do RubinOT): cada frame
+  é quadrado, com o personagem pequeno embaixo-centro e muito espaço vazio em
+  cima. Damos zoom (--zoom) para o personagem preencher o quadradinho, alinhamos
+  embaixo (corta o vazio de cima) e centralizamos horizontalmente cada frame,
+  animando a troca de frames com steps().
 */
-@keyframes outfit-walk {
-  to {
-    transform: translateX(-100%);
-  }
-}
 .outfit-sheet {
-  animation: outfit-walk 1.2s steps(var(--frames, 8)) infinite;
+  --box: 64px;
+  --zoom: 1.55;
+  --frame: calc(var(--box) * var(--zoom)); /* lado do frame exibido */
+  --x0: calc((var(--box) - var(--frame)) / 2); /* centraliza o frame 0 */
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: var(--frame);
+  width: auto;
+  max-width: none;
+  animation: outfit-walk 1.1s steps(var(--frames, 8)) infinite;
+}
+@keyframes outfit-walk {
+  from {
+    transform: translateX(var(--x0));
+  }
+  to {
+    transform: translateX(calc(var(--x0) - var(--frame) * var(--frames)));
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .outfit-sheet {
     animation: none;
+    transform: translateX(var(--x0));
   }
 }
 

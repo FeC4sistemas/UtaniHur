@@ -22,7 +22,7 @@ function OutfitImage({ auction }: { auction: Auction }) {
   const short = vocationMeta(auction.vocationName).short
 
   const boxCls =
-    'h-16 w-16 shrink-0 overflow-hidden rounded-md border border-separator/70 bg-background'
+    'relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-separator/70 bg-background'
 
   if (sourceIndex >= sources.length) {
     return (
@@ -32,38 +32,28 @@ function OutfitImage({ auction }: { auction: Auction }) {
     )
   }
   return (
-    // flex centra a janela do frame no quadradinho
-    <div className={`${boxCls} grid place-items-center`}>
-      <div
-        className="relative overflow-hidden"
-        style={{ width: '100%', height: '100%' }}
-      >
-        <img
-          src={sources[sourceIndex]}
-          alt={`Outfit de ${auction.name}`}
-          loading="lazy"
-          onLoad={e => {
-            const img = e.currentTarget
-            setFrames(Math.max(1, Math.round(img.naturalWidth / img.naturalHeight)))
-          }}
-          onError={() => {
-            setFrames(1)
-            setSourceIndex(i => i + 1)
-          }}
-          className={
-            frames > 1
-              ? // sprite sheet: janela mostra 1 frame (quadrado), animada por steps()
-                'outfit-sheet pixelated absolute left-0 top-0 h-full w-auto max-w-none'
-              : // imagem única: centralizada no quadradinho
-                'pixelated absolute inset-0 m-auto max-h-full max-w-full object-contain'
-          }
-          style={
-            frames > 1
-              ? ({ '--frames': frames, animationDuration: `${frames * 0.09}s` } as React.CSSProperties)
-              : undefined
-          }
-        />
-      </div>
+    <div className={boxCls}>
+      <img
+        src={sources[sourceIndex]}
+        alt={`Outfit de ${auction.name}`}
+        loading="lazy"
+        onLoad={e => {
+          const img = e.currentTarget
+          setFrames(Math.max(1, Math.round(img.naturalWidth / img.naturalHeight)))
+        }}
+        onError={() => {
+          setFrames(1)
+          setSourceIndex(i => i + 1)
+        }}
+        className={
+          frames > 1
+            ? // sprite sheet: zoom + alinhamento embaixo-centro, animada por steps()
+              'outfit-sheet pixelated'
+            : // imagem única: centralizada no quadradinho
+              'pixelated absolute inset-0 m-auto max-h-full max-w-full object-contain'
+        }
+        style={frames > 1 ? ({ '--frames': frames } as React.CSSProperties) : undefined}
+      />
     </div>
   )
 }
