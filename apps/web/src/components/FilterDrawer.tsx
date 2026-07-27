@@ -92,6 +92,7 @@ interface Props {
 export function FilterDrawer({ open, onClose, filters, onApply, options }: Props) {
   const [draft, setDraft] = useState<AuctionFilters>(filters)
   const wardrobe = useWardrobe()
+  const previewAddon = (draft.reqAddon1 ? 1 : 0) | (draft.reqAddon2 ? 2 : 0) || 3
   const panelRef = useRef<HTMLDivElement>(null)
 
   // Sincroniza o rascunho quando o drawer abre
@@ -315,6 +316,16 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
             <p className="-mt-1 mb-1 text-[11px] text-onSurface/45">
               Filtra por posse (o personagem deve ter os selecionados). Requer npm run details.
             </p>
+            <div className="mb-1 flex items-center gap-3">
+              <label className="flex cursor-pointer items-center gap-1.5 text-sm text-onSurface/80">
+                <input type="checkbox" checked={draft.reqAddon1} onChange={e => set('reqAddon1', e.target.checked)} className="h-4 w-4 accent-primary" />
+                Addon 1
+              </label>
+              <label className="flex cursor-pointer items-center gap-1.5 text-sm text-onSurface/80">
+                <input type="checkbox" checked={draft.reqAddon2} onChange={e => set('reqAddon2', e.target.checked)} className="h-4 w-4 accent-primary" />
+                Addon 2
+              </label>
+            </div>
             <div className="flex flex-col gap-2">
               <WardrobePicker
                 title="Outfits"
@@ -322,6 +333,7 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
                 items={wardrobe.outfits.filter(o => !o.store)}
                 selected={draft.outfits}
                 onChange={v => set('outfits', v)}
+                previewAddon={previewAddon}
               />
               <WardrobePicker
                 title="Store Outfits"
@@ -329,6 +341,7 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
                 items={wardrobe.outfits.filter(o => o.store)}
                 selected={draft.outfits}
                 onChange={v => set('outfits', v)}
+                previewAddon={previewAddon}
               />
               <WardrobePicker
                 title="Mounts"

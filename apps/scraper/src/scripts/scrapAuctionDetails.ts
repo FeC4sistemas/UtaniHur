@@ -33,10 +33,17 @@ function extractExtra(body: any) {
   const general = body?.general
   if (!general) return null
   const s = general.skills ?? {}
-  // Outfits/mounts possuídos (para o filtro visual)
-  const outfits = Array.isArray(body.outfits)
-    ? [...new Set(body.outfits.filter((o: any) => o?.info?.unlocked).map((o: any) => o.info.name).filter(Boolean))]
-    : []
+  // Outfits/mounts possuídos (para o filtro visual). Guarda o bitmask de
+  // addons por outfit (1 = addon 1, 2 = addon 2), unindo se repetir.
+  const outfitMap = new Map<string, number>()
+  if (Array.isArray(body.outfits)) {
+    for (const o of body.outfits) {
+      if (o?.info?.unlocked && o.info.name) {
+        outfitMap.set(o.info.name, (outfitMap.get(o.info.name) ?? 0) | (typeof o.addons === 'number' ? o.addons : 0))
+      }
+    }
+  }
+  const outfits = [...outfitMap.entries()].map(([name, addons]) => ({ name, addons }))
   const mounts = Array.isArray(body.mounts)
     ? [...new Set(body.mounts.map((m: any) => m?.name).filter(Boolean))]
     : []

@@ -116,6 +116,8 @@ export interface AuctionFilters {
   charmExpansion: boolean
   outfits: string[]
   mounts: string[]
+  reqAddon1: boolean
+  reqAddon2: boolean
 }
 
 export const EMPTY_FILTERS: AuctionFilters = {
@@ -140,4 +142,6 @@ export const EMPTY_FILTERS: AuctionFilters = {
   charmExpansion: false,
   outfits: [],
   mounts: [],
+  reqAddon1: false,
+  reqAddon2: false,
 }

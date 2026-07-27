@@ -7,7 +7,8 @@ const router = Router()
 const DATA_FILE = path.resolve(__dirname, '../../../scraper/output/CurrentAuctions.json')
 const DETAILS_FILE = path.resolve(__dirname, '../../../scraper/output/AuctionDetails.json')
 
-function loadDetails(): Record<string, { skills?: any; extra?: any; outfits?: string[]; mounts?: string[] }> {
+type OwnedOutfit = string | { name: string; addons?: number }
+function loadDetails(): Record<string, { skills?: any; extra?: any; outfits?: OwnedOutfit[]; mounts?: string[] }> {
   if (!fs.existsSync(DETAILS_FILE)) return {}
   try {
     return JSON.parse(fs.readFileSync(DETAILS_FILE, 'utf-8')).byId || {}
@@ -87,7 +88,7 @@ router.get('/', (req: Request, res: Response) => {
       skillKey, minSkill,
       minPrice, maxPrice, hasBid,
       minCharm, minBoss, minMounts, minOutfits,
-      charmExpansion, outfits, mounts,
+      charmExpansion, outfits, mounts, oAddon1, oAddon2,
       page = '1', limit = '25', sortBy = 'auctionEnd', sortOrder = 'asc',
     } = req.query
 
@@ -122,17 +123,26 @@ router.get('/', (req: Request, res: Response) => {
     if (q(minMounts)) auctions = auctions.filter((a: any) => (a.extra?.mountsCount ?? -1) >= Number(minMounts))
     if (q(minOutfits)) auctions = auctions.filter((a: any) => (a.extra?.outfitsCount ?? -1) >= Number(minOutfits))
     if (charmExpansion === 'true') auctions = auctions.filter((a: any) => a.extra?.charmExpansion === true)
-    // Filtro por posse de outfits/mounts (nomes separados por vírgula; precisa ter todos)
+    // Filtro por posse de outfits/mounts (nomes separados por vírgula; precisa ter todos).
+    // oAddon1/oAddon2 exigem que o outfit possuído tenha aquele(s) addon(s).
     if (q(outfits) || q(mounts)) {
       const byId = loadDetails()
       const wantOutfits = q(outfits) ? String(outfits).split(',').filter(Boolean) : []
       const wantMounts = q(mounts) ? String(mounts).split(',').filter(Boolean) : []
+      const reqMask = (oAddon1 === 'true' ? 1 : 0) | (oAddon2 === 'true' ? 2 : 0)
       auctions = auctions.filter((a: any) => {
         const d = byId[a.id]
         if (!d) return false
-        const ownedO = new Set(d.outfits ?? [])
+        // mapa nome → addons do que o personagem possui (tolera formato antigo string)
+        const ownedO = new Map<string, number>()
+        for (const o of d.outfits ?? []) {
+          if (typeof o === 'string') ownedO.set(o, 0)
+          else ownedO.set(o.name, o.addons ?? 0)
+        }
         const ownedM = new Set(d.mounts ?? [])
-        return wantOutfits.every(o => ownedO.has(o)) && wantMounts.every(m => ownedM.has(m))
+        const outfitsOk = wantOutfits.every(o => ownedO.has(o) && (ownedO.get(o)! & reqMask) === reqMask)
+        const mountsOk = wantMounts.every(m => ownedM.has(m))
+        return outfitsOk && mountsOk
       })
     }
 

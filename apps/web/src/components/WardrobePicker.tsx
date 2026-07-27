@@ -45,16 +45,19 @@ function Thumb({
   item,
   kind,
   sex,
+  previewAddon,
   selected,
   onToggle,
 }: {
   item: WardrobeItem
   kind: 'outfit' | 'mount'
   sex: 'male' | 'female'
+  previewAddon: number
   selected: boolean
   onToggle: () => void
 }) {
-  const addons = [3, 2, 1, 0]
+  // tenta o addon de preview primeiro, depois cai para os menores
+  const addons = [...new Set([previewAddon, 3, 2, 1, 0])]
   const [addonIdx, setAddonIdx] = useState(0)
   const [failed, setFailed] = useState(false)
   const src = kind === 'outfit' ? outfitSrc(item, sex, addons[addonIdx]) : mountSrc(item)
@@ -90,9 +93,11 @@ interface Props {
   items: WardrobeItem[]
   selected: string[]
   onChange: (next: string[]) => void
+  /** addon usado no preview das sprites de outfit (0-3) */
+  previewAddon?: number
 }
 
-export function WardrobePicker({ title, kind, items, selected, onChange }: Props) {
+export function WardrobePicker({ title, kind, items, selected, onChange, previewAddon = 3 }: Props) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [sex, setSex] = useState<'male' | 'female'>('male')
@@ -162,6 +167,7 @@ export function WardrobePicker({ title, kind, items, selected, onChange }: Props
                 item={item}
                 kind={kind}
                 sex={sex}
+                previewAddon={previewAddon}
                 selected={selected.includes(item.name)}
                 onToggle={() => toggle(item.name)}
               />

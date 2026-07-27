@@ -52,6 +52,8 @@ export function useAuctions({ filters, sortBy, sortOrder, page, limit }: Params)
     if (filters.charmExpansion) params.set('charmExpansion', 'true')
     if (filters.outfits.length) params.set('outfits', filters.outfits.join(','))
     if (filters.mounts.length) params.set('mounts', filters.mounts.join(','))
+    if (filters.reqAddon1) params.set('oAddon1', 'true')
+    if (filters.reqAddon2) params.set('oAddon2', 'true')
 
     setState(s => ({ ...s, loading: true, error: null }))
 
