@@ -132,6 +132,42 @@ async function main() {
   fs.writeFileSync(SAMPLE_FILE, JSON.stringify(sample, null, 2))
   console.log('📐 Rota OK: /api/bazaar/{id} (campo `general` presente)')
 
+  // Catálogo global de outfits/mounts (para o seletor), montado a partir dos
+  // dados reais — assim os nomes batem exatamente com os do filtro.
+  const wardrobeFile = path.resolve(__dirname, '../../../web/public/wardrobe.json')
+  const wOut = new Map<string, { name: string; store: boolean; male: boolean; female: boolean }>()
+  const wMnt = new Map<string, { name: string; store: boolean }>()
+  // Mescla com o wardrobe.json existente (mantém flags de store dos mounts, vindas das pastas)
+  try {
+    const prev = JSON.parse(fs.readFileSync(wardrobeFile, 'utf-8'))
+    for (const o of prev.outfits ?? []) wOut.set(o.name, o)
+    for (const m of prev.mounts ?? []) wMnt.set(m.name, m)
+  } catch {
+    /* sem manifesto anterior */
+  }
+  const collectWardrobe = (body: any) => {
+    const sex = body?.player?.sex // 0 = masculino, 1 = feminino
+    for (const o of body?.outfits ?? []) {
+      const info = o?.info
+      if (!info?.name) continue
+      const e = wOut.get(info.name) ?? { name: info.name, store: false, male: false, female: false }
+      if (info.source === 'store') e.store = true
+      if (sex === 0) e.male = true
+      else e.female = true
+      wOut.set(info.name, e)
+    }
+    for (const m of body?.mounts ?? []) {
+      if (m?.name && !wMnt.has(m.name)) wMnt.set(m.name, { name: m.name, store: false })
+    }
+  }
+  collectWardrobe(sample)
+
+  const writeWardrobe = () => {
+    const outfits = [...wOut.values()].sort((a, b) => a.name.localeCompare(b.name))
+    const mounts = [...wMnt.values()].sort((a, b) => a.name.localeCompare(b.name))
+    fs.writeFileSync(wardrobeFile, JSON.stringify({ outfits, mounts }, null, 0))
+  }
+
   // Re-busca também entradas antigas que foram salvas sem a posse de outfits
   const pending = auctions.filter(a => !byId[a.id] || byId[a.id].outfits === undefined)
   console.log(`📋 ${auctions.length} leilões | ${Object.keys(byId).length} já salvos | ${pending.length} a (re)buscar`)
@@ -144,6 +180,7 @@ async function main() {
     const parsed = extractExtra(body)
     if (parsed) {
       byId[a.id] = parsed
+      collectWardrobe(body)
       ok++
     } else fail++
     processed++
@@ -151,9 +188,11 @@ async function main() {
       process.stdout.write(`\r🔎 novos ok: ${ok} | falhas: ${fail} | ${processed}/${pending.length}`)
       // salva progresso parcial para não perder em caso de interrupção
       fs.writeFileSync(OUT_FILE, JSON.stringify({ enrichedAt: new Date().toISOString(), byId }, null, 2))
+      writeWardrobe()
     }
     await sleep(DELAY_MS)
   }
+  writeWardrobe()
 
   fs.writeFileSync(OUT_FILE, JSON.stringify({ enrichedAt: new Date().toISOString(), byId }, null, 2))
   console.log(`\n✅ Total salvo: ${Object.keys(byId).length} (novos: ${ok}, ainda faltando: ${fail})`)
