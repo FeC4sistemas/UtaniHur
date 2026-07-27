@@ -1,19 +1,15 @@
 /*
-  Enriquece os leilões com o DETALHE de cada um (a listagem traz só os
-  destaques principais; o detalhe costuma trazer a lista completa —
-  imbuements, prey, gems, animus, etc. — normalmente como "augments").
+  DIAGNÓSTICO do detalhe do leilão do RubinOT.
 
-  Como a rota exata do detalhe pode variar, o script:
-  1. Abre o bazaar, passa pela Cloudflare.
-  2. Descobre a rota do detalhe: testa rotas prováveis e também intercepta o
-     tráfego ao abrir um leilão, procurando um JSON com lookType + mais
-     augments que a listagem.
-  3. Para cada leilão, busca o detalhe e guarda a lista completa de augments
-     (e quaisquer pares "Rótulo: valor") em output/AuctionDetails.json.
-  4. SEMPRE grava output/auctionDetailSample.json com o detalhe cru do 1º
-     leilão — me mande esse arquivo para eu mapear campos específicos.
+  A rota de detalhe não é conhecida, então este passo apenas COLETA material
+  bruto para identificá-la: abre o bazaar, registra todas as respostas JSON/XHR,
+  tenta abrir o primeiro leilão (clique + navegação), sonda rotas candidatas e
+  grava tudo em output/auctionDetailSample.json.
 
-  Uso: npm run details   (na raiz do monorepo; idempotente)
+  Rode e me mande esse arquivo — com ele eu descubro a rota certa e finalizo
+  o enriquecimento (imbuements, prey, gems, etc.).
+
+  Uso: npm run details   (na raiz do monorepo)
 */
 import puppeteer from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
@@ -23,49 +19,25 @@ import path from 'path'
 puppeteer.use(StealthPlugin())
 
 const CURRENT_FILE = path.resolve(__dirname, '../../output/CurrentAuctions.json')
-const OUT_FILE = path.resolve(__dirname, '../../output/AuctionDetails.json')
 const SAMPLE_FILE = path.resolve(__dirname, '../../output/auctionDetailSample.json')
 const MAIN_ORIGIN = 'https://rubinot.com.br'
-const DELAY_MS = 250
-
-const DETAIL_CANDIDATES = [
-  `${MAIN_ORIGIN}/api/bazaar/{id}`,
-  `${MAIN_ORIGIN}/api/bazaar/auction/{id}`,
-  `${MAIN_ORIGIN}/api/bazaar/character/{id}`,
-  `${MAIN_ORIGIN}/api/bazaar?auction={id}`,
-  `${MAIN_ORIGIN}/api/auction/{id}`,
-]
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 
-const fetchJson = (page: any, url: string) =>
-  page.evaluate(async (u: string) => {
-    try {
-      const res = await fetch(u)
-      return res.ok ? await res.json() : null
-    } catch {
-      return null
-    }
-  }, url)
-
-const unwrap = (body: any) => body?.auction ?? body?.data ?? body
-
-/** Converte um augment em par {label, value} quando faz sentido. */
-function toDetail(text: string): { label: string; value: string } | null {
-  const colon = text.match(/^(.{2,40}?):\s*(.+)$/)
-  if (colon) return { label: colon[1].trim(), value: colon[2].trim() }
-  const lead = text.match(/^(\d[\d.,/]*)\s+(.{2,40})$/)
-  if (lead) return { label: lead[2].trim(), value: lead[1].trim() }
-  return null
+const preview = (v: any) => {
+  try {
+    const s = typeof v === 'string' ? v : JSON.stringify(v)
+    return s.length > 4000 ? s.slice(0, 4000) + '…(truncado)' : s
+  } catch {
+    return String(v)
+  }
 }
 
 async function main() {
   const data = JSON.parse(fs.readFileSync(CURRENT_FILE, 'utf-8'))
-  const auctions: any[] = data.auctions ?? []
-  if (auctions.length === 0) {
-    console.log('Nenhum leilão em CurrentAuctions.json.')
-    return
-  }
+  const first = data.auctions?.[0]
+  const firstId = first?.id
+  console.log(`🎯 Leilão de referência: id=${firstId} (${first?.name})`)
 
   console.log('🚀 Iniciando navegador com stealth...')
   const browser = await puppeteer.launch({
@@ -76,15 +48,18 @@ async function main() {
   })
   const page = await browser.newPage()
 
-  const detailResponses: Array<{ url: string; body: any }> = []
+  // Registra toda resposta JSON/XHR
+  const captured: Array<{ phase: string; url: string; status: number; body: string }> = []
+  let phase = 'load'
   page.on('response', async (res: any) => {
     const ct = res.headers()['content-type'] || ''
-    if (!ct.includes('application/json')) return
+    if (!/json|javascript|text\/plain/.test(ct)) return
+    const url = res.url()
+    if (/\.(js|css|woff|png|gif|jpg|svg)(\?|$)/i.test(url)) return
     try {
-      const body = await res.json()
-      const d = unwrap(body)
-      if (d && typeof d.lookType === 'number' && Array.isArray(d.highlightAugments)) {
-        detailResponses.push({ url: res.url(), body })
+      const text = await res.text()
+      if (text && text.trim().startsWith('{') && text.length < 200000) {
+        captured.push({ phase, url, status: res.status(), body: preview(text) })
       }
     } catch {
       /* ignora */
@@ -96,62 +71,77 @@ async function main() {
   console.log('⏳ Aguardando Cloudflare...')
   await sleep(8000)
 
-  const listAugCount = (auctions[0].highlightAugments ?? []).length
-  const first = auctions[0].id
+  // Fase: tenta abrir o primeiro leilão clicando no card
+  phase = 'click'
+  const clicked = await page
+    .evaluate(async (id: number) => {
+      const clickable = Array.from(
+        document.querySelectorAll<HTMLElement>('a, [role="button"], button, [class*="auction"], [class*="card"]'),
+      )
+      // procura algo que referencie o id ou pareça um card clicável
+      const byId = clickable.find(el => (el.getAttribute('href') || '').includes(String(id)))
+      const target = byId || clickable.find(el => /auction|card|character/i.test(el.className))
+      if (target) {
+        target.click()
+        return target.outerHTML.slice(0, 200)
+      }
+      return null
+    }, firstId)
+    .catch(() => null)
+  await sleep(4000)
 
-  // 1) tenta rotas candidatas
-  let template: string | null = null
-  for (const cand of DETAIL_CANDIDATES) {
-    const body = await fetchJson(page, cand.replace('{id}', String(first)))
-    const d = unwrap(body)
-    if (d && typeof d.lookType === 'number' && Array.isArray(d.highlightAugments)) {
-      template = cand
-      fs.writeFileSync(SAMPLE_FILE, JSON.stringify({ url: cand, body }, null, 2))
-      break
-    }
+  // Fase: navega direto para a URL do leilão (várias formas)
+  phase = 'nav'
+  for (const url of [`${MAIN_ORIGIN}/bazaar?auction=${firstId}`, `${MAIN_ORIGIN}/bazaar/${firstId}`]) {
+    await page.goto(url, { waitUntil: 'networkidle0', timeout: 45000 }).catch(() => {})
+    await sleep(3000)
   }
 
-  // 2) plano B: abre a página do leilão e captura o detalhe interceptado
-  if (!template) {
-    await page.goto(`${MAIN_ORIGIN}/bazaar?auction=${first}`, { waitUntil: 'networkidle0', timeout: 60000 }).catch(() => {})
-    await sleep(4000)
-    const hit = detailResponses.find(r => JSON.stringify(r.body).includes(`"id":${first}`)) ?? detailResponses[0]
-    if (hit) {
-      fs.writeFileSync(SAMPLE_FILE, JSON.stringify(hit, null, 2))
-      // tenta derivar um template trocando o id na URL
-      if (hit.url.includes(String(first))) template = hit.url.replace(String(first), '{id}')
-    }
+  // Fase: sonda rotas candidatas via fetch na página
+  phase = 'probe'
+  const candidates = [
+    `${MAIN_ORIGIN}/api/bazaar/${firstId}`,
+    `${MAIN_ORIGIN}/api/bazaar/auction/${firstId}`,
+    `${MAIN_ORIGIN}/api/bazaar/character/${firstId}`,
+    `${MAIN_ORIGIN}/api/bazaar?auction=${firstId}`,
+    `${MAIN_ORIGIN}/api/auction/${firstId}`,
+    `${MAIN_ORIGIN}/api/bazaar/details/${firstId}`,
+  ]
+  const probes: Array<{ url: string; status: number; body: string }> = []
+  for (const url of candidates) {
+    const r = await page
+      .evaluate(async (u: string) => {
+        try {
+          const res = await fetch(u)
+          return { status: res.status, body: (await res.text()).slice(0, 4000) }
+        } catch (e: any) {
+          return { status: 0, body: 'ERR ' + e.message }
+        }
+      }, url)
+      .catch(() => ({ status: -1, body: 'evaluate failed' }))
+    probes.push({ url, ...r })
   }
 
-  if (!template) {
-    console.log('⚠️  Não achei a rota de detalhe. Se um auctionDetailSample.json foi gerado, me mande.')
-    console.log('    Senão, me diga e eu tento outra abordagem.')
-    await browser.close()
-    return
-  }
-  console.log(`📐 Rota de detalhe: ${template}`)
-
-  // 3) enriquece todos
-  const enrichment: Record<number, { highlightAugments: any[]; details: Array<{ label: string; value: string }> }> = {}
-  let ok = 0
-  let fail = 0
-  for (const a of auctions) {
-    const body = await fetchJson(page, template.replace('{id}', String(a.id)))
-    const d = unwrap(body)
-    if (d && Array.isArray(d.highlightAugments)) {
-      const augs = d.highlightAugments
-      const details = augs
-        .map((x: any) => toDetail(String(x.text ?? '')))
-        .filter(Boolean) as Array<{ label: string; value: string }>
-      enrichment[a.id] = { highlightAugments: augs, details }
-      ok++
-    } else fail++
-    if (ok % 25 === 0 || fail % 25 === 0) process.stdout.write(`\r🔎 detalhes — ok: ${ok} | falhas: ${fail}`)
-    await sleep(DELAY_MS)
-  }
-  console.log(`\n💾 Salvando ${Object.keys(enrichment).length} detalhes...`)
-  fs.writeFileSync(OUT_FILE, JSON.stringify({ enrichedAt: new Date().toISOString(), byId: enrichment }, null, 2))
-  console.log('✅ Concluído. Se algum campo faltar/vier errado, me mande output/auctionDetailSample.json')
+  const currentUrl = page.url()
+  fs.writeFileSync(
+    SAMPLE_FILE,
+    JSON.stringify(
+      {
+        collectedAt: new Date().toISOString(),
+        referenceAuctionId: firstId,
+        finalUrl: currentUrl,
+        clickedElement: clicked,
+        listItemSample: first,
+        candidateProbes: probes,
+        capturedResponses: captured.slice(0, 60),
+      },
+      null,
+      2,
+    ),
+  )
+  console.log(`\n✅ Diagnóstico salvo em output/auctionDetailSample.json`)
+  console.log(`   Respostas JSON capturadas: ${captured.length} | sondas: ${probes.length}`)
+  console.log('   Me mande esse arquivo para eu identificar a rota do detalhe.')
 
   await browser.close()
 }
