@@ -7,7 +7,7 @@ const router = Router()
 const DATA_FILE = path.resolve(__dirname, '../../../scraper/output/CurrentAuctions.json')
 const DETAILS_FILE = path.resolve(__dirname, '../../../scraper/output/AuctionDetails.json')
 
-function loadDetails(): Record<string, { highlightAugments?: any[]; details?: any[] }> {
+function loadDetails(): Record<string, { skills?: any; extra?: any }> {
   if (!fs.existsSync(DETAILS_FILE)) return {}
   try {
     return JSON.parse(fs.readFileSync(DETAILS_FILE, 'utf-8')).byId || {}
@@ -21,15 +21,16 @@ function loadAuctions() {
   const raw = fs.readFileSync(DATA_FILE, 'utf-8')
   const data = JSON.parse(raw)
   const auctions = data.auctions || []
-  // Mescla o detalhe (augments completos + campos extras), quando disponível
+  // Mescla o detalhe (skills completas + campos extras), quando disponível
   const byId = loadDetails()
   return auctions.map((a: any) => {
     const d = byId[a.id]
     if (!d) return a
     return {
       ...a,
-      highlightAugments: d.highlightAugments?.length ? d.highlightAugments : a.highlightAugments,
-      details: d.details ?? undefined,
+      // fist/fishing reais vindos do detalhe
+      skills: { ...a.skills, ...(d.skills?.fist != null ? { fist: d.skills.fist } : {}), ...(d.skills?.fishing != null ? { fishing: d.skills.fishing } : {}) },
+      extra: d.extra ?? undefined,
     }
   })
 }

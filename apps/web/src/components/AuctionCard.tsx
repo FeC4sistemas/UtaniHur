@@ -196,6 +196,19 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
     .map(formatAugment)
     .filter(b => !new Set(['level', 'magic', 'charm']).has(b.tone))
   const derivedTags = deriveTags(a)
+  // Campos extras (do detalhe) para a grade de stats
+  const e = a.extra
+  const extraStats: Array<{ label: string; value: string }> = []
+  if (e) {
+    if (e.bossPoints != null) extraStats.push({ label: 'Boss points', value: formatCoins(e.bossPoints) })
+    if (e.mountsCount != null) extraStats.push({ label: 'Mounts', value: String(e.mountsCount) })
+    if (e.outfitsCount != null) extraStats.push({ label: 'Outfits', value: String(e.outfitsCount) })
+    if (e.titlesCount != null) extraStats.push({ label: 'Títulos', value: String(e.titlesCount) })
+    if (e.wheelPoints != null) extraStats.push({ label: 'Wheel points', value: formatCoins(e.wheelPoints) })
+    if (e.dust != null) extraStats.push({ label: 'Dust', value: e.dustMax != null ? `${e.dust}/${e.dustMax}` : String(e.dust) })
+    if (e.huntingTaskPoints != null) extraStats.push({ label: 'Task points', value: formatCoins(e.huntingTaskPoints) })
+    if (e.preyWildcards != null) extraStats.push({ label: 'Prey wildcards', value: String(e.preyWildcards) })
+  }
 
   const toggleFavorite = () => {
     const favs = readFavorites()
@@ -297,8 +310,8 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
             value={formatCoins(a.achievementPoints)}
           />
           {/* Campos extras vindos do detalhe do leilão (quando disponíveis) */}
-          {a.details?.map(d => (
-            <StatRow key={d.label} icon={<span className="text-onSurface/40">•</span>} label={d.label} value={d.value} />
+          {extraStats.map(s => (
+            <StatRow key={s.label} icon={<span className="text-onSurface/40">•</span>} label={s.label} value={s.value} />
           ))}
         </div>
 

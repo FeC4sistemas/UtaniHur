@@ -4,6 +4,27 @@ export interface AuctionSkills {
   axe: number
   dist: number
   shielding: number
+  fist?: number
+  fishing?: number
+}
+
+/** Campos extras vindos do detalhe do leilão (/api/bazaar/{id} → general). */
+export interface AuctionExtra {
+  mountsCount?: number
+  outfitsCount?: number
+  titlesCount?: number
+  bossPoints?: number
+  wheelPoints?: number
+  maxWheelPoints?: number
+  dust?: number
+  dustMax?: number
+  huntingTaskPoints?: number
+  preyWildcards?: number
+  hirelingCount?: number
+  thirdPrey?: boolean
+  thirdHunting?: boolean
+  charmExpansion?: boolean
+  permanentWeeklyTaskSlot?: boolean
 }
 
 export interface HighlightItem {
@@ -45,8 +66,8 @@ export interface Auction {
   skills: AuctionSkills
   highlightItems: HighlightItem[]
   highlightAugments: HighlightAugment[]
-  /** Campos extras vindos do detalhe do leilão (imbuements, prey, gems…). */
-  details?: Array<{ label: string; value: string }>
+  /** Campos extras vindos do detalhe do leilão (/api/bazaar/{id}). */
+  extra?: AuctionExtra
 }
 
 export interface Pagination {

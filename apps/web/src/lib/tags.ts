@@ -49,5 +49,20 @@ export function deriveTags(a: Auction): DerivedTag[] {
 
   if (a.level >= 1000) tags.push({ label: 'Alto level', title: `Level ${a.level}` })
 
+  // Campos vindos do detalhe (/api/bazaar/{id})
+  const e = a.extra
+  if (e) {
+    if ((e.mountsCount ?? 0) >= 40)
+      tags.push({ label: 'Muitas mounts', title: `${e.mountsCount} mounts`, emoji: '🐎' })
+    if ((e.outfitsCount ?? 0) >= 40)
+      tags.push({ label: 'Muitos outfits', title: `${e.outfitsCount} outfits`, emoji: '👕' })
+    if ((e.titlesCount ?? 0) >= 20)
+      tags.push({ label: 'Colecionador de títulos', title: `${e.titlesCount} títulos` })
+    if (e.charmExpansion) tags.push({ label: 'Charm Expansion', title: 'Charm Expansion ativa' })
+    if (e.permanentWeeklyTaskSlot) tags.push({ label: 'Weekly Task Slot', title: 'Slot permanente de weekly task' })
+    if (e.thirdPrey) tags.push({ label: '3ª Prey', title: 'Terceiro slot de prey' })
+    if (e.thirdHunting) tags.push({ label: '3ª Hunting Task', title: 'Terceiro slot de hunting task' })
+  }
+
   return tags
 }
