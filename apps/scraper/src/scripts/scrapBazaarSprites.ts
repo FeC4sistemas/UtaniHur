@@ -95,6 +95,90 @@ function outfitUrl(o: OutfitPair) {
   return OUTFIT_ENDPOINT.replace('{type}', String(o.lookType)).replace('{addons}', String(o.addons))
 }
 
+const CELL = 64 // tamanho de cada célula limpa gerada
+
+/**
+ * Baixa a tira do gerador e a normaliza: detecta a área do personagem (pixels
+ * não-transparentes) usando a união de todos os frames, recorta o vazio e
+ * redesenha cada frame centralizado numa célula CELL×CELL. Roda no navegador
+ * (mesma origem → canvas não fica "tainted"). Retorna PNG da tira limpa.
+ */
+async function fetchCleanOutfit(page: any, url: string): Promise<{ b64: string; type: string } | null> {
+  return page.evaluate(
+    async (u: string, cell: number) => {
+      const load = (src: string) =>
+        new Promise<HTMLImageElement | null>(resolve => {
+          const img = new Image()
+          img.crossOrigin = 'anonymous'
+          img.onload = () => resolve(img)
+          img.onerror = () => resolve(null)
+          img.src = src
+        })
+
+      const img = await load(u)
+      if (!img || !img.naturalWidth) return null
+
+      const w = img.naturalWidth
+      const h = img.naturalHeight
+      const frames = Math.max(1, Math.round(w / h)) // frames quadrados lado a lado
+      const fw = Math.round(w / frames)
+      const fh = h
+
+      const src = document.createElement('canvas')
+      src.width = w
+      src.height = h
+      const sctx = src.getContext('2d')!
+      sctx.imageSmoothingEnabled = false
+      sctx.drawImage(img, 0, 0)
+
+      // Caixa do personagem (união entre todos os frames), em coords do frame
+      let minx = fw
+      let miny = fh
+      let maxx = -1
+      let maxy = -1
+      for (let f = 0; f < frames; f++) {
+        const d = sctx.getImageData(f * fw, 0, fw, fh).data
+        for (let py = 0; py < fh; py++) {
+          for (let px = 0; px < fw; px++) {
+            if (d[(py * fw + px) * 4 + 3] > 12) {
+              if (px < minx) minx = px
+              if (px > maxx) maxx = px
+              if (py < miny) miny = py
+              if (py > maxy) maxy = py
+            }
+          }
+        }
+      }
+      if (maxx < 0) {
+        minx = 0
+        miny = 0
+        maxx = fw - 1
+        maxy = fh - 1
+      }
+      const bw = maxx - minx + 1
+      const bh = maxy - miny + 1
+      const scale = Math.min((cell * 0.92) / bw, (cell * 0.92) / bh)
+      const dw = bw * scale
+      const dh = bh * scale
+
+      // Nova tira: frames células CELL×CELL, personagem centralizado em cada uma
+      const out = document.createElement('canvas')
+      out.width = cell * frames
+      out.height = cell
+      const octx = out.getContext('2d')!
+      octx.imageSmoothingEnabled = false
+      for (let f = 0; f < frames; f++) {
+        const dx = f * cell + (cell - dw) / 2
+        const dy = (cell - dh) / 2
+        octx.drawImage(src, f * fw + minx, miny, bw, bh, dx, dy, dw, dh)
+      }
+      return { b64: out.toDataURL('image/png').split(',')[1], type: 'image/png' }
+    },
+    url,
+    CELL,
+  )
+}
+
 async function main() {
   const { missingOutfits, missingItems } = loadNeeds()
   console.log(`🎨 Faltando: ${missingOutfits.length} outfits | ${missingItems.length} itens`)
@@ -134,7 +218,7 @@ async function main() {
     let ok = 0
     let fail = 0
     for (const o of missingOutfits) {
-      const file = await fetchImageViaPage(bazaarPage, outfitUrl(o))
+      const file = await fetchCleanOutfit(bazaarPage, outfitUrl(o))
       if (file) {
         save(OUTFIT_DIR, o.key, file)
         ok++
