@@ -4,6 +4,27 @@ export interface AuctionSkills {
   axe: number
   dist: number
   shielding: number
+  fist?: number
+  fishing?: number
+}
+
+/** Campos extras vindos do detalhe do leilão (/api/bazaar/{id} → general). */
+export interface AuctionExtra {
+  mountsCount?: number
+  outfitsCount?: number
+  titlesCount?: number
+  bossPoints?: number
+  wheelPoints?: number
+  maxWheelPoints?: number
+  dust?: number
+  dustMax?: number
+  huntingTaskPoints?: number
+  preyWildcards?: number
+  hirelingCount?: number
+  thirdPrey?: boolean
+  thirdHunting?: boolean
+  charmExpansion?: boolean
+  permanentWeeklyTaskSlot?: boolean
 }
 
 export interface HighlightItem {
@@ -45,6 +66,8 @@ export interface Auction {
   skills: AuctionSkills
   highlightItems: HighlightItem[]
   highlightAugments: HighlightAugment[]
+  /** Campos extras vindos do detalhe do leilão (/api/bazaar/{id}). */
+  extra?: AuctionExtra
 }
 
 export interface Pagination {
@@ -67,22 +90,58 @@ export interface FilterOptions {
 export type SortBy = 'auctionEnd' | 'level' | 'price' | 'magLevel'
 export type SortOrder = 'asc' | 'desc'
 
+export type SkillKey = 'magic' | 'club' | 'sword' | 'axe' | 'dist' | 'shielding' | 'fist' | 'fishing'
+export type PvpType = 'pvp' | 'no-pvp' | 'pvp-enforced'
+export type HasBid = 'yes' | 'no'
+
 export interface AuctionFilters {
   search: string
   vocation: number | null
   world: string | null
+  pvp: PvpType | null
   sex: number | null
   minLevel: string
   maxLevel: string
   minMagLevel: string
+  maxMagLevel: string
+  skillKey: SkillKey | null
+  minSkill: string
+  minPrice: string
+  maxPrice: string
+  hasBid: HasBid | null
+  minCharm: string
+  minBoss: string
+  minMounts: string
+  minOutfits: string
+  charmExpansion: boolean
+  outfits: string[]
+  mounts: string[]
+  reqAddon1: boolean
+  reqAddon2: boolean
 }
 
 export const EMPTY_FILTERS: AuctionFilters = {
   search: '',
   vocation: null,
   world: null,
+  pvp: null,
   sex: null,
   minLevel: '',
   maxLevel: '',
   minMagLevel: '',
+  maxMagLevel: '',
+  skillKey: null,
+  minSkill: '',
+  minPrice: '',
+  maxPrice: '',
+  hasBid: null,
+  minCharm: '',
+  minBoss: '',
+  minMounts: '',
+  minOutfits: '',
+  charmExpansion: false,
+  outfits: [],
+  mounts: [],
+  reqAddon1: false,
+  reqAddon2: false,
 }

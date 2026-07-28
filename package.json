@@ -10,6 +10,11 @@
     "scraper": "npm run start --workspace=apps/scraper",
     "api": "npm run dev --workspace=apps/api",
     "web": "npm run dev --workspace=apps/web",
+    "sprites": "npm run sprites --workspace=apps/scraper",
+    "sprites:rubinot": "npm run sprites:rubinot --workspace=apps/scraper",
+    "boosted": "npm run boosted --workspace=apps/scraper",
+    "details": "npm run details --workspace=apps/scraper",
+    "wardrobe": "npm run wardrobe --workspace=apps/scraper",
     "build:web": "npm run build --workspace=apps/web"
   }
 }
