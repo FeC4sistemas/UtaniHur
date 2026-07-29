@@ -22,18 +22,21 @@ function loadAuctions() {
   const raw = fs.readFileSync(DATA_FILE, 'utf-8')
   const data = JSON.parse(raw)
   const auctions = data.auctions || []
-  // Mescla o detalhe (skills completas + campos extras), quando disponível
+  // Mescla o detalhe (skills completas + campos extras) e as quests, quando disponíveis
   const byId = loadDetails()
+  const questsById = loadQuests().byId
   return auctions.map((a: any) => {
     const d = byId[a.id]
-    if (!d) return a
-    return {
-      ...a,
-      // fist/fishing reais vindos do detalhe
-      skills: { ...a.skills, ...(d.skills?.fist != null ? { fist: d.skills.fist } : {}), ...(d.skills?.fishing != null ? { fishing: d.skills.fishing } : {}) },
-      extra: d.extra ?? undefined,
-      questsDone: questsDone(d.bosstiary),
-    }
+    const questsDone = questsById[a.id]
+    const base = d
+      ? {
+          ...a,
+          // fist/fishing reais vindos do detalhe
+          skills: { ...a.skills, ...(d.skills?.fist != null ? { fist: d.skills.fist } : {}), ...(d.skills?.fishing != null ? { fishing: d.skills.fishing } : {}) },
+          extra: d.extra ?? undefined,
+        }
+      : a
+    return questsDone ? { ...base, questsDone } : base
   })
 }
 
@@ -61,27 +64,17 @@ function skillValue(a: any, key: string): number {
   return a.skills?.[key] ?? 0
 }
 
-// Quests inferidas pelos bosses do bosstiary (só acessíveis após fazer a quest).
-// Nomes em minúsculo. Ajuste os nomes conforme o RubinOT, se necessário.
-const QUEST_BOSSES: Record<string, string[]> = {
-  soulWar: [
-    "goshnar's cruelty",
-    "goshnar's hatred",
-    "goshnar's spite",
-    "goshnar's malice",
-    "goshnar's greed",
-    "goshnar's megalomania",
-  ],
-  primalOrdeal: ['bakragore'],
-}
+const QUESTS_FILE = path.resolve(__dirname, '../../../scraper/output/AuctionQuests.json')
 
-/** Quests que o personagem concluiu, inferidas do bosstiary. */
-function questsDone(bosstiary: string[] | undefined): string[] {
-  if (!bosstiary || bosstiary.length === 0) return []
-  const set = new Set(bosstiary)
-  return Object.entries(QUEST_BOSSES)
-    .filter(([, bosses]) => bosses.some(b => set.has(b)))
-    .map(([key]) => key)
+/** Quests concluídas por leilão, lidas da aba Quests do site (npm run quests). */
+function loadQuests(): { byId: Record<string, string[]>; allQuests: string[] } {
+  if (!fs.existsSync(QUESTS_FILE)) return { byId: {}, allQuests: [] }
+  try {
+    const j = JSON.parse(fs.readFileSync(QUESTS_FILE, 'utf-8'))
+    return { byId: j.byId ?? {}, allQuests: j.allQuests ?? [] }
+  } catch {
+    return { byId: {}, allQuests: [] }
+  }
 }
 
 router.get('/options', (_req: Request, res: Response) => {
@@ -95,7 +88,8 @@ router.get('/options', (_req: Request, res: Response) => {
     const vocations = [...vocMap.entries()]
       .map(([id, name]) => ({ id, name }))
       .sort((a, b) => a.id - b.id)
-    res.json({ worlds, vocations })
+    const quests = loadQuests().allQuests
+    res.json({ worlds, vocations, quests })
   } catch (err) {
     res.status(500).json({ error: 'Erro ao carregar opções de filtro' })
   }

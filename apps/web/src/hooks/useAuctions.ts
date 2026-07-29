@@ -76,7 +76,7 @@ export function useAuctions({ filters, sortBy, sortOrder, page, limit }: Params)
 }
 
 export function useFilterOptions(): FilterOptions {
-  const [options, setOptions] = useState<FilterOptions>({ worlds: [], vocations: [] })
+  const [options, setOptions] = useState<FilterOptions>({ worlds: [], vocations: [], quests: [] })
 
   useEffect(() => {
     fetch('/api/auctions/options')

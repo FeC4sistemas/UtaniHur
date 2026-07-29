@@ -87,6 +87,7 @@ export interface AuctionListResponse {
 export interface FilterOptions {
   worlds: string[]
   vocations: Array<{ id: number; name: string }>
+  quests: string[]
 }
 
 export type SortBy = 'auctionEnd' | 'level' | 'price' | 'magLevel'

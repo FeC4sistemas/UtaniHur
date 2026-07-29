@@ -14,6 +14,7 @@
     "sprites:rubinot": "npm run sprites:rubinot --workspace=apps/scraper",
     "boosted": "npm run boosted --workspace=apps/scraper",
     "details": "npm run details --workspace=apps/scraper",
+    "quests": "npm run quests --workspace=apps/scraper",
     "quests:sample": "npm run quests:sample --workspace=apps/scraper",
     "wardrobe": "npm run wardrobe --workspace=apps/scraper",
     "build:web": "npm run build --workspace=apps/web"

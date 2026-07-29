@@ -1,15 +1,19 @@
-export interface QuestMeta {
-  key: string
-  label: string
+export interface QuestHighlight {
+  name: string
   emoji: string
 }
 
-/** Quests destacadas no card e no filtro. */
-export const QUESTS: QuestMeta[] = [
-  { key: 'soulWar', label: 'Soul War', emoji: '💀' },
-  { key: 'primalOrdeal', label: 'Primal Ordeal', emoji: '⚔️' },
+/**
+ * Quests destacadas no card (badge azul quando concluídas). O filtro cobre
+ * TODAS as quests (vindas de /api/auctions/options); estas são só as que
+ * ganham destaque visual no card.
+ */
+export const QUEST_HIGHLIGHTS: QuestHighlight[] = [
+  { name: 'Soul War', emoji: '💀' },
+  { name: 'Primal Ordeal', emoji: '⚔️' },
+  { name: "Ferumbras' Ascendant", emoji: '🔥' },
 ]
 
-export function questMeta(key: string): QuestMeta {
-  return QUESTS.find(q => q.key === key) ?? { key, label: key, emoji: '❓' }
+export function questEmoji(name: string): string {
+  return QUEST_HIGHLIGHTS.find(q => q.name === name)?.emoji ?? '📜'
 }
