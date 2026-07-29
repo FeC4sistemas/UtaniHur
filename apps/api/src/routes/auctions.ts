@@ -8,7 +8,7 @@ const DATA_FILE = path.resolve(__dirname, '../../../scraper/output/CurrentAuctio
 const DETAILS_FILE = path.resolve(__dirname, '../../../scraper/output/AuctionDetails.json')
 
 type OwnedOutfit = string | { name: string; addons?: number }
-function loadDetails(): Record<string, { skills?: any; extra?: any; outfits?: OwnedOutfit[]; mounts?: string[] }> {
+function loadDetails(): Record<string, { skills?: any; extra?: any; outfits?: OwnedOutfit[]; mounts?: string[]; bosstiary?: string[] }> {
   if (!fs.existsSync(DETAILS_FILE)) return {}
   try {
     return JSON.parse(fs.readFileSync(DETAILS_FILE, 'utf-8')).byId || {}
@@ -32,8 +32,9 @@ function loadAuctions() {
       // fist/fishing reais vindos do detalhe
       skills: { ...a.skills, ...(d.skills?.fist != null ? { fist: d.skills.fist } : {}), ...(d.skills?.fishing != null ? { fishing: d.skills.fishing } : {}) },
       extra: d.extra ?? undefined,
+      questsDone: questsDone(d.bosstiary),
     }
-  }).map((a: any) => ({ ...a, questsAvailable: questsAvailable(a) }))
+  })
 }
 
 // Pares base → promovida (ex.: filtrar por Elite Knight inclui Knight)
@@ -60,14 +61,27 @@ function skillValue(a: any, key: string): number {
   return a.skills?.[key] ?? 0
 }
 
-// Quests e o level de acesso (gate principal). Refinável com storage de acesso.
-const QUEST_RULES: Array<{ key: string; minLevel: number }> = [
-  { key: 'soulWar', minLevel: 400 },
-  { key: 'primalOrdeal', minLevel: 250 },
-]
+// Quests inferidas pelos bosses do bosstiary (só acessíveis após fazer a quest).
+// Nomes em minúsculo. Ajuste os nomes conforme o RubinOT, se necessário.
+const QUEST_BOSSES: Record<string, string[]> = {
+  soulWar: [
+    "goshnar's cruelty",
+    "goshnar's hatred",
+    "goshnar's spite",
+    "goshnar's malice",
+    "goshnar's greed",
+    "goshnar's megalomania",
+  ],
+  primalOrdeal: ['bakragore'],
+}
 
-function questsAvailable(a: any): string[] {
-  return QUEST_RULES.filter(r => (a.level ?? 0) >= r.minLevel).map(r => r.key)
+/** Quests que o personagem concluiu, inferidas do bosstiary. */
+function questsDone(bosstiary: string[] | undefined): string[] {
+  if (!bosstiary || bosstiary.length === 0) return []
+  const set = new Set(bosstiary)
+  return Object.entries(QUEST_BOSSES)
+    .filter(([, bosses]) => bosses.some(b => set.has(b)))
+    .map(([key]) => key)
 }
 
 router.get('/options', (_req: Request, res: Response) => {
@@ -135,7 +149,7 @@ router.get('/', (req: Request, res: Response) => {
     if (charmExpansion === 'true') auctions = auctions.filter((a: any) => a.extra?.charmExpansion === true)
     if (q(quests)) {
       const wantQuests = String(quests).split(',').filter(Boolean)
-      auctions = auctions.filter((a: any) => wantQuests.every(qk => (a.questsAvailable ?? []).includes(qk)))
+      auctions = auctions.filter((a: any) => wantQuests.every(qk => (a.questsDone ?? []).includes(qk)))
     }
     // Filtro por posse de outfits/mounts (nomes separados por vírgula; precisa ter todos).
     // oAddon1/oAddon2 exigem que o outfit possuído tenha aquele(s) addon(s).

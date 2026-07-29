@@ -47,9 +47,14 @@ function extractExtra(body: any) {
   const mounts = Array.isArray(body.mounts)
     ? [...new Set(body.mounts.map((m: any) => m?.name).filter(Boolean))]
     : []
+  // Nomes (minúsculos) dos bosses no bosstiary — usados para inferir quests feitas
+  const bosstiary = Array.isArray(body.bosstiaries)
+    ? [...new Set(body.bosstiaries.map((b: any) => String(b?.name ?? '').toLowerCase()).filter(Boolean))]
+    : []
   return {
     outfits,
     mounts,
+    bosstiary,
     skills: { fist: num(s.fist), fishing: num(s.fishing) },
     extra: {
       mountsCount: num(general.mountsCount),
@@ -168,8 +173,10 @@ async function main() {
     fs.writeFileSync(wardrobeFile, JSON.stringify({ outfits, mounts }, null, 0))
   }
 
-  // Re-busca também entradas antigas que foram salvas sem a posse de outfits
-  const pending = auctions.filter(a => !byId[a.id] || byId[a.id].outfits === undefined)
+  // Re-busca também entradas antigas salvas sem outfits ou sem bosstiary
+  const pending = auctions.filter(
+    a => !byId[a.id] || byId[a.id].outfits === undefined || byId[a.id].bosstiary === undefined,
+  )
   console.log(`📋 ${auctions.length} leilões | ${Object.keys(byId).length} já salvos | ${pending.length} a (re)buscar`)
 
   let ok = 0

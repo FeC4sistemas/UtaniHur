@@ -318,7 +318,7 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
 
           {tab === 'extras' && (
             <>
-          <Section title="Quests disponíveis">
+          <Section title="Quests concluídas">
             <div className="flex flex-wrap gap-1.5">
               {QUESTS.map(quest => {
                 const active = draft.quests.includes(quest.key)

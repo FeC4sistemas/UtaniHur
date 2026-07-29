@@ -68,8 +68,8 @@ export interface Auction {
   highlightAugments: HighlightAugment[]
   /** Campos extras vindos do detalhe do leilão (/api/bazaar/{id}). */
   extra?: AuctionExtra
-  /** Quests que o personagem tem acesso (por level), ex.: ['soulWar']. */
-  questsAvailable?: string[]
+  /** Quests que o personagem concluiu (inferidas do bosstiary), ex.: ['soulWar']. */
+  questsDone?: string[]
 }
 
 export interface Pagination {

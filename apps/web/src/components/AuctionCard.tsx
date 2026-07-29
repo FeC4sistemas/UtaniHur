@@ -327,17 +327,18 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
           </div>
         )}
 
-        {/* Quests disponíveis */}
-        {(a.questsAvailable ?? []).length > 0 && (
+        {/* Quests concluídas */}
+        {(a.questsDone ?? []).length > 0 && (
           <div className="flex flex-wrap gap-1.5">
-            {a.questsAvailable!.map(key => {
+            {a.questsDone!.map(key => {
               const qm = questMeta(key)
               return (
                 <span
                   key={key}
+                  title={`Concluiu a quest ${qm.label}`}
                   className="inline-flex items-center gap-1 rounded-full bg-sky-500/12 px-2.5 py-0.5 text-[11px] font-semibold text-sky-600 dark:text-sky-300"
                 >
-                  {qm.label} disponível <span>{qm.emoji}</span>
+                  {qm.label} <span>{qm.emoji}</span>
                 </span>
               )
             })}

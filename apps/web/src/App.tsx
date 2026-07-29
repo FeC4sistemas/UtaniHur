@@ -102,7 +102,7 @@ export default function App() {
     filters.mounts.forEach(m => chips.push({ key: `mount:${m}`, label: `Mount: ${m}` }))
     if (filters.reqAddon1) chips.push({ key: 'reqAddon1', label: 'Addon 1' })
     if (filters.reqAddon2) chips.push({ key: 'reqAddon2', label: 'Addon 2' })
-    filters.quests.forEach(qk => chips.push({ key: `quest:${qk}`, label: `${questMeta(qk).label} disponível` }))
+    filters.quests.forEach(qk => chips.push({ key: `quest:${qk}`, label: questMeta(qk).label }))
     return chips
   }, [filters, options.vocations])
 
