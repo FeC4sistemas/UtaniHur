@@ -68,6 +68,8 @@ export interface Auction {
   highlightAugments: HighlightAugment[]
   /** Campos extras vindos do detalhe do leilão (/api/bazaar/{id}). */
   extra?: AuctionExtra
+  /** Quests que o personagem tem acesso (por level), ex.: ['soulWar']. */
+  questsAvailable?: string[]
 }
 
 export interface Pagination {
@@ -118,6 +120,7 @@ export interface AuctionFilters {
   mounts: string[]
   reqAddon1: boolean
   reqAddon2: boolean
+  quests: string[]
 }
 
 export const EMPTY_FILTERS: AuctionFilters = {
@@ -144,4 +147,5 @@ export const EMPTY_FILTERS: AuctionFilters = {
   mounts: [],
   reqAddon1: false,
   reqAddon2: false,
+  quests: [],
 }

@@ -33,7 +33,7 @@ function loadAuctions() {
       skills: { ...a.skills, ...(d.skills?.fist != null ? { fist: d.skills.fist } : {}), ...(d.skills?.fishing != null ? { fishing: d.skills.fishing } : {}) },
       extra: d.extra ?? undefined,
     }
-  })
+  }).map((a: any) => ({ ...a, questsAvailable: questsAvailable(a) }))
 }
 
 // Pares base → promovida (ex.: filtrar por Elite Knight inclui Knight)
@@ -58,6 +58,16 @@ const WORLD_PVP: Record<string, string> = {
 function skillValue(a: any, key: string): number {
   if (key === 'magic') return a.magLevel ?? 0
   return a.skills?.[key] ?? 0
+}
+
+// Quests e o level de acesso (gate principal). Refinável com storage de acesso.
+const QUEST_RULES: Array<{ key: string; minLevel: number }> = [
+  { key: 'soulWar', minLevel: 400 },
+  { key: 'primalOrdeal', minLevel: 250 },
+]
+
+function questsAvailable(a: any): string[] {
+  return QUEST_RULES.filter(r => (a.level ?? 0) >= r.minLevel).map(r => r.key)
 }
 
 router.get('/options', (_req: Request, res: Response) => {
@@ -88,7 +98,7 @@ router.get('/', (req: Request, res: Response) => {
       skillKey, minSkill,
       minPrice, maxPrice, hasBid,
       minCharm, minBoss, minMounts, minOutfits,
-      charmExpansion, outfits, mounts, oAddon1, oAddon2,
+      charmExpansion, outfits, mounts, oAddon1, oAddon2, quests,
       page = '1', limit = '25', sortBy = 'auctionEnd', sortOrder = 'asc',
     } = req.query
 
@@ -123,6 +133,10 @@ router.get('/', (req: Request, res: Response) => {
     if (q(minMounts)) auctions = auctions.filter((a: any) => (a.extra?.mountsCount ?? -1) >= Number(minMounts))
     if (q(minOutfits)) auctions = auctions.filter((a: any) => (a.extra?.outfitsCount ?? -1) >= Number(minOutfits))
     if (charmExpansion === 'true') auctions = auctions.filter((a: any) => a.extra?.charmExpansion === true)
+    if (q(quests)) {
+      const wantQuests = String(quests).split(',').filter(Boolean)
+      auctions = auctions.filter((a: any) => wantQuests.every(qk => (a.questsAvailable ?? []).includes(qk)))
+    }
     // Filtro por posse de outfits/mounts (nomes separados por vírgula; precisa ter todos).
     // oAddon1/oAddon2 exigem que o outfit possuído tenha aquele(s) addon(s).
     if (q(outfits) || q(mounts)) {

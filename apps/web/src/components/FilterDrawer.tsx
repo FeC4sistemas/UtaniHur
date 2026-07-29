@@ -3,6 +3,7 @@ import type { AuctionFilters, FilterOptions } from '../types'
 import { EMPTY_FILTERS } from '../types'
 import { CloseIcon, FemaleIcon, MaleIcon, SearchIcon } from './Icons'
 import { WardrobePicker, useWardrobe } from './WardrobePicker'
+import { QUESTS } from '../lib/quests'
 
 const VOCATION_CHIPS = [
   { id: 8, label: 'EK', title: 'Knight' },
@@ -317,6 +318,27 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
 
           {tab === 'extras' && (
             <>
+          <Section title="Quests disponíveis">
+            <div className="flex flex-wrap gap-1.5">
+              {QUESTS.map(quest => {
+                const active = draft.quests.includes(quest.key)
+                return (
+                  <button
+                    key={quest.key}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() =>
+                      set('quests', active ? draft.quests.filter(k => k !== quest.key) : [...draft.quests, quest.key])
+                    }
+                    className={chipCls(active)}
+                  >
+                    {quest.label} {quest.emoji}
+                  </button>
+                )
+              })}
+            </div>
+          </Section>
+
           <Section title="Charm points mínimo">
             <input type="number" min={0} inputMode="numeric" value={draft.minCharm} onChange={e => set('minCharm', e.target.value)} placeholder="Ex.: 3000" className={inputCls} />
           </Section>

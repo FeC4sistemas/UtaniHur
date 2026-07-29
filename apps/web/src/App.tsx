@@ -9,6 +9,7 @@ import { useDebounce } from './hooks/useDebounce'
 import type { AuctionFilters, SortBy, SortOrder } from './types'
 import { EMPTY_FILTERS } from './types'
 import { vocationMeta } from './lib/vocation'
+import { questMeta } from './lib/quests'
 
 const PAGE_SIZE = 24
 /** Um espaço de anúncio é inserido na grade a cada N cards. */
@@ -51,6 +52,7 @@ export default function App() {
     setFilters(f => {
       if (key.startsWith('outfit:')) return { ...f, outfits: f.outfits.filter(o => o !== key.slice(7)) }
       if (key.startsWith('mount:')) return { ...f, mounts: f.mounts.filter(m => m !== key.slice(6)) }
+      if (key.startsWith('quest:')) return { ...f, quests: f.quests.filter(qk => qk !== key.slice(6)) }
       const k = key as keyof AuctionFilters
       return { ...f, [k]: EMPTY_FILTERS[k] }
     })
@@ -100,6 +102,7 @@ export default function App() {
     filters.mounts.forEach(m => chips.push({ key: `mount:${m}`, label: `Mount: ${m}` }))
     if (filters.reqAddon1) chips.push({ key: 'reqAddon1', label: 'Addon 1' })
     if (filters.reqAddon2) chips.push({ key: 'reqAddon2', label: 'Addon 2' })
+    filters.quests.forEach(qk => chips.push({ key: `quest:${qk}`, label: `${questMeta(qk).label} disponível` }))
     return chips
   }, [filters, options.vocations])
 

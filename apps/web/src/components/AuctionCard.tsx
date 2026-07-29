@@ -4,6 +4,7 @@ import { auctionUrl, formatCoins, formatEndDate, itemSources, outfitSources, tim
 import { skillList, vocationMeta } from '../lib/vocation'
 import { AUGMENT_TAG_CLASS, formatAugment } from '../lib/augment'
 import { DERIVED_TAG_CLASS, deriveTags } from '../lib/tags'
+import { questMeta } from '../lib/quests'
 import {
   ClockIcon,
   CoinIcon,
@@ -323,6 +324,23 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
                 {badge.label}
               </span>
             ))}
+          </div>
+        )}
+
+        {/* Quests disponíveis */}
+        {(a.questsAvailable ?? []).length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {a.questsAvailable!.map(key => {
+              const qm = questMeta(key)
+              return (
+                <span
+                  key={key}
+                  className="inline-flex items-center gap-1 rounded-full bg-sky-500/12 px-2.5 py-0.5 text-[11px] font-semibold text-sky-600 dark:text-sky-300"
+                >
+                  {qm.label} disponível <span>{qm.emoji}</span>
+                </span>
+              )
+            })}
           </div>
         )}
 
