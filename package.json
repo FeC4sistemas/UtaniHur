@@ -16,6 +16,8 @@
     "details": "npm run details --workspace=apps/scraper",
     "quests": "npm run quests --workspace=apps/scraper",
     "quests:sample": "npm run quests:sample --workspace=apps/scraper",
+    "wiki:outfits": "npm run wiki:outfits --workspace=apps/scraper",
+    "wiki:mounts": "npm run wiki:mounts --workspace=apps/scraper",
     "wardrobe": "npm run wardrobe --workspace=apps/scraper",
     "build:web": "npm run build --workspace=apps/web"
   }

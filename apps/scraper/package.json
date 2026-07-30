@@ -12,6 +12,8 @@
     "details": "ts-node src/scripts/scrapAuctionDetails.ts",
     "quests": "ts-node src/scripts/scrapQuests.ts",
     "quests:sample": "ts-node src/scripts/scrapQuestsSample.ts",
+    "wiki:outfits": "ts-node src/scripts/scrapWiki.ts outfits",
+    "wiki:mounts": "ts-node src/scripts/scrapWiki.ts mounts",
     "wardrobe": "ts-node src/scripts/genWardrobe.ts"
   },
   "dependencies": {
