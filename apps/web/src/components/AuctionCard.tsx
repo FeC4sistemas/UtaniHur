@@ -4,6 +4,7 @@ import { auctionUrl, formatCoins, formatEndDate, itemSources, outfitSources, tim
 import { skillList, vocationMeta } from '../lib/vocation'
 import { AUGMENT_TAG_CLASS, formatAugment } from '../lib/augment'
 import { DERIVED_TAG_CLASS, deriveTags } from '../lib/tags'
+import { QUEST_HIGHLIGHTS, questEmoji } from '../lib/quests'
 import {
   ClockIcon,
   CoinIcon,
@@ -325,6 +326,26 @@ export const AuctionCard = memo(function AuctionCard({ auction: a, index }: Prop
             ))}
           </div>
         )}
+
+        {/* Quests concluídas em destaque */}
+        {(() => {
+          const done = new Set(a.questsDone ?? [])
+          const shown = QUEST_HIGHLIGHTS.filter(q => done.has(q.name))
+          if (shown.length === 0) return null
+          return (
+            <div className="flex flex-wrap gap-1.5">
+              {shown.map(q => (
+                <span
+                  key={q.name}
+                  title={`Concluiu a quest ${q.name}`}
+                  className="inline-flex items-center gap-1 rounded-full bg-sky-500/12 px-2.5 py-0.5 text-[11px] font-semibold text-sky-600 dark:text-sky-300"
+                >
+                  {q.name} <span>{questEmoji(q.name)}</span>
+                </span>
+              ))}
+            </div>
+          )
+        })()}
 
         {/* Tags qualitativas derivadas */}
         {derivedTags.length > 0 && (

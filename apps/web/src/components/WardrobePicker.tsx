@@ -6,6 +6,21 @@ export interface WardrobeItem {
   store: boolean
   male?: boolean
   female?: boolean
+  /** lookType do outfit por sexo — usado no fallback via outfit-proxy da wiki. */
+  ltMale?: number
+  ltFemale?: number
+}
+
+/**
+ * Template do outfit-proxy da wiki do RubinOT (cobre até os outfits exclusivos).
+ * Placeholders: {type} = lookType, {addons} = 0-3.
+ */
+const OUTFIT_PROXY =
+  (import.meta.env.VITE_OUTFIT_PROXY_URL as string | undefined) ??
+  'https://wiki.rubinot.com/api/outfit-proxy?type={type}&head=78&body=106&legs=79&feet=0&addons={addons}&direction=3&animated=0&walk=0&size=0'
+
+function proxyUrl(lookType: number, addons: number): string {
+  return OUTFIT_PROXY.replace('{type}', String(lookType)).replace('{addons}', String(addons))
 }
 
 interface Wardrobe {
@@ -30,17 +45,27 @@ export function useWardrobe(): Wardrobe {
   return data
 }
 
-function outfitSrc(item: WardrobeItem, sex: 'male' | 'female', addon: number): string {
-  const folder = item.store ? 'storeoutfits' : 'outfits'
-  return `/sprites/${folder}/${sex}/${encodeURIComponent(item.name)}_${addon}.gif`
-}
-
-function mountSrc(item: WardrobeItem): string {
+/** Lista de URLs de imagem a tentar, em ordem (pasta local → wiki → falha). */
+function imageSources(item: WardrobeItem, kind: 'outfit' | 'mount', sex: 'male' | 'female', previewAddon: number): string[] {
+  const n = encodeURIComponent(item.name)
+  if (kind === 'outfit') {
+    const folder = item.store ? 'storeoutfits' : 'outfits'
+    const addons = [...new Set([previewAddon, 3, 2, 1, 0])]
+    const lt = sex === 'male' ? item.ltMale : item.ltFemale
+    return [
+      ...addons.map(a => `/sprites/${folder}/${sex}/${n}_${a}.gif`),
+      `/sprites/wiki/outfits/${n}.gif`,
+      `/sprites/wiki/outfits/${n}.png`,
+      // Fallback definitivo: gera o outfit por lookType direto no proxy da wiki,
+      // cobrindo os outfits exclusivos que não temos como sprite local.
+      ...(lt ? [proxyUrl(lt, previewAddon)] : []),
+    ]
+  }
   const folder = item.store ? 'storemounts' : 'mounts'
-  return `/sprites/${folder}/${encodeURIComponent(item.name)}.gif`
+  return [`/sprites/${folder}/${n}.gif`, `/sprites/wiki/mounts/${n}.gif`, `/sprites/wiki/mounts/${n}.png`]
 }
 
-/** Thumb com fallback de addon (3→2→1→0). */
+/** Thumb que percorre as fontes de imagem e cai no nome quando nenhuma carrega. */
 function Thumb({
   item,
   kind,
@@ -56,11 +81,8 @@ function Thumb({
   selected: boolean
   onToggle: () => void
 }) {
-  // tenta o addon de preview primeiro, depois cai para os menores
-  const addons = [...new Set([previewAddon, 3, 2, 1, 0])]
-  const [addonIdx, setAddonIdx] = useState(0)
-  const [failed, setFailed] = useState(false)
-  const src = kind === 'outfit' ? outfitSrc(item, sex, addons[addonIdx]) : mountSrc(item)
+  const sources = imageSources(item, kind, sex, previewAddon)
+  const [idx, setIdx] = useState(0)
 
   return (
     <button
@@ -72,14 +94,14 @@ function Thumb({
         selected ? 'border-primary bg-primary/15 ring-1 ring-primary' : 'border-separator/70 bg-surface-2 hover:border-primary/40'
       }`}
     >
-      {failed ? (
+      {idx >= sources.length ? (
         <span className="px-0.5 text-center text-[7px] leading-tight text-onSurface/40">{item.name}</span>
       ) : (
         <img
-          src={src}
+          src={sources[idx]}
           alt={item.name}
           loading="lazy"
-          onError={() => (kind === 'outfit' && addonIdx < addons.length - 1 ? setAddonIdx(i => i + 1) : setFailed(true))}
+          onError={() => setIdx(i => i + 1)}
           className="pixelated h-12 w-12 object-contain"
         />
       )}

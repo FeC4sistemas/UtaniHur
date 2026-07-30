@@ -3,6 +3,43 @@ import type { AuctionFilters, FilterOptions } from '../types'
 import { EMPTY_FILTERS } from '../types'
 import { CloseIcon, FemaleIcon, MaleIcon, SearchIcon } from './Icons'
 import { WardrobePicker, useWardrobe } from './WardrobePicker'
+import { questEmoji } from '../lib/quests'
+
+/** Lista de quests concluídas com busca e checkboxes. */
+function QuestPicker({ all, selected, onChange }: { all: string[]; selected: string[]; onChange: (v: string[]) => void }) {
+  const [search, setSearch] = useState('')
+  const term = search.trim().toLowerCase()
+  const list = term ? all.filter(q => q.toLowerCase().includes(term)) : all
+  const toggle = (name: string) =>
+    onChange(selected.includes(name) ? selected.filter(n => n !== name) : [...selected, name])
+
+  if (all.length === 0) {
+    return <p className="text-[11px] text-onSurface/45">Rode “npm run quests” para carregar a lista de quests.</p>
+  }
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="relative">
+        <SearchIcon size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-onSurface/35" />
+        <input
+          type="search"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Procurar quest…"
+          className="h-8 w-full rounded-md border border-separator bg-surface pl-7 pr-2 text-xs outline-none focus:border-primary"
+        />
+      </div>
+      <div className="flex max-h-56 flex-col gap-0.5 overflow-y-auto">
+        {list.map(name => (
+          <label key={name} className="flex cursor-pointer items-center gap-2 rounded px-1 py-1 text-[13px] hover:bg-primary/5">
+            <input type="checkbox" checked={selected.includes(name)} onChange={() => toggle(name)} className="h-4 w-4 accent-primary" />
+            <span className="flex-1 truncate">{name}</span>
+            <span>{questEmoji(name)}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 const VOCATION_CHIPS = [
   { id: 8, label: 'EK', title: 'Knight' },
@@ -317,6 +354,10 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
 
           {tab === 'extras' && (
             <>
+          <Section title="Quests concluídas">
+            <QuestPicker all={options.quests} selected={draft.quests} onChange={v => set('quests', v)} />
+          </Section>
+
           <Section title="Charm points mínimo">
             <input type="number" min={0} inputMode="numeric" value={draft.minCharm} onChange={e => set('minCharm', e.target.value)} placeholder="Ex.: 3000" className={inputCls} />
           </Section>

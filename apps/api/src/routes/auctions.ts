@@ -8,7 +8,7 @@ const DATA_FILE = path.resolve(__dirname, '../../../scraper/output/CurrentAuctio
 const DETAILS_FILE = path.resolve(__dirname, '../../../scraper/output/AuctionDetails.json')
 
 type OwnedOutfit = string | { name: string; addons?: number }
-function loadDetails(): Record<string, { skills?: any; extra?: any; outfits?: OwnedOutfit[]; mounts?: string[] }> {
+function loadDetails(): Record<string, { skills?: any; extra?: any; outfits?: OwnedOutfit[]; mounts?: string[]; bosstiary?: string[] }> {
   if (!fs.existsSync(DETAILS_FILE)) return {}
   try {
     return JSON.parse(fs.readFileSync(DETAILS_FILE, 'utf-8')).byId || {}
@@ -22,17 +22,21 @@ function loadAuctions() {
   const raw = fs.readFileSync(DATA_FILE, 'utf-8')
   const data = JSON.parse(raw)
   const auctions = data.auctions || []
-  // Mescla o detalhe (skills completas + campos extras), quando disponível
+  // Mescla o detalhe (skills completas + campos extras) e as quests, quando disponíveis
   const byId = loadDetails()
+  const questsById = loadQuests().byId
   return auctions.map((a: any) => {
     const d = byId[a.id]
-    if (!d) return a
-    return {
-      ...a,
-      // fist/fishing reais vindos do detalhe
-      skills: { ...a.skills, ...(d.skills?.fist != null ? { fist: d.skills.fist } : {}), ...(d.skills?.fishing != null ? { fishing: d.skills.fishing } : {}) },
-      extra: d.extra ?? undefined,
-    }
+    const questsDone = questsById[a.id]
+    const base = d
+      ? {
+          ...a,
+          // fist/fishing reais vindos do detalhe
+          skills: { ...a.skills, ...(d.skills?.fist != null ? { fist: d.skills.fist } : {}), ...(d.skills?.fishing != null ? { fishing: d.skills.fishing } : {}) },
+          extra: d.extra ?? undefined,
+        }
+      : a
+    return questsDone ? { ...base, questsDone } : base
   })
 }
 
@@ -60,6 +64,19 @@ function skillValue(a: any, key: string): number {
   return a.skills?.[key] ?? 0
 }
 
+const QUESTS_FILE = path.resolve(__dirname, '../../../scraper/output/AuctionQuests.json')
+
+/** Quests concluídas por leilão, lidas da aba Quests do site (npm run quests). */
+function loadQuests(): { byId: Record<string, string[]>; allQuests: string[] } {
+  if (!fs.existsSync(QUESTS_FILE)) return { byId: {}, allQuests: [] }
+  try {
+    const j = JSON.parse(fs.readFileSync(QUESTS_FILE, 'utf-8'))
+    return { byId: j.byId ?? {}, allQuests: j.allQuests ?? [] }
+  } catch {
+    return { byId: {}, allQuests: [] }
+  }
+}
+
 router.get('/options', (_req: Request, res: Response) => {
   try {
     const auctions = loadAuctions()
@@ -71,7 +88,8 @@ router.get('/options', (_req: Request, res: Response) => {
     const vocations = [...vocMap.entries()]
       .map(([id, name]) => ({ id, name }))
       .sort((a, b) => a.id - b.id)
-    res.json({ worlds, vocations })
+    const quests = loadQuests().allQuests
+    res.json({ worlds, vocations, quests })
   } catch (err) {
     res.status(500).json({ error: 'Erro ao carregar opções de filtro' })
   }
@@ -88,7 +106,7 @@ router.get('/', (req: Request, res: Response) => {
       skillKey, minSkill,
       minPrice, maxPrice, hasBid,
       minCharm, minBoss, minMounts, minOutfits,
-      charmExpansion, outfits, mounts, oAddon1, oAddon2,
+      charmExpansion, outfits, mounts, oAddon1, oAddon2, quests,
       page = '1', limit = '25', sortBy = 'auctionEnd', sortOrder = 'asc',
     } = req.query
 
@@ -123,6 +141,10 @@ router.get('/', (req: Request, res: Response) => {
     if (q(minMounts)) auctions = auctions.filter((a: any) => (a.extra?.mountsCount ?? -1) >= Number(minMounts))
     if (q(minOutfits)) auctions = auctions.filter((a: any) => (a.extra?.outfitsCount ?? -1) >= Number(minOutfits))
     if (charmExpansion === 'true') auctions = auctions.filter((a: any) => a.extra?.charmExpansion === true)
+    if (q(quests)) {
+      const wantQuests = String(quests).split(',').filter(Boolean)
+      auctions = auctions.filter((a: any) => wantQuests.every(qk => (a.questsDone ?? []).includes(qk)))
+    }
     // Filtro por posse de outfits/mounts (nomes separados por vírgula; precisa ter todos).
     // oAddon1/oAddon2 exigem que o outfit possuído tenha aquele(s) addon(s).
     if (q(outfits) || q(mounts)) {
