@@ -1,0 +1,529 @@
+{
+  "collectedAt": "2026-07-24T20:11:32.608Z",
+  "hits": [
+    {
+      "kind": "boss",
+      "name": "The Brainstealer",
+      "from": "Boosted Boss: The Brainstealer"
+    },
+    {
+      "kind": "creature",
+      "name": "Askarak Lord",
+      "from": "Boosted Creature: Askarak Lord"
+    }
+  ],
+  "network": [
+    {
+      "url": "https://rubinot.com.br/",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "url": "https://rubinot.com.br/news",
+      "type": "text/html; charset=utf-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/media/83afe278b6a6bb3c-s.p.0q-301v4kxxnr.woff2",
+      "type": "font/woff2"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/media/cc014fcb166cf364-s.p.0rbrcy8kuidpb.woff2",
+      "type": "font/woff2"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/123xr0ff8odpi.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0k6c9i47ki3cm.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/07~xaemfhb9ov.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/100ngxjsu7-6w.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/126rnvnpgd8h_.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/1325ku1ce-zrr.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/turbopack-0rudbyd.0mmqa.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/02f74gqd5wh3k.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/g6ko/",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0p~5n_g1t13mv.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0xjwh~rnbar_q.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0cw2wg31tz4xw.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0v5~a-gh7ba~w.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/05dyv~_ra~-79.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/cdn-cgi/challenge-platform/scripts/jsd/main.js",
+      "type": ""
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0nqp9bp3jh5fu.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/images/ui/page/header-editable.png",
+      "type": "image/webp"
+    },
+    {
+      "url": "https://rubinot.com.br/cdn-cgi/challenge-platform/h/g/scripts/jsd/b0da9f4911ba/main.js?",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/cdn-cgi/challenge-platform/h/g/jsd/oneshot/b0da9f4911ba/0.5082213573146825:1784919632:22IXHml9NwjAD1Lg_dMaBf0nrOrgff_fwVhupgRer1Q/a20592ad6cefdf22",
+      "type": "text/plain; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/api/geo-language",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/geo-language",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/maintenance",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/auth/session",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/boosted",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/news",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/news",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/g6ko/XiRzjSadisvm642n1pKMuYuIcRc6RC2e7O8UZ0oJBEcBZDJw",
+      "type": "text/html; charset=UTF-8"
+    },
+    {
+      "url": "https://www.google.com/ccm/collect?rcb=0&frm=0&ae=g&auid=759570796.1784923878&dt=RubinOT&en=page_view&dl=https%3A%2F%2Frubinot.com.br%2Fnews&scrsrc=rubinot.com.br&rnd=1838950784.1784923878&navt=n&npa=0&ep.ads_data_redaction=0&gdid=dYzg1YT.dNzQzZD&gtm=45E92e67m0v9225647437za204zd9225647437xea&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938469~118897920~118897930~119724320~119896803&apve=1&apvf=f&gap.gtb=1&apvc=1&tft=1784923877827&tfd=1355&fmt=8",
+      "type": ""
+    },
+    {
+      "url": "https://www.googletagmanager.com/gtm.js?id=GTM-NRRD999C&gtg_health=1",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=D2RH9SBC77UEK08KPNIG&lib=ttq",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/api/maintenance",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/boosted",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/geo-language",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/geo-language",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/news",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/boosted",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/geo-language",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0efniltsbpfgw.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/api/maintenance",
+      "type": "application/json"
+    },
+    {
+      "url": "https://analytics.tiktok.com/i18n/pixel/static/main.MTkwNzNhYjk5OQ.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/01ku_51-g9bip.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/api/news",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/boosted",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/g6ko/?id=G-JD5ND9M441&cx=c&gtm=4e67m0&f=1",
+      "type": "text/html; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/187h76gtggy85.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0ert_f6hb_~ye.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0pn0d-ennhuhw.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0bjxq~y9x2m6q.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0z9yvkcco8cgh.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/api/news",
+      "type": "application/json"
+    },
+    {
+      "url": "https://static.rubinot.com/news/categories/updates.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://static.rubinot.com/layout/header/logo.webp",
+      "type": "image/webp"
+    },
+    {
+      "url": "https://static.rubinot.com/news/categories/guides.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://static.rubinot.com/news/categories/community.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://static.rubinot.com/news/categories/events.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://tibiawiki.com.br/images/1/1f/Gingerbread_Man.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://rubinot.com.br/api/outfit?type=1412&head=0&body=0&legs=0&feet=0&addons=0&direction=3&animated=1&walk=1&size=0",
+      "type": "image/png"
+    },
+    {
+      "url": "https://rubinot.com.br/images/ui/menu/header.png",
+      "type": "image/webp"
+    },
+    {
+      "url": "https://rubinot.com.br/api/outfit?type=410&head=0&body=0&legs=0&feet=0&addons=0&direction=3&animated=1&walk=1&size=0",
+      "type": "image/png"
+    },
+    {
+      "url": "https://rubinot.com.br/api/worlds",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/news",
+      "type": "application/json"
+    },
+    {
+      "url": "https://rubinot.com.br/api/outfit?type=1412&head=0&body=0&legs=0&feet=0&addons=0&direction=3&animated=1&walk=1&size=0",
+      "type": "image/png"
+    },
+    {
+      "url": "https://rubinot.com.br/api/outfit?type=410&head=0&body=0&legs=0&feet=0&addons=0&direction=3&animated=1&walk=1&size=0",
+      "type": "image/png"
+    },
+    {
+      "url": "https://rubinot.com.br/news",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://analytics.tiktok.com/i18n/pixel/static/identify_ea043f1c.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/images/ui/menu/content/content-center.png",
+      "type": "image/webp"
+    },
+    {
+      "url": "https://rubinot.com.br/images/ui/menu/content/content-top.png",
+      "type": "image/webp"
+    },
+    {
+      "url": "https://rubinot.com.br/images/ui/menu/content/content-bottom.png",
+      "type": "image/webp"
+    },
+    {
+      "url": "https://rubinot.com.br/images/ui/topbar.png",
+      "type": "image/webp"
+    },
+    {
+      "url": "https://static.rubinot.com/layout/background/background-default.jpg",
+      "type": "image/jpeg"
+    },
+    {
+      "url": "https://rubinot.com.br/api/news",
+      "type": "application/json"
+    },
+    {
+      "url": "https://www.tibiawiki.com.br/images/5/58/Gralvalon.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://www.tibiawiki.com.br/images/0/00/Sineater_Inferniarch.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://www.tibiawiki.com.br/images/f/f0/Arbaziloth.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://i.imgur.com/DYoXZPQ.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://analytics.tiktok.com/api/v2/pixel",
+      "type": ""
+    },
+    {
+      "url": "https://analytics.tiktok.com/api/v2/pixel",
+      "type": ""
+    },
+    {
+      "url": "https://tibiawiki.com.br/images/f/f1/Cream_Blob.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://tibiawiki.com.br/images/f/f5/Candy_Floss_Elemental.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://i.imgur.com/ManaTnE.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://i.imgur.com/0eM6BHp.png",
+      "type": "image/png"
+    },
+    {
+      "url": "https://i.imgur.com/bQ7aUlb.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://i.imgur.com/L0w1c6a.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://analytics-ipv6.tiktokw.us/ipv6/enrich_ipv6",
+      "type": ""
+    },
+    {
+      "url": "https://analytics.tiktok.com/api/v2/pixel",
+      "type": ""
+    },
+    {
+      "url": "https://analytics.tiktok.com/api/v2/pixel/act",
+      "type": ""
+    },
+    {
+      "url": "https://i.imgur.com/Kam8qUR.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://i.imgur.com/qjJpzBp.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://tibiawiki.com.br/images/1/18/Candy_Horror.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://tibiawiki.com.br/images/a/a1/Sugar_Mommy.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://tibiawiki.com.br/images/2/27/Sugar_Daddy.gif",
+      "type": "image/gif"
+    },
+    {
+      "url": "https://rubinot.com.br/download?_rsc=ZT0-uqATtlNBUI5v",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/?_rsc=ZT0-uqATtlNBUI5v",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/legal/cookies?_rsc=ZT0-uqATtlNBUI5v",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/worlds?_rsc=ZT0-uqATtlNBUI5v",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/images/icon.png",
+      "type": "image/webp"
+    },
+    {
+      "url": "https://rubinot.com.br/login?_rsc=ZT0-uqATtlNBUI5v",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/download?_rsc=jDHFxEVpGpks_sSm",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/legal/cookies?_rsc=jDHFxEVpGpks_sSm",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/download?_rsc=NLHYI_ZU_4vQOwUI",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/images/icon.png",
+      "type": ""
+    },
+    {
+      "url": "https://rubinot.com.br/legal/cookies?_rsc=rcEjzmS6C_-ofcKG",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/legal/cookies?_rsc=y_JVaSd4oDgdyoO6",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/legal/cookies?_rsc=Y6AgfFvlHDXB1hrY",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/legal/cookies?_rsc=McFDkCWUxHwthRfo",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/worlds?_rsc=jDHFxEVpGpks_sSm",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0bx-cxs5sy824.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/worlds?_rsc=vfTVE-k8DaORw3xu",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/worlds?_rsc=aQSPdvvp4_4eYtZ3",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/download?_rsc=Tvrs74V84oulfUn8",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/download?_rsc=bbXNIp6Kh_n8KxMM",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/?_rsc=jDHFxEVpGpks_sSm",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0tztp5i-zq4om.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/login?_rsc=jDHFxEVpGpks_sSm",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/?_rsc=FlMgHlqNLWRsmRi_",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0765z55p.ufio.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/074h3-t7-xvrz.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/login?_rsc=P4Xp6RDt9ejO27Zf",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/login?_rsc=mNdd9qXM_9ViR-7J",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/login?_rsc=9kJmr5Wra5Fxkw8O",
+      "type": "text/x-component"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0h4vyh9.rp98t.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/0fk6hggp1wmfp.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://rubinot.com.br/_next/static/chunks/01e9g23os2pcn.js",
+      "type": "application/javascript; charset=UTF-8"
+    },
+    {
+      "url": "https://analytics.tiktok.com/api/v2/pixel",
+      "type": ""
+    }
+  ]
+}

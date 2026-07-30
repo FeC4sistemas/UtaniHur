@@ -1,0 +1,3317 @@
+{
+  "auction": {
+    "id": 235760,
+    "state": 3,
+    "stateName": "finished",
+    "owner": null,
+    "startingValue": 50,
+    "currentValue": 512,
+    "winningBid": 512,
+    "highestBidderId": null,
+    "hasWinner": true,
+    "auctionStart": 1782586338,
+    "auctionEnd": 1785178285,
+    "myBid": 0,
+    "isWinning": false,
+    "isOwner": false
+  },
+  "isAdmin": false,
+  "adminInfo": null,
+  "player": {
+    "name": "Inimigo da def",
+    "level": 618,
+    "vocation": 7,
+    "vocationName": "Royal Paladin",
+    "sex": 1,
+    "worldName": "Belaria",
+    "lookType": 152,
+    "lookHead": 0,
+    "lookBody": 0,
+    "lookLegs": 0,
+    "lookFeet": 0,
+    "lookAddons": 0,
+    "direction": 2,
+    "lookMount": 0
+  },
+  "general": {
+    "health": 6585,
+    "healthMax": 6285,
+    "mana": 8716,
+    "manaMax": 9240,
+    "manaSpent": "519584998",
+    "cap": 12670,
+    "stamina": 2520,
+    "soul": 200,
+    "experience": "3914242375",
+    "magLevel": 38,
+    "skills": {
+      "fist": 11,
+      "fistTries": 11,
+      "club": 11,
+      "clubTries": 0,
+      "sword": 11,
+      "swordTries": 0,
+      "axe": 11,
+      "axeTries": 0,
+      "dist": 122,
+      "distTries": 438555,
+      "shielding": 117,
+      "shieldingTries": 508172,
+      "fishing": 11,
+      "fishingTries": 0
+    },
+    "mountsCount": 4,
+    "outfitsCount": 20,
+    "titlesCount": 12,
+    "linkedTasks": 0,
+    "createDate": 1749679585,
+    "balance": "680967",
+    "totalMoney": "680967",
+    "achievementPoints": 143,
+    "charmPoints": 65,
+    "spentCharmPoints": 560,
+    "availableCharmPoints": 65,
+    "spentMinorEchoes": 200,
+    "availableMinorEchoes": 0,
+    "charmExpansion": false,
+    "streakDays": 0,
+    "huntingTaskPoints": 50,
+    "thirdPrey": false,
+    "thirdHunting": false,
+    "permanentWeeklyTaskSlot": false,
+    "preyWildcards": 0,
+    "hirelingCount": 0,
+    "hirelingJobs": 0,
+    "hirelingOutfits": 0,
+    "dust": 43,
+    "dustMax": 100,
+    "bossPoints": 300,
+    "wheelPoints": 18,
+    "maxWheelPoints": 568,
+    "gpActive": false,
+    "gpPoints": 300
+  },
+  "storages": [
+    [
+      22454,
+      "0"
+    ],
+    [
+      35880,
+      "1777813200"
+    ],
+    [
+      35878,
+      "1777814781"
+    ],
+    [
+      35873,
+      "1778590800"
+    ],
+    [
+      10135,
+      "1"
+    ],
+    [
+      18541,
+      "5"
+    ],
+    [
+      3293,
+      "0"
+    ],
+    [
+      961,
+      "5"
+    ],
+    [
+      22523,
+      "0"
+    ],
+    [
+      99111,
+      "1500"
+    ],
+    [
+      230625,
+      "1"
+    ],
+    [
+      12249,
+      "2"
+    ],
+    [
+      10133,
+      "1"
+    ],
+    [
+      10132,
+      "1"
+    ],
+    [
+      35877,
+      "1778590800"
+    ],
+    [
+      35692,
+      "0"
+    ],
+    [
+      3374,
+      "0"
+    ],
+    [
+      12247,
+      "5"
+    ],
+    [
+      3258,
+      "0"
+    ],
+    [
+      10326,
+      "0"
+    ],
+    [
+      17950,
+      "1"
+    ],
+    [
+      22453,
+      "0"
+    ],
+    [
+      22451,
+      "0"
+    ],
+    [
+      12139,
+      "3"
+    ],
+    [
+      10159,
+      "0"
+    ],
+    [
+      14065,
+      "8"
+    ],
+    [
+      18500,
+      "0"
+    ],
+    [
+      12354,
+      "3"
+    ],
+    [
+      21224,
+      "0"
+    ],
+    [
+      23130,
+      "6"
+    ],
+    [
+      21205,
+      "0"
+    ],
+    [
+      35776,
+      "1767618000"
+    ],
+    [
+      12135,
+      "7"
+    ],
+    [
+      700003,
+      "1"
+    ],
+    [
+      22420,
+      "1"
+    ],
+    [
+      22422,
+      "0"
+    ],
+    [
+      958,
+      "0"
+    ],
+    [
+      35000,
+      "1"
+    ],
+    [
+      99965,
+      "1"
+    ],
+    [
+      14101,
+      "1"
+    ],
+    [
+      100824,
+      "1780125858"
+    ],
+    [
+      52256,
+      "1"
+    ],
+    [
+      35677,
+      "1"
+    ],
+    [
+      12805,
+      "1"
+    ],
+    [
+      81716,
+      "1"
+    ],
+    [
+      21211,
+      "1"
+    ],
+    [
+      7097,
+      "1"
+    ],
+    [
+      14102,
+      "1"
+    ],
+    [
+      21210,
+      "1"
+    ],
+    [
+      847,
+      "0"
+    ],
+    [
+      35865,
+      "2"
+    ],
+    [
+      152,
+      "5"
+    ],
+    [
+      5182,
+      "0"
+    ],
+    [
+      12806,
+      "1"
+    ],
+    [
+      14055,
+      "6"
+    ],
+    [
+      35689,
+      "0"
+    ],
+    [
+      14207,
+      "2"
+    ],
+    [
+      30018,
+      "1"
+    ],
+    [
+      12278,
+      "1"
+    ],
+    [
+      14323,
+      "1774382659"
+    ],
+    [
+      99140,
+      "1"
+    ],
+    [
+      12121,
+      "18"
+    ],
+    [
+      52279,
+      "1"
+    ],
+    [
+      10167,
+      "1"
+    ],
+    [
+      16003,
+      "0"
+    ],
+    [
+      14135,
+      "0"
+    ],
+    [
+      22421,
+      "5"
+    ],
+    [
+      12803,
+      "1"
+    ],
+    [
+      18521,
+      "3"
+    ],
+    [
+      21209,
+      "1"
+    ],
+    [
+      52258,
+      "1"
+    ],
+    [
+      14030,
+      "3"
+    ],
+    [
+      1,
+      "1775954238"
+    ],
+    [
+      16004,
+      "0"
+    ],
+    [
+      91666,
+      "1"
+    ],
+    [
+      12192,
+      "3"
+    ],
+    [
+      14071,
+      "0"
+    ],
+    [
+      12165,
+      "3"
+    ],
+    [
+      10153,
+      "0"
+    ],
+    [
+      35676,
+      "1"
+    ],
+    [
+      23101,
+      "8"
+    ],
+    [
+      10134,
+      "1"
+    ],
+    [
+      21200,
+      "1"
+    ],
+    [
+      2086,
+      "1"
+    ],
+    [
+      22634,
+      "0"
+    ],
+    [
+      35864,
+      "0"
+    ],
+    [
+      151,
+      "3"
+    ],
+    [
+      18506,
+      "0"
+    ],
+    [
+      18003,
+      "5"
+    ],
+    [
+      849,
+      "0"
+    ],
+    [
+      35874,
+      "1777831763"
+    ],
+    [
+      35710,
+      "1763211600"
+    ],
+    [
+      9051,
+      "1"
+    ],
+    [
+      22127,
+      "0"
+    ],
+    [
+      99100,
+      "1"
+    ],
+    [
+      20001,
+      "1"
+    ],
+    [
+      35879,
+      "1777813200"
+    ],
+    [
+      962,
+      "1"
+    ],
+    [
+      35685,
+      "1"
+    ],
+    [
+      12802,
+      "1"
+    ],
+    [
+      52273,
+      "3"
+    ],
+    [
+      14045,
+      "5"
+    ],
+    [
+      35674,
+      "1"
+    ],
+    [
+      12191,
+      "3"
+    ],
+    [
+      14203,
+      "2"
+    ],
+    [
+      35688,
+      "1"
+    ],
+    [
+      14059,
+      "0"
+    ],
+    [
+      3102024,
+      "1"
+    ],
+    [
+      80503,
+      "1"
+    ],
+    [
+      22128,
+      "0"
+    ],
+    [
+      14080,
+      "14"
+    ],
+    [
+      12276,
+      "1"
+    ],
+    [
+      14034,
+      "3"
+    ],
+    [
+      956,
+      "2"
+    ],
+    [
+      23185,
+      "7"
+    ],
+    [
+      12166,
+      "3"
+    ],
+    [
+      21220,
+      "0"
+    ],
+    [
+      281801,
+      "1776561931"
+    ],
+    [
+      14205,
+      "76"
+    ],
+    [
+      12193,
+      "3"
+    ],
+    [
+      12351,
+      "3"
+    ],
+    [
+      22411,
+      "0"
+    ],
+    [
+      10100,
+      "7"
+    ],
+    [
+      35753,
+      "1"
+    ],
+    [
+      12137,
+      "3"
+    ],
+    [
+      22401,
+      "1"
+    ],
+    [
+      35743,
+      "1"
+    ],
+    [
+      60015,
+      "0"
+    ],
+    [
+      12162,
+      "3"
+    ],
+    [
+      90,
+      "1"
+    ],
+    [
+      14100,
+      "1"
+    ],
+    [
+      100823,
+      "77"
+    ],
+    [
+      50723,
+      "16"
+    ],
+    [
+      22555,
+      "1728"
+    ],
+    [
+      14321,
+      "0"
+    ],
+    [
+      12352,
+      "3"
+    ],
+    [
+      22412,
+      "0"
+    ],
+    [
+      12138,
+      "2"
+    ],
+    [
+      35754,
+      "0"
+    ],
+    [
+      23179,
+      "1"
+    ],
+    [
+      3032026,
+      "1"
+    ],
+    [
+      136,
+      "1"
+    ],
+    [
+      14220,
+      "0"
+    ],
+    [
+      12208,
+      "4"
+    ],
+    [
+      12800,
+      "8"
+    ],
+    [
+      9064,
+      "1"
+    ],
+    [
+      35748,
+      "0"
+    ],
+    [
+      7077,
+      "0"
+    ],
+    [
+      35693,
+      "1"
+    ],
+    [
+      22615,
+      "3"
+    ],
+    [
+      12804,
+      "1"
+    ],
+    [
+      81715,
+      "1776543686"
+    ],
+    [
+      12357,
+      "6"
+    ],
+    [
+      35628,
+      "0"
+    ],
+    [
+      921,
+      "30"
+    ],
+    [
+      21230,
+      "1"
+    ],
+    [
+      50095,
+      "1"
+    ],
+    [
+      22430,
+      "1"
+    ],
+    [
+      18503,
+      "0"
+    ],
+    [
+      14330,
+      "1"
+    ],
+    [
+      35630,
+      "0"
+    ],
+    [
+      21153,
+      "3"
+    ],
+    [
+      35687,
+      "14"
+    ],
+    [
+      22106,
+      "1774383249"
+    ],
+    [
+      22554,
+      "1868"
+    ],
+    [
+      10151,
+      "0"
+    ],
+    [
+      12163,
+      "6"
+    ],
+    [
+      21151,
+      "0"
+    ],
+    [
+      62900,
+      "1777742365178"
+    ],
+    [
+      14332,
+      "1"
+    ],
+    [
+      12275,
+      "1"
+    ],
+    [
+      35625,
+      "0"
+    ],
+    [
+      12133,
+      "3"
+    ],
+    [
+      99152,
+      "0"
+    ],
+    [
+      22461,
+      "0"
+    ],
+    [
+      700002,
+      "1"
+    ],
+    [
+      50734,
+      "1"
+    ],
+    [
+      138,
+      "1"
+    ],
+    [
+      12210,
+      "2"
+    ],
+    [
+      14328,
+      "1"
+    ],
+    [
+      12132,
+      "6"
+    ],
+    [
+      99151,
+      "0"
+    ],
+    [
+      21273,
+      "0"
+    ],
+    [
+      147,
+      "3"
+    ],
+    [
+      35860,
+      "1"
+    ],
+    [
+      3540,
+      "2"
+    ],
+    [
+      14103,
+      "1"
+    ],
+    [
+      99110,
+      "2"
+    ],
+    [
+      12248,
+      "4"
+    ],
+    [
+      21215,
+      "1"
+    ],
+    [
+      10149,
+      "0"
+    ],
+    [
+      12161,
+      "7"
+    ],
+    [
+      35742,
+      "0"
+    ],
+    [
+      14331,
+      "1774382803"
+    ],
+    [
+      23190,
+      "1"
+    ],
+    [
+      960,
+      "0"
+    ],
+    [
+      28042024,
+      "1"
+    ],
+    [
+      3295,
+      "0"
+    ],
+    [
+      35863,
+      "1"
+    ],
+    [
+      150,
+      "3"
+    ],
+    [
+      21222,
+      "0"
+    ],
+    [
+      10157,
+      "0"
+    ],
+    [
+      21223,
+      "0"
+    ],
+    [
+      3296,
+      "0"
+    ],
+    [
+      12350,
+      "28"
+    ],
+    [
+      14256,
+      "0"
+    ],
+    [
+      21298,
+      "0"
+    ],
+    [
+      12244,
+      "6"
+    ],
+    [
+      12353,
+      "3"
+    ],
+    [
+      3180,
+      "1"
+    ],
+    [
+      35875,
+      "0"
+    ],
+    [
+      22450,
+      "5"
+    ],
+    [
+      35755,
+      "1"
+    ],
+    [
+      22490,
+      "1"
+    ],
+    [
+      35750,
+      "1"
+    ],
+    [
+      7079,
+      "0"
+    ],
+    [
+      35686,
+      "0"
+    ],
+    [
+      22105,
+      "1"
+    ],
+    [
+      21152,
+      "0"
+    ],
+    [
+      62901,
+      "1"
+    ],
+    [
+      35629,
+      "0"
+    ],
+    [
+      12279,
+      "1"
+    ],
+    [
+      3181,
+      "17"
+    ],
+    [
+      35862,
+      "1"
+    ],
+    [
+      149,
+      "3"
+    ],
+    [
+      20201,
+      "1716"
+    ],
+    [
+      12355,
+      "3"
+    ],
+    [
+      18501,
+      "0"
+    ],
+    [
+      9313,
+      "107"
+    ],
+    [
+      35678,
+      "0"
+    ],
+    [
+      22600,
+      "1"
+    ],
+    [
+      52277,
+      "1"
+    ],
+    [
+      14037,
+      "0"
+    ],
+    [
+      959,
+      "0"
+    ],
+    [
+      957,
+      "2"
+    ],
+    [
+      14035,
+      "3"
+    ],
+    [
+      3294,
+      "0"
+    ],
+    [
+      35050,
+      "16"
+    ],
+    [
+      22470,
+      "3"
+    ],
+    [
+      22400,
+      "1"
+    ],
+    [
+      10328,
+      "0"
+    ],
+    [
+      21231,
+      "0"
+    ],
+    [
+      12358,
+      "2"
+    ],
+    [
+      130,
+      "2"
+    ],
+    [
+      12705,
+      "5"
+    ],
+    [
+      12202,
+      "5"
+    ],
+    [
+      99221,
+      "1"
+    ],
+    [
+      35675,
+      "0"
+    ],
+    [
+      10022,
+      "0"
+    ],
+    [
+      23100,
+      "2"
+    ],
+    [
+      12359,
+      "2"
+    ],
+    [
+      18001,
+      "2"
+    ],
+    [
+      18504,
+      "0"
+    ],
+    [
+      22455,
+      "0"
+    ],
+    [
+      35691,
+      "1"
+    ],
+    [
+      4032026,
+      "1"
+    ],
+    [
+      35749,
+      "1"
+    ],
+    [
+      7078,
+      "0"
+    ],
+    [
+      9088,
+      "2"
+    ],
+    [
+      35747,
+      "1"
+    ],
+    [
+      7076,
+      "0"
+    ],
+    [
+      16002,
+      "0"
+    ],
+    [
+      12190,
+      "8"
+    ],
+    [
+      18006,
+      "1"
+    ],
+    [
+      14033,
+      "3"
+    ],
+    [
+      955,
+      "2"
+    ],
+    [
+      22584,
+      "0"
+    ],
+    [
+      60000,
+      "1"
+    ],
+    [
+      35856,
+      "1"
+    ],
+    [
+      143,
+      "10"
+    ],
+    [
+      3216,
+      "0"
+    ],
+    [
+      18520,
+      "3"
+    ],
+    [
+      50712,
+      "1"
+    ],
+    [
+      18004,
+      "2"
+    ],
+    [
+      35609,
+      "20260627"
+    ],
+    [
+      23000,
+      "1"
+    ],
+    [
+      40102,
+      "1"
+    ],
+    [
+      12201,
+      "3"
+    ],
+    [
+      12704,
+      "3"
+    ],
+    [
+      3542,
+      "2"
+    ],
+    [
+      14105,
+      "8"
+    ],
+    [
+      851,
+      "0"
+    ],
+    [
+      18005,
+      "7"
+    ],
+    [
+      7080,
+      "0"
+    ],
+    [
+      35751,
+      "0"
+    ],
+    [
+      35627,
+      "0"
+    ],
+    [
+      40104,
+      "1"
+    ],
+    [
+      35868,
+      "1"
+    ],
+    [
+      155,
+      "3"
+    ],
+    [
+      22501,
+      "3"
+    ],
+    [
+      12356,
+      "4"
+    ],
+    [
+      7075,
+      "0"
+    ],
+    [
+      9087,
+      "1"
+    ],
+    [
+      10093,
+      "1"
+    ],
+    [
+      35746,
+      "1"
+    ],
+    [
+      35679,
+      "1"
+    ],
+    [
+      12807,
+      "1"
+    ],
+    [
+      23115,
+      "3"
+    ],
+    [
+      35690,
+      "10"
+    ],
+    [
+      35866,
+      "1"
+    ],
+    [
+      5183,
+      "4"
+    ],
+    [
+      153,
+      "1"
+    ],
+    [
+      4100,
+      "0"
+    ],
+    [
+      21202,
+      "0"
+    ],
+    [
+      10136,
+      "1"
+    ],
+    [
+      14031,
+      "3"
+    ],
+    [
+      22582,
+      "0"
+    ],
+    [
+      52259,
+      "1"
+    ],
+    [
+      3400,
+      "0"
+    ],
+    [
+      18002,
+      "14"
+    ],
+    [
+      900,
+      "30"
+    ],
+    [
+      18505,
+      "0"
+    ],
+    [
+      21208,
+      "1"
+    ],
+    [
+      20202,
+      "638"
+    ],
+    [
+      10327,
+      "0"
+    ],
+    [
+      22399,
+      "1"
+    ],
+    [
+      35741,
+      "1"
+    ],
+    [
+      35637,
+      "202601"
+    ],
+    [
+      21206,
+      "0"
+    ],
+    [
+      12152,
+      "1"
+    ],
+    [
+      14200,
+      "1"
+    ],
+    [
+      9170,
+      "1"
+    ],
+    [
+      21242,
+      "1776561629"
+    ],
+    [
+      12160,
+      "18"
+    ],
+    [
+      12134,
+      "2"
+    ],
+    [
+      14329,
+      "0"
+    ],
+    [
+      300525,
+      "20260627"
+    ],
+    [
+      23202,
+      "5"
+    ],
+    [
+      12136,
+      "3"
+    ],
+    [
+      20002,
+      "1"
+    ],
+    [
+      62906,
+      "1"
+    ],
+    [
+      35744,
+      "1"
+    ],
+    [
+      12130,
+      "24"
+    ],
+    [
+      14325,
+      "1774381706"
+    ],
+    [
+      21271,
+      "0"
+    ],
+    [
+      145,
+      "3"
+    ],
+    [
+      35858,
+      "0"
+    ],
+    [
+      5175,
+      "2"
+    ],
+    [
+      35752,
+      "10"
+    ],
+    [
+      10099,
+      "14"
+    ],
+    [
+      7081,
+      "0"
+    ],
+    [
+      20000,
+      "3"
+    ],
+    [
+      105589,
+      "-1874482773"
+    ],
+    [
+      965,
+      "1757437620"
+    ],
+    [
+      14041,
+      "0"
+    ],
+    [
+      963,
+      "0"
+    ],
+    [
+      21150,
+      "0"
+    ],
+    [
+      80504,
+      "1"
+    ],
+    [
+      133,
+      "3"
+    ],
+    [
+      12205,
+      "6"
+    ],
+    [
+      12240,
+      "54"
+    ],
+    [
+      35881,
+      "1778245200"
+    ],
+    [
+      22500,
+      "1"
+    ],
+    [
+      0,
+      "1776967145"
+    ],
+    [
+      18502,
+      "0"
+    ],
+    [
+      17999,
+      "1"
+    ],
+    [
+      23170,
+      "2"
+    ],
+    [
+      9086,
+      "1"
+    ],
+    [
+      35745,
+      "0"
+    ],
+    [
+      21204,
+      "0"
+    ],
+    [
+      22605,
+      "4"
+    ],
+    [
+      12707,
+      "1"
+    ],
+    [
+      12204,
+      "2"
+    ],
+    [
+      132,
+      "3"
+    ],
+    [
+      35624,
+      "2026"
+    ],
+    [
+      50714,
+      "1"
+    ],
+    [
+      12808,
+      "1"
+    ],
+    [
+      300524,
+      "20260627"
+    ],
+    [
+      22125,
+      "0"
+    ],
+    [
+      12140,
+      "1"
+    ],
+    [
+      21240,
+      "2"
+    ],
+    [
+      5670,
+      "9"
+    ],
+    [
+      12209,
+      "2"
+    ],
+    [
+      156,
+      "3"
+    ],
+    [
+      14240,
+      "0"
+    ],
+    [
+      38412,
+      "42101"
+    ],
+    [
+      148,
+      "3"
+    ],
+    [
+      21274,
+      "0"
+    ],
+    [
+      35861,
+      "0"
+    ],
+    [
+      99141,
+      "1200"
+    ],
+    [
+      10110,
+      "2"
+    ],
+    [
+      12801,
+      "1"
+    ],
+    [
+      21352,
+      "0"
+    ],
+    [
+      18550,
+      "10"
+    ],
+    [
+      21261,
+      "0"
+    ],
+    [
+      12710,
+      "4"
+    ],
+    [
+      135,
+      "2"
+    ],
+    [
+      12207,
+      "3"
+    ],
+    [
+      35867,
+      "0"
+    ],
+    [
+      154,
+      "3"
+    ],
+    [
+      21280,
+      "1"
+    ],
+    [
+      12211,
+      "2"
+    ],
+    [
+      134,
+      "3"
+    ],
+    [
+      12206,
+      "8"
+    ],
+    [
+      21260,
+      "1"
+    ],
+    [
+      12241,
+      "6"
+    ],
+    [
+      14326,
+      "1"
+    ],
+    [
+      12245,
+      "8"
+    ],
+    [
+      12203,
+      "3"
+    ],
+    [
+      99222,
+      "1750430851"
+    ],
+    [
+      14215,
+      "2"
+    ],
+    [
+      131,
+      "5"
+    ],
+    [
+      12706,
+      "1"
+    ],
+    [
+      3234,
+      "0"
+    ],
+    [
+      21250,
+      "1"
+    ],
+    [
+      12167,
+      "1"
+    ],
+    [
+      10155,
+      "0"
+    ],
+    [
+      21221,
+      "0"
+    ],
+    [
+      9045,
+      "500"
+    ],
+    [
+      22121,
+      "2"
+    ],
+    [
+      9043,
+      "1"
+    ],
+    [
+      60071,
+      "0"
+    ],
+    [
+      14327,
+      "1"
+    ],
+    [
+      16001,
+      "0"
+    ],
+    [
+      954,
+      "4"
+    ],
+    [
+      14032,
+      "3"
+    ],
+    [
+      52260,
+      "1"
+    ],
+    [
+      22583,
+      "0"
+    ],
+    [
+      12242,
+      "8"
+    ],
+    [
+      700001,
+      "1"
+    ],
+    [
+      21254,
+      "0"
+    ],
+    [
+      12703,
+      "1"
+    ],
+    [
+      12200,
+      "1"
+    ],
+    [
+      14212,
+      "2"
+    ],
+    [
+      800,
+      "1"
+    ],
+    [
+      3215,
+      "0"
+    ],
+    [
+      35855,
+      "0"
+    ],
+    [
+      142,
+      "9"
+    ],
+    [
+      12246,
+      "5"
+    ],
+    [
+      12120,
+      "1"
+    ],
+    [
+      12131,
+      "3"
+    ],
+    [
+      23197,
+      "0"
+    ],
+    [
+      14029,
+      "1"
+    ],
+    [
+      52257,
+      "1"
+    ],
+    [
+      18551,
+      "10"
+    ],
+    [
+      60001,
+      "6"
+    ],
+    [
+      21270,
+      "1"
+    ],
+    [
+      144,
+      "3"
+    ],
+    [
+      35857,
+      "1"
+    ],
+    [
+      10137,
+      "1"
+    ],
+    [
+      4101,
+      "1781396425"
+    ],
+    [
+      60053,
+      "0"
+    ],
+    [
+      3214,
+      "0"
+    ],
+    [
+      35854,
+      "1"
+    ],
+    [
+      141,
+      "3"
+    ],
+    [
+      964,
+      "0"
+    ],
+    [
+      21272,
+      "0"
+    ],
+    [
+      60003,
+      "1"
+    ],
+    [
+      7022026,
+      "1"
+    ],
+    [
+      35859,
+      "1"
+    ],
+    [
+      146,
+      "3"
+    ],
+    [
+      12164,
+      "3"
+    ],
+    [
+      21218,
+      "0"
+    ],
+    [
+      12250,
+      "5"
+    ],
+    [
+      9048,
+      "1"
+    ],
+    [
+      22126,
+      "0"
+    ],
+    [
+      12010,
+      "1"
+    ],
+    [
+      12212,
+      "6"
+    ],
+    [
+      5170,
+      "1"
+    ],
+    [
+      140,
+      "4"
+    ],
+    [
+      14201,
+      "14"
+    ],
+    [
+      9171,
+      "1"
+    ],
+    [
+      21243,
+      "1776561629"
+    ],
+    [
+      21241,
+      "1776561629"
+    ],
+    [
+      60028,
+      "0"
+    ],
+    [
+      12243,
+      "6"
+    ],
+    [
+      21297,
+      "1777166645"
+    ],
+    [
+      12700,
+      "1"
+    ],
+    [
+      1131,
+      "1774106742"
+    ],
+    [
+      21251,
+      "0"
+    ],
+    [
+      12701,
+      "3"
+    ],
+    [
+      21252,
+      "0"
+    ],
+    [
+      12702,
+      "2"
+    ],
+    [
+      21253,
+      "0"
+    ],
+    [
+      18007,
+      "3"
+    ],
+    [
+      19104,
+      "1776974255"
+    ],
+    [
+      10325,
+      "0"
+    ]
+  ],
+  "items": [
+    {
+      "name": "backpack",
+      "slotId": 3,
+      "clientId": 2854,
+      "itemId": 1988,
+      "count": 1,
+      "tier": 0,
+      "description": "a backpack (Vol:20).\nImbuements: (Empty Slot).\nIt weighs 1961.80 oz."
+    },
+    {
+      "name": "collar of blue plasma",
+      "slotId": 3,
+      "clientId": 23542,
+      "itemId": 26198,
+      "count": 1,
+      "tier": 0,
+      "description": "a collar of blue plasma that will expire in 4 minutes and 6 seconds.\nIt can only be wielded properly by paladins of level 150 or higher.\nIt weighs 5.00 oz."
+    },
+    {
+      "name": "prismatic ring",
+      "slotId": 3,
+      "clientId": 16114,
+      "itemId": 18408,
+      "count": 1,
+      "tier": 0,
+      "description": "a prismatic ring (protection physical +10%, energy +8%) that will expire in 37 minutes and 44 seconds.\nIt can only be wielded properly by players of level 120 or higher.\nIt weighs 1.05 oz."
+    },
+    {
+      "name": "prismatic necklace",
+      "slotId": 3,
+      "clientId": 16113,
+      "itemId": 18407,
+      "count": 1,
+      "tier": 0,
+      "description": "a prismatic necklace (protection physical +10%, energy +15%) that has 489 charges left.\nIt can only be wielded properly by players of level 150 or higher.\nIt weighs 6.50 oz."
+    },
+    {
+      "name": "void boots",
+      "slotId": 3,
+      "clientId": 23477,
+      "itemId": 26133,
+      "count": 2,
+      "tier": 0,
+      "description": "void boots that will expire in 53 minutes and 16 seconds.\nIt can only be wielded properly by players of level 150 or higher.\nIt weighs 15.00 oz."
+    },
+    {
+      "name": "energy ring",
+      "slotId": 3,
+      "clientId": 3051,
+      "itemId": 2167,
+      "count": 4,
+      "tier": 0,
+      "description": "an energy ring that will expire in 4 minutes and 10 seconds.\nIt can only be wielded properly by paladins, knights and monks.\nIt weighs 0.80 oz."
+    },
+    {
+      "name": "elite draken mail",
+      "slotId": 3,
+      "clientId": 11651,
+      "itemId": 12607,
+      "count": 2,
+      "tier": 0,
+      "description": "an elite draken mail (Arm:15, speed +10).\nClassification: 2 Tier: 0\nImbuements: (Powerful Vampirism 17:45h, Powerful Lich Shroud 17:45h).\nIt can only be wielded properly by knights, elite knights, paladins and royal paladins of level 100 or higher.\nIt weighs 120.00 oz."
+    },
+    {
+      "name": "embrace of nature",
+      "slotId": 3,
+      "clientId": 31579,
+      "itemId": 36293,
+      "count": 3,
+      "tier": 0,
+      "description": "an embrace of nature (Arm:16, distance fighting +4, protection energy -3%, ice +11%).\nClassification: 3 Tier: 0\nImbuements: (Powerful Demon Presence 19:16h).\nIt can only be wielded properly by paladins and royal paladins of level 220 or higher.\nIt weighs 24.00 oz."
+    },
+    {
+      "name": "amulet of loss",
+      "slotId": 3,
+      "clientId": 3057,
+      "itemId": 2173,
+      "count": 1,
+      "tier": 0,
+      "description": "an amulet of loss.\nIt weighs 4.20 oz."
+    },
+    {
+      "name": "animate dead rune",
+      "slotId": 3,
+      "clientId": 3203,
+      "itemId": 2316,
+      "count": 3,
+      "tier": 0,
+      "description": "3 animate dead runes. They can only be used by players with level 27 and magic level 4 or higher.\nThey weigh 6.30 oz."
+    },
+    {
+      "name": "magic wall rune",
+      "slotId": 3,
+      "clientId": 3180,
+      "itemId": 2293,
+      "count": 117,
+      "tier": 0,
+      "description": "17 magic wall runes. They can only be used by players with level 32 and magic level 9 or higher.\nThey weigh 11.90 oz."
+    },
+    {
+      "name": "adventurer's stone",
+      "slotId": 3,
+      "clientId": 16277,
+      "itemId": 18559,
+      "count": 1,
+      "tier": 0,
+      "description": "an adventurer's stone.\nIt weighs 0.30 oz.\nUse it in major temples to travel to the adventurers guild. A replacement is available at temples."
+    },
+    {
+      "name": "shopping bag",
+      "slotId": 3,
+      "clientId": 21411,
+      "itemId": 23782,
+      "count": 71,
+      "tier": 0,
+      "description": "a shopping bag (Vol:20).\nIt weighs 1654.75 oz."
+    },
+    {
+      "name": "teleport crystal",
+      "slotId": 3,
+      "clientId": 16167,
+      "itemId": 18457,
+      "count": 233,
+      "tier": 0,
+      "description": "33 teleport crystals.\nThey weigh 14.85 oz.\nSuch crystals are used to charge the long range teleporters to the cities."
+    },
+    {
+      "name": "great spirit potion",
+      "slotId": 3,
+      "clientId": 7642,
+      "itemId": 8472,
+      "count": 2,
+      "tier": 0,
+      "description": "2 great spirit potions.\nThey weigh 6.20 oz.\nIt can only be consumed by paladins and monks of level 80 or higher."
+    },
+    {
+      "name": "might ring",
+      "slotId": 3,
+      "clientId": 3048,
+      "itemId": 2164,
+      "count": 1,
+      "tier": 0,
+      "description": "a might ring (protection physical +20%, energy +20%, earth +20%, fire +20%, ice +20%, holy +20%, death +20%) that has 11 charges left.\nIt weighs 1.00 oz."
+    },
+    {
+      "name": "destroy field rune",
+      "slotId": 3,
+      "clientId": 3148,
+      "itemId": 2261,
+      "count": 245,
+      "tier": 0,
+      "description": "96 destroy field runes. They can only be used by players with level 17 and magic level 3 or higher.\nThey weigh 67.20 oz."
+    },
+    {
+      "name": "mushroom backpack",
+      "slotId": 3,
+      "clientId": 16099,
+      "itemId": 18393,
+      "count": 1,
+      "tier": 0,
+      "description": "a mushroom backpack (Vol:20).\nImbuements: (Empty Slot).\nIt weighs 18.00 oz."
+    },
+    {
+      "name": "brown mushroom",
+      "slotId": 3,
+      "clientId": 3725,
+      "itemId": 2789,
+      "count": 185,
+      "tier": 0,
+      "description": "85 brown mushrooms.\nThey weigh 17.00 oz."
+    },
+    {
+      "name": "machete",
+      "slotId": 3,
+      "clientId": 3308,
+      "itemId": 2420,
+      "count": 1,
+      "tier": 0,
+      "description": "a machete (Atk:12, Def:9).\nClassification: 1 Tier: 0\nIt weighs 16.50 oz."
+    },
+    {
+      "name": "sliver",
+      "slotId": 3,
+      "clientId": 37109,
+      "itemId": 43332,
+      "count": 3,
+      "tier": 0,
+      "description": "3 slivers.\nThey weigh 0.30 oz.\nThis item can be used in the exaltation forge to create exalted cores."
+    },
+    {
+      "name": "harness",
+      "slotId": 3,
+      "clientId": 12307,
+      "itemId": 13294,
+      "count": 11,
+      "tier": 0,
+      "description": "a harness.\nIt weighs 2.00 oz.\nA hermit near Carlin might be able to tell you more about it."
+    },
+    {
+      "name": "red quiver",
+      "slotId": 5,
+      "clientId": 35849,
+      "itemId": 41552,
+      "count": 1,
+      "tier": 0,
+      "description": "a red quiver.\nIt can only be wielded properly by paladins.\nIt weighs 17.00 oz."
+    },
+    {
+      "name": "naga crossbow",
+      "slotId": 6,
+      "clientId": 39159,
+      "itemId": 46654,
+      "count": 1,
+      "tier": 0,
+      "description": "a naga crossbow (Range: 6, Atk +8, Hit% +6, distance fighting +1, protection earth +4%).\nClassification: 4 Tier: 0\nImbuements: (Powerful Strike 14:15h, Powerful Precision 14:15h, Powerful Void 14:15h).\nIt can only be wielded properly by paladins of level 300 or higher.\nIt weighs 102.00 oz."
+    },
+    {
+      "name": "your battle pass inbox",
+      "slotId": 12,
+      "clientId": 63592,
+      "itemId": 71477,
+      "count": 1,
+      "tier": 0,
+      "description": "your battle pass inbox (Vol:20).\nIt weighs 2.30 oz."
+    },
+    {
+      "name": "physical amplification",
+      "slotId": 12,
+      "clientId": 36742,
+      "itemId": 42826,
+      "count": 1,
+      "tier": 0,
+      "description": "a physical amplification.\nIt weighs 2.30 oz.\nDrinking this potion temporarily amplifies physical damage against monsters."
+    },
+    {
+      "name": "bag",
+      "slotId": 1,
+      "clientId": 2853,
+      "itemId": 1987,
+      "count": 1,
+      "tier": 0,
+      "description": "a bag (Vol:8).\nIt weighs 8.00 oz."
+    },
+    {
+      "name": "great mana potion",
+      "slotId": 1,
+      "clientId": 7590,
+      "itemId": 7590,
+      "count": 286,
+      "tier": 0,
+      "description": "They can only be consumed by paladins, sorcerers, druids and monks of level 80 or higher."
+    },
+    {
+      "name": "draken trophy",
+      "slotId": 1,
+      "clientId": 11315,
+      "itemId": 11315,
+      "count": 1,
+      "tier": 0,
+      "description": ""
+    },
+    {
+      "name": "bamboo leaves",
+      "slotId": 1,
+      "clientId": 13538,
+      "itemId": 13538,
+      "count": 16,
+      "tier": 0,
+      "description": "A hermit near Carlin might be able to tell you more about it."
+    },
+    {
+      "name": "gill necklace",
+      "slotId": 1,
+      "clientId": 18402,
+      "itemId": 18402,
+      "count": 1,
+      "tier": 0,
+      "description": ""
+    },
+    {
+      "name": "cluster of solace",
+      "slotId": 1,
+      "clientId": 22396,
+      "itemId": 22396,
+      "count": 11,
+      "tier": 0,
+      "description": ""
+    },
+    {
+      "name": "ultimate spirit potion",
+      "slotId": 1,
+      "clientId": 26030,
+      "itemId": 26030,
+      "count": 792,
+      "tier": 0,
+      "description": "It can only be consumed by paladins and monks of level 130 or higher."
+    },
+    {
+      "name": "folded void carpet",
+      "slotId": 1,
+      "clientId": 26192,
+      "itemId": 26192,
+      "count": 1,
+      "tier": 0,
+      "description": "This carpet is extremely soft to the touch - and forever will be."
+    },
+    {
+      "name": "diamond arrow",
+      "slotId": 1,
+      "clientId": 41604,
+      "itemId": 41604,
+      "count": 2118,
+      "tier": 0,
+      "description": ""
+    }
+  ],
+  "itemsTotal": 35,
+  "storeItems": [
+    {
+      "name": "lasting exercise bow",
+      "slotId": 11,
+      "clientId": 35288,
+      "itemId": 41000,
+      "count": 3,
+      "tier": 0,
+      "description": "an lasting exercise bow that has 5000 charges left.\nIt weighs 10.00 oz."
+    },
+    {
+      "name": "lasting exercise rod",
+      "slotId": 11,
+      "clientId": 35289,
+      "itemId": 41001,
+      "count": 5,
+      "tier": 0,
+      "description": "an lasting exercise rod that has 5000 charges left.\nIt weighs 10.00 oz."
+    },
+    {
+      "name": "decoration kit",
+      "slotId": 11,
+      "clientId": 38707,
+      "itemId": 46202,
+      "count": 1,
+      "tier": 0,
+      "description": "a decoration kit.\nYou bought this item in the Store.\nUnwrap it in your own house to create a <podium of vigour>."
+    }
+  ],
+  "storeItemsTotal": 3,
+  "outfits": [
+    {
+      "id": 128,
+      "addons": 0,
+      "info": {
+        "id": 1,
+        "type": 1,
+        "looktype": 128,
+        "name": "Citizen",
+        "premium": false,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 129,
+      "addons": 0,
+      "info": {
+        "id": 2,
+        "type": 1,
+        "looktype": 129,
+        "name": "Hunter",
+        "premium": false,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 130,
+      "addons": 0,
+      "info": {
+        "id": 3,
+        "type": 1,
+        "looktype": 130,
+        "name": "Mage",
+        "premium": false,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 131,
+      "addons": 0,
+      "info": {
+        "id": 4,
+        "type": 1,
+        "looktype": 131,
+        "name": "Knight",
+        "premium": false,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 132,
+      "addons": 0,
+      "info": {
+        "id": 5,
+        "type": 1,
+        "looktype": 132,
+        "name": "Nobleman",
+        "premium": true,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 133,
+      "addons": 0,
+      "info": {
+        "id": 6,
+        "type": 1,
+        "looktype": 133,
+        "name": "Summoner",
+        "premium": true,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 134,
+      "addons": 0,
+      "info": {
+        "id": 7,
+        "type": 1,
+        "looktype": 134,
+        "name": "Warrior",
+        "premium": true,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 143,
+      "addons": 0,
+      "info": {
+        "id": 8,
+        "type": 1,
+        "looktype": 143,
+        "name": "Barbarian",
+        "premium": true,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 144,
+      "addons": 0,
+      "info": {
+        "id": 9,
+        "type": 1,
+        "looktype": 144,
+        "name": "Druid",
+        "premium": true,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 145,
+      "addons": 0,
+      "info": {
+        "id": 10,
+        "type": 1,
+        "looktype": 145,
+        "name": "Wizard",
+        "premium": true,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 146,
+      "addons": 0,
+      "info": {
+        "id": 11,
+        "type": 1,
+        "looktype": 146,
+        "name": "Oriental",
+        "premium": true,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 619,
+      "addons": 0,
+      "info": {
+        "id": 36,
+        "type": 1,
+        "looktype": 619,
+        "name": "Jersey",
+        "premium": true,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 1824,
+      "addons": 0,
+      "info": {
+        "id": 124,
+        "type": 1,
+        "looktype": 1824,
+        "name": "Monk",
+        "premium": false,
+        "unlocked": true,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 289,
+      "addons": 0,
+      "info": {
+        "id": 20,
+        "type": 1,
+        "looktype": 289,
+        "name": "Demon Hunter",
+        "premium": true,
+        "unlocked": false,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 154,
+      "addons": 0,
+      "info": {
+        "id": 15,
+        "type": 1,
+        "looktype": 154,
+        "name": "Shaman",
+        "premium": true,
+        "unlocked": false,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 335,
+      "addons": 0,
+      "info": {
+        "id": 23,
+        "type": 1,
+        "looktype": 335,
+        "name": "Warmaster",
+        "premium": true,
+        "unlocked": false,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 251,
+      "addons": 0,
+      "info": {
+        "id": 16,
+        "type": 1,
+        "looktype": 251,
+        "name": "Norseman",
+        "premium": true,
+        "unlocked": false,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 152,
+      "addons": 0,
+      "info": {
+        "id": 13,
+        "type": 1,
+        "looktype": 152,
+        "name": "Assassin",
+        "premium": true,
+        "unlocked": false,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 325,
+      "addons": 1,
+      "info": {
+        "id": 21,
+        "type": 1,
+        "looktype": 325,
+        "name": "Yalaharian",
+        "premium": true,
+        "unlocked": false,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    },
+    {
+      "id": 151,
+      "addons": 0,
+      "info": {
+        "id": 12,
+        "type": 1,
+        "looktype": 151,
+        "name": "Pirate",
+        "premium": true,
+        "unlocked": false,
+        "enabled": true,
+        "source": "quest",
+        "resetable": true
+      }
+    }
+  ],
+  "mounts": [
+    {
+      "id": 167,
+      "name": "Savanna Ostrich",
+      "clientId": 1309
+    },
+    {
+      "id": 168,
+      "name": "Coral Rhea",
+      "clientId": 1310
+    },
+    {
+      "id": 169,
+      "name": "Eventide Nandu",
+      "clientId": 1311
+    },
+    {
+      "id": 82,
+      "name": "Noctungra",
+      "clientId": 739
+    }
+  ],
+  "familiars": [],
+  "charms": [
+    {
+      "id": 17,
+      "tier": 0,
+      "raceId": 1798,
+      "type": "minor"
+    },
+    {
+      "id": 0,
+      "tier": 0,
+      "raceId": 618,
+      "type": "major"
+    },
+    {
+      "id": 3,
+      "tier": 0,
+      "raceId": 617,
+      "type": "major"
+    },
+    {
+      "id": 18,
+      "tier": 0,
+      "raceId": 1799,
+      "type": "minor"
+    }
+  ],
+  "blessings": [
+    {
+      "name": "Wisdom of Solitude",
+      "count": 1
+    },
+    {
+      "name": "Spark of the Phoenix",
+      "count": 2
+    },
+    {
+      "name": "Fire of the Suns",
+      "count": 2
+    },
+    {
+      "name": "Spiritual Shielding",
+      "count": 2
+    },
+    {
+      "name": "Embrace of Tibia",
+      "count": 2
+    },
+    {
+      "name": "Heart of the Mountain",
+      "count": 2
+    },
+    {
+      "name": "Blood of the Mountain",
+      "count": 2
+    },
+    {
+      "name": "Twist of Fate",
+      "count": 2
+    }
+  ],
+  "titles": [
+    55,
+    24,
+    38,
+    39,
+    56,
+    57,
+    40,
+    41,
+    42,
+    43,
+    25,
+    74
+  ],
+  "gems": [],
+  "basicModUpgrades": {},
+  "supremeModUpgrades": {},
+  "bestiaryCompleted": [
+    {
+      "raceId": 617,
+      "kills": 57486,
+      "gained": true
+    },
+    {
+      "raceId": 618,
+      "kills": 36592,
+      "gained": true
+    },
+    {
+      "raceId": 1798,
+      "kills": 3736,
+      "gained": true
+    },
+    {
+      "raceId": 1799,
+      "kills": 3456,
+      "gained": true
+    },
+    {
+      "raceId": 1022,
+      "kills": 3432,
+      "gained": true
+    },
+    {
+      "raceId": 1234,
+      "kills": 3356,
+      "gained": true
+    },
+    {
+      "raceId": 1224,
+      "kills": 3208,
+      "gained": true
+    },
+    {
+      "raceId": 291,
+      "kills": 3196,
+      "gained": true
+    },
+    {
+      "raceId": 1235,
+      "kills": 3024,
+      "gained": true
+    },
+    {
+      "raceId": 1260,
+      "kills": 2806,
+      "gained": true
+    },
+    {
+      "raceId": 1800,
+      "kills": 2504,
+      "gained": true
+    },
+    {
+      "raceId": 519,
+      "kills": 1744,
+      "gained": true
+    },
+    {
+      "raceId": 287,
+      "kills": 1520,
+      "gained": true
+    },
+    {
+      "raceId": 284,
+      "kills": 1460,
+      "gained": true
+    },
+    {
+      "raceId": 1014,
+      "kills": 1276,
+      "gained": true
+    }
+  ],
+  "bestiaryTotal": 134,
+  "mastery": [],
+  "bosstiaries": [
+    {
+      "id": 1801,
+      "name": "scarlett etzel",
+      "kills": 1,
+      "gained1": false,
+      "gained2": false,
+      "gained3": false
+    },
+    {
+      "id": 1226,
+      "name": "eradicator",
+      "kills": 1,
+      "gained1": false,
+      "gained2": false,
+      "gained3": false
+    },
+    {
+      "id": 1227,
+      "name": "outburst",
+      "kills": 1,
+      "gained1": false,
+      "gained2": false,
+      "gained3": false
+    },
+    {
+      "id": 1219,
+      "name": "anomaly",
+      "kills": 1,
+      "gained1": false,
+      "gained2": false,
+      "gained3": false
+    },
+    {
+      "id": 892,
+      "name": "deathstrike",
+      "kills": 1,
+      "gained1": false,
+      "gained2": false,
+      "gained3": false
+    },
+    {
+      "id": 1218,
+      "name": "realityquake",
+      "kills": 1,
+      "gained1": false,
+      "gained2": false,
+      "gained3": false
+    },
+    {
+      "id": 893,
+      "name": "gnomevil",
+      "kills": 1,
+      "gained1": false,
+      "gained2": false,
+      "gained3": false
+    },
+    {
+      "id": 1901,
+      "name": "goshnar's malice",
+      "kills": 1,
+      "gained1": false,
+      "gained2": false,
+      "gained3": false
+    },
+    {
+      "id": 1225,
+      "name": "rupture",
+      "kills": 1,
+      "gained1": false,
+      "gained2": false,
+      "gained3": false
+    },
+    {
+      "id": 887,
+      "name": "abyssador",
+      "kills": 1,
+      "gained1": false,
+      "gained2": false,
+      "gained3": false
+    }
+  ],
+  "bosstiariosTotal": 10,
+  "weaponProficiency": [
+    {
+      "itemId": 18454,
+      "experience": 175700,
+      "weaponLevel": 3,
+      "masteryAchieved": false,
+      "activePerks": [
+        {
+          "lane": 0,
+          "index": 0
+        },
+        {
+          "lane": 1,
+          "index": 1
+        },
+        {
+          "lane": 2,
+          "index": 1
+        }
+      ]
+    },
+    {
+      "itemId": 7367,
+      "experience": 64595,
+      "weaponLevel": 2,
+      "masteryAchieved": false,
+      "activePerks": [
+        {
+          "lane": 0,
+          "index": 0
+        },
+        {
+          "lane": 1,
+          "index": 0
+        }
+      ]
+    },
+    {
+      "itemId": 8855,
+      "experience": 33263,
+      "weaponLevel": 2,
+      "masteryAchieved": false,
+      "activePerks": [
+        {
+          "lane": 0,
+          "index": 0
+        },
+        {
+          "lane": 1,
+          "index": 0
+        }
+      ]
+    },
+    {
+      "itemId": 25522,
+      "experience": 181945,
+      "weaponLevel": 3,
+      "masteryAchieved": false,
+      "activePerks": [
+        {
+          "lane": 0,
+          "index": 0
+        },
+        {
+          "lane": 1,
+          "index": 0
+        },
+        {
+          "lane": 2,
+          "index": 1
+        }
+      ]
+    },
+    {
+      "itemId": 30690,
+      "experience": 10343447,
+      "weaponLevel": 6,
+      "masteryAchieved": false,
+      "activePerks": [
+        {
+          "lane": 0,
+          "index": 0
+        },
+        {
+          "lane": 1,
+          "index": 0
+        },
+        {
+          "lane": 2,
+          "index": 1
+        },
+        {
+          "lane": 3,
+          "index": 0
+        },
+        {
+          "lane": 4,
+          "index": 0
+        }
+      ]
+    },
+    {
+      "itemId": 46654,
+      "experience": 368764,
+      "weaponLevel": 4,
+      "masteryAchieved": false,
+      "activePerks": [
+        {
+          "lane": 0,
+          "index": 0
+        },
+        {
+          "lane": 1,
+          "index": 0
+        },
+        {
+          "lane": 2,
+          "index": 0
+        },
+        {
+          "lane": 3,
+          "index": 0
+        }
+      ]
+    }
+  ],
+  "highlightItems": [],
+  "highlightAugments": [
+    {
+      "text": "122 distance fighting (Loyalty bonus not included)",
+      "argType": 0
+    },
+    {
+      "text": "618 Level",
+      "argType": 0
+    }
+  ],
+  "auras": [],
+  "loginScreens": [],
+  "battlepassSeasons": [
+    {
+      "season": 4,
+      "points": 300,
+      "active": 0,
+      "shoppoints": 0,
+      "steps": []
+    },
+    {
+      "season": 3,
+      "points": 2850,
+      "active": 0,
+      "shoppoints": 0,
+      "steps": [
+        {
+          "stepId": 4,
+          "claimedAt": 1772849605201
+        },
+        {
+          "stepId": 20,
+          "claimedAt": 1772895687281
+        },
+        {
+          "stepId": 16,
+          "claimedAt": 1772895691584
+        },
+        {
+          "stepId": 12,
+          "claimedAt": 1772895695828
+        },
+        {
+          "stepId": 8,
+          "claimedAt": 1772915238456
+        }
+      ]
+    }
+  ],
+  "achievements": [
+    {
+      "id": 232,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 290,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 377,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 263,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 354,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 374,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 79,
+      "unlockedAt": 1757365748
+    },
+    {
+      "id": 57,
+      "unlockedAt": 1757365709
+    },
+    {
+      "id": 434,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 80,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 257,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 394,
+      "unlockedAt": 1754590986
+    },
+    {
+      "id": 276,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 453,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 247,
+      "unlockedAt": 1754669869
+    },
+    {
+      "id": 16,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 248,
+      "unlockedAt": 1749978718
+    },
+    {
+      "id": 366,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 78,
+      "unlockedAt": 1753818606
+    },
+    {
+      "id": 356,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 46,
+      "unlockedAt": 1757365762
+    },
+    {
+      "id": 242,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 378,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 1,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 329,
+      "unlockedAt": 1753818606
+    },
+    {
+      "id": 270,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 328,
+      "unlockedAt": 1753818606
+    },
+    {
+      "id": 277,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 159,
+      "unlockedAt": 1749978718
+    },
+    {
+      "id": 81,
+      "unlockedAt": 1753818606
+    },
+    {
+      "id": 380,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 289,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 280,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 398,
+      "unlockedAt": 1771103132
+    },
+    {
+      "id": 382,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 441,
+      "unlockedAt": 1774311348
+    },
+    {
+      "id": 128,
+      "unlockedAt": 1753818606
+    },
+    {
+      "id": 186,
+      "unlockedAt": 1776013843
+    },
+    {
+      "id": 363,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 243,
+      "unlockedAt": 1749978718
+    },
+    {
+      "id": 330,
+      "unlockedAt": 1753818606
+    },
+    {
+      "id": 63,
+      "unlockedAt": 1757365726
+    },
+    {
+      "id": 4,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 294,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 77,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 372,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 343,
+      "unlockedAt": 1753818606
+    },
+    {
+      "id": 228,
+      "unlockedAt": 1754501326
+    },
+    {
+      "id": 169,
+      "unlockedAt": 1749978718
+    }
+  ],
+  "bountyTalismans": [
+    {
+      "type": 0,
+      "level": 0,
+      "effectValue": 0.025
+    },
+    {
+      "type": 1,
+      "level": 0,
+      "effectValue": 0.025
+    },
+    {
+      "type": 2,
+      "level": 0,
+      "effectValue": 0.025
+    },
+    {
+      "type": 3,
+      "level": 0,
+      "effectValue": 0.05
+    }
+  ],
+  "bountyPoints": 16,
+  "totalBountyPoints": 16,
+  "bountyRerolls": 1,
+  "hirelingSkills": [],
+  "hirelingWardrobe": []
+}
