@@ -42,46 +42,76 @@ async function main() {
     defaultViewport: null,
   })
   const page = await browser.newPage()
+
+  // Captura toda imagem carregada pela rede (fonte definitiva)
+  const netImages = new Set<string>()
+  page.on('response', (res: any) => {
+    const ct = res.headers()['content-type'] || ''
+    const u = res.url()
+    if (/^image\//.test(ct) || /\.(gif|png|webp)(\?|$)/i.test(u)) netImages.add(u)
+  })
+
   await page.goto(URL, { waitUntil: 'networkidle0', timeout: 60000 })
   await sleep(6000)
-  // rola até o fim para carregar imagens lazy
+  // rola devagar até o fim para disparar lazy-load
   await page.evaluate(async () => {
-    for (let y = 0; y < document.body.scrollHeight; y += 800) {
+    for (let y = 0; y < document.body.scrollHeight * 2; y += 400) {
       window.scrollTo(0, y)
-      await new Promise(r => setTimeout(r, 120))
+      await new Promise(r => setTimeout(r, 250))
     }
+    window.scrollTo(0, 0)
   })
-  await sleep(1500)
+  await sleep(2500)
 
-  // Extrai pares {nome, src}: imagem + nome (alt/title/legenda/célula vizinha)
+  // Extrai pares {nome, src} considerando lazy (data-src/srcset) e background-image
   const entries: Array<{ name: string; src: string }> = await page.evaluate(() => {
     const out: Array<{ name: string; src: string }> = []
     const seen = new Set<string>()
-    document.querySelectorAll<HTMLImageElement>('img').forEach(img => {
-      const src = img.currentSrc || img.src
+    const push = (name: string, src: string) => {
       if (!src || src.startsWith('data:')) return
-      // ignora ícones/logos pequenos
-      if ((img.naturalWidth && img.naturalWidth < 24) || /logo|icon|sprite-sheet|flag/i.test(src)) return
-      // nome: alt/title, senão legenda/figcaption, senão texto do container/célula
-      let name =
-        (img.getAttribute('alt') || img.getAttribute('title') || '').trim()
-      if (!name) {
-        const fig = img.closest('figure')?.querySelector('figcaption')?.textContent
-        const cell = img.closest('td, li, .gallerybox, [class*="card"]')?.textContent
-        name = (fig || cell || '').trim()
-      }
-      name = name.replace(/\s+/g, ' ').slice(0, 40).trim()
+      name = (name || '').replace(/\s+/g, ' ').slice(0, 40).trim()
       if (!name) return
-      const key = name.toLowerCase()
+      const key = name.toLowerCase() + '|' + src
       if (seen.has(key)) return
       seen.add(key)
       out.push({ name, src })
+    }
+    document.querySelectorAll<HTMLElement>('img, [style*="background-image"]').forEach(el => {
+      const img = el as HTMLImageElement
+      const src =
+        img.currentSrc ||
+        img.src ||
+        img.getAttribute('data-src') ||
+        img.getAttribute('data-original') ||
+        img.getAttribute('data-lazy-src') ||
+        (img.getAttribute('srcset') || '').split(' ')[0] ||
+        (getComputedStyle(el).backgroundImage.match(/url\(["']?([^"')]+)["']?\)/)?.[1] ?? '')
+      if (!src) return
+      const name =
+        el.getAttribute('alt') ||
+        el.getAttribute('title') ||
+        el.closest('figure')?.querySelector('figcaption')?.textContent ||
+        el.closest('td, li, .gallerybox, [class*="card"], [class*="item"]')?.textContent ||
+        ''
+      push(name, src)
     })
     return out
   })
 
-  fs.writeFileSync(SAMPLE, JSON.stringify({ url: URL, count: entries.length, sample: entries.slice(0, 40) }, null, 2))
-  console.log(`🔎 ${entries.length} imagens encontradas (amostra em output/wikiSample-${KIND}.json)`)
+  fs.writeFileSync(
+    SAMPLE,
+    JSON.stringify(
+      {
+        url: URL,
+        domImages: entries.length,
+        domSample: entries.slice(0, 50),
+        networkImages: [...netImages].slice(0, 120),
+      },
+      null,
+      2,
+    ),
+  )
+  console.log(`🔎 DOM: ${entries.length} | rede: ${netImages.size} imagens (amostra em output/wikiSample-${KIND}.json)`)
 
   const download = (src: string) =>
     page.evaluate(async (u: string) => {
