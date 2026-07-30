@@ -6,6 +6,21 @@ export interface WardrobeItem {
   store: boolean
   male?: boolean
   female?: boolean
+  /** lookType do outfit por sexo — usado no fallback via outfit-proxy da wiki. */
+  ltMale?: number
+  ltFemale?: number
+}
+
+/**
+ * Template do outfit-proxy da wiki do RubinOT (cobre até os outfits exclusivos).
+ * Placeholders: {type} = lookType, {addons} = 0-3.
+ */
+const OUTFIT_PROXY =
+  (import.meta.env.VITE_OUTFIT_PROXY_URL as string | undefined) ??
+  'https://wiki.rubinot.com/api/outfit-proxy?type={type}&head=78&body=106&legs=79&feet=0&addons={addons}&direction=3&animated=0&walk=0&size=0'
+
+function proxyUrl(lookType: number, addons: number): string {
+  return OUTFIT_PROXY.replace('{type}', String(lookType)).replace('{addons}', String(addons))
 }
 
 interface Wardrobe {
@@ -36,10 +51,14 @@ function imageSources(item: WardrobeItem, kind: 'outfit' | 'mount', sex: 'male' 
   if (kind === 'outfit') {
     const folder = item.store ? 'storeoutfits' : 'outfits'
     const addons = [...new Set([previewAddon, 3, 2, 1, 0])]
+    const lt = sex === 'male' ? item.ltMale : item.ltFemale
     return [
       ...addons.map(a => `/sprites/${folder}/${sex}/${n}_${a}.gif`),
       `/sprites/wiki/outfits/${n}.gif`,
       `/sprites/wiki/outfits/${n}.png`,
+      // Fallback definitivo: gera o outfit por lookType direto no proxy da wiki,
+      // cobrindo os outfits exclusivos que não temos como sprite local.
+      ...(lt ? [proxyUrl(lt, previewAddon)] : []),
     ]
   }
   const folder = item.store ? 'storemounts' : 'mounts'

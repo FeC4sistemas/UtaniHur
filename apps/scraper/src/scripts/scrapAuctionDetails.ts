@@ -140,7 +140,8 @@ async function main() {
   // Catálogo global de outfits/mounts (para o seletor), montado a partir dos
   // dados reais — assim os nomes batem exatamente com os do filtro.
   const wardrobeFile = path.resolve(__dirname, '../../../web/public/wardrobe.json')
-  const wOut = new Map<string, { name: string; store: boolean; male: boolean; female: boolean }>()
+  type WOut = { name: string; store: boolean; male: boolean; female: boolean; ltMale?: number; ltFemale?: number }
+  const wOut = new Map<string, WOut>()
   const wMnt = new Map<string, { name: string; store: boolean }>()
   // Mescla com o wardrobe.json existente (mantém flags de store dos mounts, vindas das pastas)
   try {
@@ -155,10 +156,18 @@ async function main() {
     for (const o of body?.outfits ?? []) {
       const info = o?.info
       if (!info?.name) continue
-      const e = wOut.get(info.name) ?? { name: info.name, store: false, male: false, female: false }
+      const e: WOut = wOut.get(info.name) ?? { name: info.name, store: false, male: false, female: false }
       if (info.source === 'store') e.store = true
-      if (sex === 0) e.male = true
-      else e.female = true
+      // lookType por sexo → o seletor usa o outfit-proxy da wiki como fallback,
+      // cobrindo até os outfits exclusivos do RubinOT (sem baixar nada).
+      const lt = num(info.looktype ?? info.lookType ?? info.type)
+      if (sex === 0) {
+        e.male = true
+        if (lt) e.ltMale = lt
+      } else {
+        e.female = true
+        if (lt) e.ltFemale = lt
+      }
       wOut.set(info.name, e)
     }
     for (const m of body?.mounts ?? []) {
