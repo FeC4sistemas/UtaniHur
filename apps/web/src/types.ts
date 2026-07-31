@@ -25,6 +25,8 @@ export interface AuctionExtra {
   thirdHunting?: boolean
   charmExpansion?: boolean
   permanentWeeklyTaskSlot?: boolean
+  /** Gold Pouch ativo (item de store que auto-coleta gold). */
+  gpActive?: boolean
 }
 
 export interface HighlightItem {
@@ -116,7 +118,12 @@ export interface AuctionFilters {
   minBoss: string
   minMounts: string
   minOutfits: string
+  /** Itens/features de store (flags do detalhe do leilão). */
   charmExpansion: boolean
+  hireling: boolean
+  preySlot: boolean
+  weeklyTask: boolean
+  goldPouch: boolean
   outfits: string[]
   mounts: string[]
   reqAddon1: boolean
@@ -143,6 +150,10 @@ export const EMPTY_FILTERS: AuctionFilters = {
   minMounts: '',
   minOutfits: '',
   charmExpansion: false,
+  hireling: false,
+  preySlot: false,
+  weeklyTask: false,
+  goldPouch: false,
   outfits: [],
   mounts: [],
   reqAddon1: false,
