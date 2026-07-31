@@ -41,18 +41,22 @@ function QuestPicker({ all = [], selected, onChange }: { all?: string[]; selecte
   )
 }
 
-const VOCATION_CHIPS = [
-  { id: 8, label: 'EK', title: 'Knight' },
-  { id: 7, label: 'RP', title: 'Paladin' },
-  { id: 5, label: 'MS', title: 'Sorcerer' },
-  { id: 6, label: 'ED', title: 'Druid' },
-  { id: 10, label: 'EM', title: 'Monk' },
+const ICON_BASE = '/sprites/images/'
+// id = vocação promovida (família); o filtro inclui a base via VOCATION_FAMILY.
+// icon = png em public/sprites/images; emoji = fallback quando não há png.
+const VOCATION_CHIPS: Array<{ id: number; label: string; icon?: string; emoji?: string }> = [
+  { id: 0, label: 'None', icon: 'rook.png' },
+  { id: 8, label: 'Knight', icon: 'knight.png' },
+  { id: 7, label: 'Paladin', icon: 'paladin.png' },
+  { id: 5, label: 'Sorcerer', icon: 'sorcerer.png' },
+  { id: 6, label: 'Druid', icon: 'druid.png' },
+  { id: 10, label: 'Monk', emoji: '🥋' },
 ]
 
-const PVP_CHIPS: Array<{ value: NonNullable<AuctionFilters['pvp']>; label: string }> = [
-  { value: 'pvp', label: 'Open PvP' },
-  { value: 'no-pvp', label: 'Optional' },
-  { value: 'pvp-enforced', label: 'Retro' },
+const PVP_CHIPS: Array<{ value: NonNullable<AuctionFilters['pvp']>; label: string; icon: string }> = [
+  { value: 'no-pvp', label: 'Optional', icon: 'dove.png' },
+  { value: 'pvp', label: 'Open', icon: 'whiteSkull.png' },
+  { value: 'pvp-enforced', label: 'Retro', icon: 'blackSkull.png' },
 ]
 
 const SKILL_OPTIONS: Array<{ key: SkillKey; label: string; icon: string }> = [
@@ -231,11 +235,16 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
                 <button
                   key={v.id}
                   type="button"
-                  title={v.title}
+                  title={v.label}
                   aria-pressed={draft.vocation === v.id}
                   onClick={() => set('vocation', draft.vocation === v.id ? null : v.id)}
                   className={chipCls(draft.vocation === v.id)}
                 >
+                  {v.icon ? (
+                    <img src={ICON_BASE + v.icon} alt="" className="pixelated h-4 w-4 object-contain" />
+                  ) : (
+                    <span aria-hidden>{v.emoji}</span>
+                  )}
                   {v.label}
                 </button>
               ))}
@@ -284,10 +293,12 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
                 <button
                   key={p.value}
                   type="button"
+                  title={p.label}
                   aria-pressed={draft.pvp === p.value}
                   onClick={() => set('pvp', draft.pvp === p.value ? null : p.value)}
                   className={chipCls(draft.pvp === p.value)}
                 >
+                  <img src={ICON_BASE + p.icon} alt="" className="pixelated h-4 w-4 object-contain" />
                   {p.label}
                 </button>
               ))}
