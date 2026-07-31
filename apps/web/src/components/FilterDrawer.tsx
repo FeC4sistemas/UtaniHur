@@ -53,10 +53,10 @@ const VOCATION_CHIPS: Array<{ id: number; label: string; icon?: string; emoji?: 
   { id: 10, label: 'Monk', emoji: '🥋' },
 ]
 
-const PVP_CHIPS: Array<{ value: NonNullable<AuctionFilters['pvp']>; label: string }> = [
-  { value: 'pvp', label: 'Open PvP' },
-  { value: 'no-pvp', label: 'Optional' },
-  { value: 'pvp-enforced', label: 'Retro' },
+const PVP_CHIPS: Array<{ value: NonNullable<AuctionFilters['pvp']>; label: string; icon: string }> = [
+  { value: 'no-pvp', label: 'Optional', icon: 'dove.png' },
+  { value: 'pvp', label: 'Open', icon: 'whiteSkull.png' },
+  { value: 'pvp-enforced', label: 'Retro', icon: 'blackSkull.png' },
 ]
 
 const SKILL_OPTIONS: Array<{ key: SkillKey; label: string; icon: string }> = [
@@ -293,10 +293,12 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
                 <button
                   key={p.value}
                   type="button"
+                  title={p.label}
                   aria-pressed={draft.pvp === p.value}
                   onClick={() => set('pvp', draft.pvp === p.value ? null : p.value)}
                   className={chipCls(draft.pvp === p.value)}
                 >
+                  <img src={ICON_BASE + p.icon} alt="" className="pixelated h-4 w-4 object-contain" />
                   {p.label}
                 </button>
               ))}
