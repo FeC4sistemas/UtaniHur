@@ -10,6 +10,7 @@
     "sprites:rubinot": "ts-node src/scripts/scrapBazaarSprites.ts",
     "boosted": "ts-node src/scripts/scrapBoosted.ts",
     "details": "ts-node src/scripts/scrapAuctionDetails.ts",
+  "storescan": "ts-node src/scripts/scrapStoreItems.ts",
     "quests": "ts-node src/scripts/scrapQuests.ts",
     "quests:sample": "ts-node src/scripts/scrapQuestsSample.ts",
     "wiki:outfits": "ts-node src/scripts/scrapWiki.ts outfits",
