@@ -105,10 +105,10 @@ export interface AuctionFilters {
   sex: number | null
   minLevel: string
   maxLevel: string
-  minMagLevel: string
-  maxMagLevel: string
-  skillKey: SkillKey | null
+  /** Skills selecionadas (multi). Match = QUALQUER uma dentro de [minSkill, maxSkill]. */
+  skills: SkillKey[]
   minSkill: string
+  maxSkill: string
   minPrice: string
   maxPrice: string
   hasBid: HasBid | null
@@ -132,10 +132,9 @@ export const EMPTY_FILTERS: AuctionFilters = {
   sex: null,
   minLevel: '',
   maxLevel: '',
-  minMagLevel: '',
-  maxMagLevel: '',
-  skillKey: null,
+  skills: [],
   minSkill: '',
+  maxSkill: '',
   minPrice: '',
   maxPrice: '',
   hasBid: null,

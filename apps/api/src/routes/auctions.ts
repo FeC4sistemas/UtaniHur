@@ -102,8 +102,8 @@ router.get('/', (req: Request, res: Response) => {
     // Filtros
     const {
       search, vocation, world, pvp, sex,
-      minLevel, maxLevel, minMagLevel, maxMagLevel,
-      skillKey, minSkill,
+      minLevel, maxLevel,
+      skills, minSkill, maxSkill,
       minPrice, maxPrice, hasBid,
       minCharm, minBoss, minMounts, minOutfits,
       charmExpansion, outfits, mounts, oAddon1, oAddon2, quests,
@@ -126,10 +126,17 @@ router.get('/', (req: Request, res: Response) => {
     if (q(pvp)) auctions = auctions.filter((a: any) => WORLD_PVP[a.worldName] === String(pvp))
     if (q(minLevel)) auctions = auctions.filter((a: any) => a.level >= Number(minLevel))
     if (q(maxLevel)) auctions = auctions.filter((a: any) => a.level <= Number(maxLevel))
-    if (q(minMagLevel)) auctions = auctions.filter((a: any) => a.magLevel >= Number(minMagLevel))
-    if (q(maxMagLevel)) auctions = auctions.filter((a: any) => a.magLevel <= Number(maxMagLevel))
-    if (q(skillKey) && q(minSkill)) {
-      auctions = auctions.filter((a: any) => skillValue(a, String(skillKey)) >= Number(minSkill))
+    // Skills (multi): personagem passa se QUALQUER skill marcada estiver em [min, max]
+    if (q(skills) && (q(minSkill) || q(maxSkill))) {
+      const keys = String(skills).split(',').filter(Boolean)
+      const min = q(minSkill) ? Number(minSkill) : -Infinity
+      const max = q(maxSkill) ? Number(maxSkill) : Infinity
+      auctions = auctions.filter((a: any) =>
+        keys.some(k => {
+          const v = skillValue(a, k)
+          return v >= min && v <= max
+        }),
+      )
     }
     if (q(minPrice)) auctions = auctions.filter((a: any) => bidValue(a) >= Number(minPrice))
     if (q(maxPrice)) auctions = auctions.filter((a: any) => bidValue(a) <= Number(maxPrice))

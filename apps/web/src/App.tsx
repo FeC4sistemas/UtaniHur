@@ -6,11 +6,21 @@ import { FilterDrawer } from './components/FilterDrawer'
 import { Toolbar, type ActiveChip } from './components/Toolbar'
 import { useAuctions, useFilterOptions } from './hooks/useAuctions'
 import { useDebounce } from './hooks/useDebounce'
-import type { AuctionFilters, SortBy, SortOrder } from './types'
+import type { AuctionFilters, SkillKey, SortBy, SortOrder } from './types'
 import { EMPTY_FILTERS } from './types'
 import { vocationMeta } from './lib/vocation'
 
 const PAGE_SIZE = 24
+const SKILL_LABEL: Record<SkillKey, string> = {
+  magic: 'Magic',
+  dist: 'Distance',
+  club: 'Club',
+  sword: 'Sword',
+  axe: 'Axe',
+  fist: 'Fist',
+  shielding: 'Shield',
+  fishing: 'Fishing',
+}
 /** Um espaço de anúncio é inserido na grade a cada N cards. */
 const AD_EVERY = 8
 
@@ -52,6 +62,7 @@ export default function App() {
       if (key.startsWith('outfit:')) return { ...f, outfits: f.outfits.filter(o => o !== key.slice(7)) }
       if (key.startsWith('mount:')) return { ...f, mounts: f.mounts.filter(m => m !== key.slice(6)) }
       if (key.startsWith('quest:')) return { ...f, quests: f.quests.filter(qk => qk !== key.slice(6)) }
+      if (key === 'skillFilter') return { ...f, skills: [], minSkill: '', maxSkill: '' }
       const k = key as keyof AuctionFilters
       return { ...f, [k]: EMPTY_FILTERS[k] }
     })
@@ -85,10 +96,16 @@ export default function App() {
     if (filters.sex !== null) chips.push({ key: 'sex', label: filters.sex === 0 ? 'Masculino' : 'Feminino' })
     if (filters.minLevel) chips.push({ key: 'minLevel', label: `Level ≥ ${filters.minLevel}` })
     if (filters.maxLevel) chips.push({ key: 'maxLevel', label: `Level ≤ ${filters.maxLevel}` })
-    if (filters.minMagLevel) chips.push({ key: 'minMagLevel', label: `ML ≥ ${filters.minMagLevel}` })
-    if (filters.maxMagLevel) chips.push({ key: 'maxMagLevel', label: `ML ≤ ${filters.maxMagLevel}` })
-    if (filters.skillKey && filters.minSkill)
-      chips.push({ key: 'minSkill', label: `${filters.skillKey} ≥ ${filters.minSkill}` })
+    if (filters.skills.length && (filters.minSkill || filters.maxSkill)) {
+      const names = filters.skills.map(s => SKILL_LABEL[s] ?? s).join('/')
+      const range =
+        filters.minSkill && filters.maxSkill
+          ? `${filters.minSkill}–${filters.maxSkill}`
+          : filters.minSkill
+            ? `≥ ${filters.minSkill}`
+            : `≤ ${filters.maxSkill}`
+      chips.push({ key: 'skillFilter', label: `${names} ${range}` })
+    }
     if (filters.minPrice) chips.push({ key: 'minPrice', label: `Preço ≥ ${filters.minPrice}` })
     if (filters.maxPrice) chips.push({ key: 'maxPrice', label: `Preço ≤ ${filters.maxPrice}` })
     if (filters.hasBid) chips.push({ key: 'hasBid', label: filters.hasBid === 'yes' ? 'Com lance' : 'Sem lance' })

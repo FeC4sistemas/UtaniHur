@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { AuctionFilters, FilterOptions } from '../types'
+import type { AuctionFilters, FilterOptions, SkillKey } from '../types'
 import { EMPTY_FILTERS } from '../types'
 import { CloseIcon, FemaleIcon, MaleIcon, SearchIcon } from './Icons'
 import { WardrobePicker, useWardrobe } from './WardrobePicker'
@@ -55,15 +55,14 @@ const PVP_CHIPS: Array<{ value: NonNullable<AuctionFilters['pvp']>; label: strin
   { value: 'pvp-enforced', label: 'Retro' },
 ]
 
-const SKILL_OPTIONS: Array<{ key: NonNullable<AuctionFilters['skillKey']>; label: string }> = [
-  { key: 'magic', label: 'Magic Level' },
-  { key: 'fist', label: 'Fist' },
-  { key: 'club', label: 'Club' },
-  { key: 'sword', label: 'Sword' },
-  { key: 'axe', label: 'Axe' },
-  { key: 'dist', label: 'Distance' },
-  { key: 'shielding', label: 'Shielding' },
-  { key: 'fishing', label: 'Fishing' },
+const SKILL_OPTIONS: Array<{ key: SkillKey; label: string; icon: string }> = [
+  { key: 'magic', label: 'Magic', icon: '🔮' },
+  { key: 'dist', label: 'Distance', icon: '🏹' },
+  { key: 'club', label: 'Club', icon: '🔨' },
+  { key: 'sword', label: 'Sword', icon: '🗡️' },
+  { key: 'axe', label: 'Axe', icon: '🪓' },
+  { key: 'fist', label: 'Fist', icon: '👊' },
+  { key: 'shielding', label: 'Shield', icon: '🛡️' },
 ]
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -318,36 +317,39 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
 
           {tab === 'skills' && (
             <>
-          <Section title="Magic level">
-            <Range minVal={draft.minMagLevel} maxVal={draft.maxMagLevel} onMin={v => set('minMagLevel', v)} onMax={v => set('maxMagLevel', v)} label="Magic level" />
-          </Section>
-
-          <Section title="Skill mínima">
-            <div className="flex items-center gap-2">
-              <select
-                value={draft.skillKey ?? ''}
-                onChange={e => set('skillKey', (e.target.value || null) as AuctionFilters['skillKey'])}
-                className={inputCls}
-              >
-                <option value="">Escolher skill…</option>
-                {SKILL_OPTIONS.map(s => (
-                  <option key={s.key} value={s.key}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="number"
-                min={0}
-                inputMode="numeric"
-                value={draft.minSkill}
-                onChange={e => set('minSkill', e.target.value)}
-                placeholder="Mín."
-                aria-label="Valor mínimo da skill"
-                disabled={!draft.skillKey}
-                className={`${inputCls} w-24 disabled:opacity-40`}
-              />
+          <Section title="Skill">
+            <div className="flex items-end gap-2">
+              <label className="flex flex-1 flex-col gap-1">
+                <span className="text-[10px] font-medium uppercase tracking-wide text-onSurface/45">Min skill</span>
+                <input type="number" min={0} inputMode="numeric" value={draft.minSkill} onChange={e => set('minSkill', e.target.value)} placeholder="Mín." aria-label="Skill mínima" className={inputCls} />
+              </label>
+              <label className="flex flex-1 flex-col gap-1">
+                <span className="text-[10px] font-medium uppercase tracking-wide text-onSurface/45">Max skill</span>
+                <input type="number" min={0} inputMode="numeric" value={draft.maxSkill} onChange={e => set('maxSkill', e.target.value)} placeholder="Máx." aria-label="Skill máxima" className={inputCls} />
+              </label>
             </div>
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              {SKILL_OPTIONS.map(s => {
+                const active = draft.skills.includes(s.key)
+                return (
+                  <button
+                    key={s.key}
+                    type="button"
+                    title={s.label}
+                    aria-pressed={active}
+                    onClick={() =>
+                      set('skills', active ? draft.skills.filter(k => k !== s.key) : [...draft.skills, s.key])
+                    }
+                    className={chipCls(active)}
+                  >
+                    <span aria-hidden>{s.icon}</span> {s.label}
+                  </button>
+                )
+              })}
+            </div>
+            <p className="text-[11px] text-onSurface/45">
+              Mostra quem tem <b>qualquer</b> skill marcada dentro do intervalo. Sem chip marcado, o intervalo é ignorado.
+            </p>
           </Section>
             </>
           )}
