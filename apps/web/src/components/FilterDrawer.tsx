@@ -53,6 +53,16 @@ const VOCATION_CHIPS: Array<{ id: number; label: string; icon?: string; emoji?: 
   { id: 10, label: 'Monk', emoji: '🥋' },
 ]
 
+// Itens/features de store confirmados nos dados do leilão (flags do detalhe).
+type StoreBoolKey = 'charmExpansion' | 'hireling' | 'preySlot' | 'weeklyTask' | 'goldPouch'
+const STORE_CHIPS: Array<{ key: StoreBoolKey; label: string }> = [
+  { key: 'charmExpansion', label: 'Charm Expansion' },
+  { key: 'hireling', label: 'Hirelings' },
+  { key: 'preySlot', label: 'Prey Slot' },
+  { key: 'weeklyTask', label: 'Weekly Task Slot' },
+  { key: 'goldPouch', label: 'Gold Pouch' },
+]
+
 const PVP_CHIPS: Array<{ value: NonNullable<AuctionFilters['pvp']>; label: string; icon: string }> = [
   { value: 'no-pvp', label: 'Optional', icon: 'dove.png' },
   { value: 'pvp', label: 'Open', icon: 'whiteSkull.png' },
@@ -384,15 +394,28 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
               <LabeledNum label="Mounts" value={draft.minMounts} onChange={v => set('minMounts', v)} />
               <LabeledNum label="Outfits" value={draft.minOutfits} onChange={v => set('minOutfits', v)} />
             </div>
-            <label className="mt-2 flex cursor-pointer items-center gap-2 text-sm text-onSurface/80">
-              <input
-                type="checkbox"
-                checked={draft.charmExpansion}
-                onChange={e => set('charmExpansion', e.target.checked)}
-                className="h-4 w-4 accent-primary"
-              />
-              Com Charm Expansion
-            </label>
+          </Section>
+
+          <Section title="Itens da store">
+            <p className="-mt-1 mb-1 text-[11px] text-onSurface/45">
+              Requer o detalhe (npm run details). Leilões sem esse dado são ocultados quando o filtro é usado.
+            </p>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+              {STORE_CHIPS.map(s => (
+                <label
+                  key={s.key}
+                  className="flex cursor-pointer items-center gap-2 text-sm text-onSurface/80"
+                >
+                  <input
+                    type="checkbox"
+                    checked={draft[s.key]}
+                    onChange={e => set(s.key, e.target.checked)}
+                    className="h-4 w-4 accent-primary"
+                  />
+                  {s.label}
+                </label>
+              ))}
+            </div>
           </Section>
 
           <Section title="Outfits e mounts">

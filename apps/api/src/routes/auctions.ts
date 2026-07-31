@@ -106,7 +106,8 @@ router.get('/', (req: Request, res: Response) => {
       skills, minSkill, maxSkill,
       minPrice, maxPrice, hasBid,
       minCharm, minBoss, minMounts, minOutfits,
-      charmExpansion, outfits, mounts, oAddon1, oAddon2, quests,
+      charmExpansion, hireling, preySlot, weeklyTask, goldPouch,
+      outfits, mounts, oAddon1, oAddon2, quests,
       page = '1', limit = '25', sortBy = 'auctionEnd', sortOrder = 'asc',
     } = req.query
 
@@ -148,6 +149,10 @@ router.get('/', (req: Request, res: Response) => {
     if (q(minMounts)) auctions = auctions.filter((a: any) => (a.extra?.mountsCount ?? -1) >= Number(minMounts))
     if (q(minOutfits)) auctions = auctions.filter((a: any) => (a.extra?.outfitsCount ?? -1) >= Number(minOutfits))
     if (charmExpansion === 'true') auctions = auctions.filter((a: any) => a.extra?.charmExpansion === true)
+    if (hireling === 'true') auctions = auctions.filter((a: any) => (a.extra?.hirelingCount ?? 0) > 0)
+    if (preySlot === 'true') auctions = auctions.filter((a: any) => a.extra?.thirdPrey === true)
+    if (weeklyTask === 'true') auctions = auctions.filter((a: any) => a.extra?.permanentWeeklyTaskSlot === true)
+    if (goldPouch === 'true') auctions = auctions.filter((a: any) => a.extra?.gpActive === true)
     if (q(quests)) {
       const wantQuests = String(quests).split(',').filter(Boolean)
       auctions = auctions.filter((a: any) => wantQuests.every(qk => (a.questsDone ?? []).includes(qk)))

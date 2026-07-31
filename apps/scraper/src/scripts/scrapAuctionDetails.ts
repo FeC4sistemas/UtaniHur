@@ -72,8 +72,74 @@ function extractExtra(body: any) {
       thirdHunting: bool(general.thirdHunting),
       charmExpansion: bool(general.charmExpansion),
       permanentWeeklyTaskSlot: bool(general.permanentWeeklyTaskSlot),
+      gpActive: bool(general.gpActive),
     },
   }
+}
+
+// ── Diagnóstico de itens de store ──────────────────────────────────────────
+// Coleta os nomes distintos que aparecem em `storeItems` (e itens observados)
+// para descobrir quais "itens de store" (Training Dummy, Imbuement Shrine,
+// Reward Shrine, Mailbox, Gold Pouch...) realmente existem no RubinOT — a API
+// de leilão não os expõe como flags, então a única forma de confirmar é ver se
+// aparecem como item físico no depot/store inbox. Grava output/storeItemNames.json.
+const STORE_NAMES_FILE = path.resolve(__dirname, '../../output/storeItemNames.json')
+// Nomes-alvo (minúsculos) que queremos confirmar. `name.includes(w)` cobre
+// variações ("premium mailbox" casa em "mailbox").
+const STORE_WATCHLIST = [
+  'training dummy', 'exercise dummy', 'gold pouch', 'imbuement shrine',
+  'reward shrine', 'mailbox', 'world transfer', 'prey slot',
+  'charm expansion', 'hireling lamp',
+]
+type NameStat = { count: number; chars: number; fromStoreItems: number; fromItems: number; sampleDescription?: string }
+const storeNames = new Map<string, NameStat>()
+const watchHits = new Map<string, NameStat>()
+let storeCharsScanned = 0
+
+function collectStoreNames(body: any) {
+  storeCharsScanned++
+  const seenStore = new Set<string>()
+  const seenWatch = new Set<string>()
+  const bump = (map: Map<string, NameStat>, key: string, it: any, from: 'store' | 'items', seen: Set<string>) => {
+    const e = map.get(key) ?? { count: 0, chars: 0, fromStoreItems: 0, fromItems: 0 }
+    e.count += typeof it?.count === 'number' ? it.count : 1
+    if (from === 'store') e.fromStoreItems++
+    else e.fromItems++
+    if (!seen.has(key)) {
+      e.chars++
+      seen.add(key)
+    }
+    if (!e.sampleDescription && it?.description) e.sampleDescription = String(it.description).split('\n')[0]
+    map.set(key, e)
+  }
+  const scan = (arr: any, from: 'store' | 'items') => {
+    for (const it of Array.isArray(arr) ? arr : []) {
+      const name = String(it?.name ?? '').trim().toLowerCase()
+      if (!name) continue
+      if (from === 'store') bump(storeNames, name, it, from, seenStore)
+      if (STORE_WATCHLIST.some(w => name.includes(w))) bump(watchHits, name, it, from, seenWatch)
+    }
+  }
+  scan(body?.storeItems, 'store')
+  scan(body?.items, 'items') // só os que batem na watchlist entram (evita ruído de gear)
+}
+
+function writeStoreNames() {
+  const sortStat = (m: Map<string, NameStat>) =>
+    Object.fromEntries([...m.entries()].sort((a, b) => b[1].chars - a[1].chars))
+  fs.writeFileSync(
+    STORE_NAMES_FILE,
+    JSON.stringify(
+      {
+        generatedAt: new Date().toISOString(),
+        charsScanned: storeCharsScanned,
+        watchlist: sortStat(watchHits), // itens-alvo confirmados (com contagem)
+        storeItems: sortStat(storeNames), // todos os nomes vistos em storeItems
+      },
+      null,
+      2,
+    ),
+  )
 }
 
 async function main() {
@@ -175,6 +241,7 @@ async function main() {
     }
   }
   collectWardrobe(sample)
+  collectStoreNames(sample)
 
   const writeWardrobe = () => {
     const outfits = [...wOut.values()].sort((a, b) => a.name.localeCompare(b.name))
@@ -197,6 +264,7 @@ async function main() {
     if (parsed) {
       byId[a.id] = parsed
       collectWardrobe(body)
+      collectStoreNames(body)
       ok++
     } else fail++
     processed++
@@ -205,14 +273,21 @@ async function main() {
       // salva progresso parcial para não perder em caso de interrupção
       fs.writeFileSync(OUT_FILE, JSON.stringify({ enrichedAt: new Date().toISOString(), byId }, null, 2))
       writeWardrobe()
+      writeStoreNames()
     }
     await sleep(DELAY_MS)
   }
   writeWardrobe()
 
   fs.writeFileSync(OUT_FILE, JSON.stringify({ enrichedAt: new Date().toISOString(), byId }, null, 2))
+  writeStoreNames()
   console.log(`\n✅ Total salvo: ${Object.keys(byId).length} (novos: ${ok}, ainda faltando: ${fail})`)
   if (fail > 0) console.log('   Rode novamente para tentar os que faltaram (retoma de onde parou).')
+  console.log(
+    `🧪 Diagnóstico de itens de store: ${storeCharsScanned} personagens escaneados → output/storeItemNames.json` +
+      `\n   (a lista "watchlist" confirma quais itens-alvo aparecem no RubinOT; ` +
+      `só cobre os leilões buscados nesta rodada)`,
+  )
 
   await browser.close()
 }
