@@ -36,11 +36,10 @@ export function useAuctions({ filters, sortBy, sortOrder, page, limit }: Params)
     if (filters.sex !== null) params.set('sex', String(filters.sex))
     if (filters.minLevel) params.set('minLevel', filters.minLevel)
     if (filters.maxLevel) params.set('maxLevel', filters.maxLevel)
-    if (filters.minMagLevel) params.set('minMagLevel', filters.minMagLevel)
-    if (filters.maxMagLevel) params.set('maxMagLevel', filters.maxMagLevel)
-    if (filters.skillKey && filters.minSkill) {
-      params.set('skillKey', filters.skillKey)
-      params.set('minSkill', filters.minSkill)
+    if (filters.skills.length && (filters.minSkill || filters.maxSkill)) {
+      params.set('skills', filters.skills.join(','))
+      if (filters.minSkill) params.set('minSkill', filters.minSkill)
+      if (filters.maxSkill) params.set('maxSkill', filters.maxSkill)
     }
     if (filters.minPrice) params.set('minPrice', filters.minPrice)
     if (filters.maxPrice) params.set('maxPrice', filters.maxPrice)
