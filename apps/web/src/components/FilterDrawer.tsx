@@ -6,7 +6,7 @@ import { WardrobePicker, useWardrobe } from './WardrobePicker'
 import { questEmoji } from '../lib/quests'
 
 /** Lista de quests concluídas com busca e checkboxes. */
-function QuestPicker({ all, selected, onChange }: { all: string[]; selected: string[]; onChange: (v: string[]) => void }) {
+function QuestPicker({ all = [], selected, onChange }: { all?: string[]; selected: string[]; onChange: (v: string[]) => void }) {
   const [search, setSearch] = useState('')
   const term = search.trim().toLowerCase()
   const list = term ? all.filter(q => q.toLowerCase().includes(term)) : all

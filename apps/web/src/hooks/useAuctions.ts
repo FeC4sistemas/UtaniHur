@@ -81,7 +81,15 @@ export function useFilterOptions(): FilterOptions {
   useEffect(() => {
     fetch('/api/auctions/options')
       .then(res => (res.ok ? res.json() : Promise.reject(res.status)))
-      .then(setOptions)
+      .then((data: Partial<FilterOptions>) =>
+        // Mescla com os defaults: garante que worlds/vocations/quests sejam
+        // sempre arrays, mesmo que a API omita algum campo (ex.: sem scraper).
+        setOptions({
+          worlds: data.worlds ?? [],
+          vocations: data.vocations ?? [],
+          quests: data.quests ?? [],
+        }),
+      )
       .catch(() => {
         /* filtros seguem funcionando com campos livres */
       })
