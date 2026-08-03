@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express'
-import fs from 'fs'
 import path from 'path'
+import { readCached, memoByFiles } from '../lib/jsonCache'
 
 const router = Router()
 
@@ -9,9 +9,12 @@ const HISTORY_FILE = path.resolve(__dirname, '../../../scraper/output/HistoryAuc
 
 router.get('/', (_req: Request, res: Response) => {
   try {
-    // Carrega dados
-    const current = JSON.parse(fs.readFileSync(CURRENT_FILE, 'utf-8')).auctions || []
-    const history = fs.readFileSync(HISTORY_FILE, 'utf-8').split('\n').filter(Boolean).map((l: string) => JSON.parse(l))
+    // Todo o cálculo é memoizado pelos mtimes de current/history — só recomputa
+    // quando o scraper reescreve (evita reparsear ~16MB por request).
+    const payload = memoByFiles('stats:overview', [CURRENT_FILE, HISTORY_FILE], () => {
+    const currentRaw = readCached(CURRENT_FILE, raw => JSON.parse(raw), { auctions: [], scrapedAt: null })
+    const current = currentRaw.auctions || []
+    const history = readCached(HISTORY_FILE, raw => raw.split('\n').filter(Boolean).map((l: string) => JSON.parse(l)), [])
     const sold    = history.filter((a: any) => a.stateName === 'finished' && a.currentValue > 0)
 
     // Preço médio por vocação
@@ -49,7 +52,7 @@ router.get('/', (_req: Request, res: Response) => {
       .sort((a, b) => b.count - a.count)
       .slice(0, 10)
 
-    res.json({
+    return {
       overview: {
         totalActive: current.length,
         totalHistory: history.length,
@@ -59,8 +62,10 @@ router.get('/', (_req: Request, res: Response) => {
       avgPriceByVocation,
       levelDistribution,
       topWorlds,
-      lastUpdated: JSON.parse(fs.readFileSync(CURRENT_FILE, 'utf-8')).scrapedAt
+      lastUpdated: currentRaw.scrapedAt ?? null,
+    }
     })
+    res.json(payload)
   } catch (err) {
     res.status(500).json({ error: 'Erro ao calcular estatísticas' })
   }

@@ -1,0 +1,30 @@
+# Utanihur API (Express) como serviço systemd, com restart automático.
+#
+# Instalar:
+#   sudo cp deploy/utanihur-api.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now utanihur-api
+#   systemctl status utanihur-api        # conferir
+#   journalctl -u utanihur-api -f        # logs ao vivo
+
+[Unit]
+Description=Utanihur API (Express)
+After=network.target
+
+[Service]
+Type=simple
+User=utanihur
+Group=utanihur
+WorkingDirectory=/srv/utanihur
+Environment=NODE_ENV=production
+Environment=PORT=3001
+# Usa o script "start" do workspace da API (ts-node src/server.ts).
+ExecStart=/usr/bin/npm run start --workspace=apps/api
+Restart=on-failure
+RestartSec=5
+# Endurecimento básico
+NoNewPrivileges=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target
