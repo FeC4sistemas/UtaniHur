@@ -1,0 +1,23 @@
+# Utanihur — agendamento dos scrapers (mantém o bazaar do site atualizado).
+# Instalar como o usuário da aplicação:
+#   sudo crontab -u utanihur deploy/crontab.example
+# ou editar à mão:
+#   sudo -u utanihur crontab -e   (cole as linhas abaixo)
+#
+# Ajuste UTANIHUR_DIR se o repo não estiver em /srv/utanihur.
+# Os logs vão para /var/log/utanihur (crie a pasta e dê dono ao usuário:
+#   sudo mkdir -p /var/log/utanihur && sudo chown utanihur: /var/log/utanihur )
+
+UTANIHUR_DIR=/srv/utanihur
+
+# Lista de leilões ativos — a cada 30 min (muda quando leilões abrem/fecham)
+*/30 * * * *  /srv/utanihur/deploy/scrape.sh current  >> /var/log/utanihur/current.log 2>&1
+
+# Detalhe de cada personagem — a cada 2h, deslocado (incremental: só busca os novos)
+15 */2 * * *  /srv/utanihur/deploy/scrape.sh details  >> /var/log/utanihur/details.log 2>&1
+
+# Boss/creature boostados do dia — 1x por dia
+0 6 * * *     /srv/utanihur/deploy/scrape.sh boosted  >> /var/log/utanihur/boosted.log 2>&1
+
+# (Opcional) Quests concluídas — baixa frequência
+# 30 5 * * *   /srv/utanihur/deploy/scrape.sh quests   >> /var/log/utanihur/quests.log 2>&1
