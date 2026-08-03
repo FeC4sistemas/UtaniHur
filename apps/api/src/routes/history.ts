@@ -1,14 +1,13 @@
 import { Router, Request, Response } from 'express'
-import fs from 'fs'
 import path from 'path'
+import { readCached } from '../lib/jsonCache'
 
 const router = Router()
 const DATA_FILE = path.resolve(__dirname, '../../../scraper/output/HistoryAuctions.jsonl')
 
-function loadHistory() {
-  if (!fs.existsSync(DATA_FILE)) return []
-  const lines = fs.readFileSync(DATA_FILE, 'utf-8').split('\n').filter(Boolean)
-  return lines.map(line => JSON.parse(line))
+function loadHistory(): any[] {
+  // ~14MB: parseia só quando o scraper reescreve (invalidação por mtime).
+  return readCached(DATA_FILE, raw => raw.split('\n').filter(Boolean).map(l => JSON.parse(l)), [])
 }
 
 router.get('/', (req: Request, res: Response) => {
@@ -23,7 +22,8 @@ router.get('/', (req: Request, res: Response) => {
     if (maxLevel)  auctions = auctions.filter((a: any) => a.level <= Number(maxLevel))
     if (status)    auctions = auctions.filter((a: any) => a.stateName === String(status))
 
-    auctions.sort((a: any, b: any) => {
+    // sobre cópia: sem filtros, `auctions` é o array em cache do loadHistory
+    auctions = auctions.slice().sort((a: any, b: any) => {
       let valA, valB
       switch (sortBy) {
         case 'level':  valA = a.level;        valB = b.level;        break

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express'
-import fs from 'fs'
 import path from 'path'
+import { readCached, memoByFiles } from '../lib/jsonCache'
 
 const router = Router()
 
@@ -9,34 +9,28 @@ const DETAILS_FILE = path.resolve(__dirname, '../../../scraper/output/AuctionDet
 
 type OwnedOutfit = string | { name: string; addons?: number }
 function loadDetails(): Record<string, { skills?: any; extra?: any; outfits?: OwnedOutfit[]; mounts?: string[]; bosstiary?: string[] }> {
-  if (!fs.existsSync(DETAILS_FILE)) return {}
-  try {
-    return JSON.parse(fs.readFileSync(DETAILS_FILE, 'utf-8')).byId || {}
-  } catch {
-    return {}
-  }
+  return readCached(DETAILS_FILE, raw => JSON.parse(raw).byId || {}, {})
 }
 
 function loadAuctions() {
-  if (!fs.existsSync(DATA_FILE)) return []
-  const raw = fs.readFileSync(DATA_FILE, 'utf-8')
-  const data = JSON.parse(raw)
-  const auctions = data.auctions || []
-  // Mescla o detalhe (skills completas + campos extras) e as quests, quando disponíveis
-  const byId = loadDetails()
-  const questsById = loadQuests().byId
-  return auctions.map((a: any) => {
-    const d = byId[a.id]
-    const questsDone = questsById[a.id]
-    const base = d
-      ? {
-          ...a,
-          // fist/fishing reais vindos do detalhe
-          skills: { ...a.skills, ...(d.skills?.fist != null ? { fist: d.skills.fist } : {}), ...(d.skills?.fishing != null ? { fishing: d.skills.fishing } : {}) },
-          extra: d.extra ?? undefined,
-        }
-      : a
-    return questsDone ? { ...base, questsDone } : base
+  // Merge (leilões + detalhe + quests) memoizado pelos mtimes dos 3 arquivos.
+  return memoByFiles('auctions:merged', [DATA_FILE, DETAILS_FILE, QUESTS_FILE], () => {
+    const auctions = readCached(DATA_FILE, raw => JSON.parse(raw).auctions || [], [])
+    const byId = loadDetails()
+    const questsById = loadQuests().byId
+    return auctions.map((a: any) => {
+      const d = byId[a.id]
+      const questsDone = questsById[a.id]
+      const base = d
+        ? {
+            ...a,
+            // fist/fishing reais vindos do detalhe
+            skills: { ...a.skills, ...(d.skills?.fist != null ? { fist: d.skills.fist } : {}), ...(d.skills?.fishing != null ? { fishing: d.skills.fishing } : {}) },
+            extra: d.extra ?? undefined,
+          }
+        : a
+      return questsDone ? { ...base, questsDone } : base
+    })
   })
 }
 
@@ -68,13 +62,14 @@ const QUESTS_FILE = path.resolve(__dirname, '../../../scraper/output/AuctionQues
 
 /** Quests concluídas por leilão, lidas da aba Quests do site (npm run quests). */
 function loadQuests(): { byId: Record<string, string[]>; allQuests: string[] } {
-  if (!fs.existsSync(QUESTS_FILE)) return { byId: {}, allQuests: [] }
-  try {
-    const j = JSON.parse(fs.readFileSync(QUESTS_FILE, 'utf-8'))
-    return { byId: j.byId ?? {}, allQuests: j.allQuests ?? [] }
-  } catch {
-    return { byId: {}, allQuests: [] }
-  }
+  return readCached(
+    QUESTS_FILE,
+    raw => {
+      const j = JSON.parse(raw)
+      return { byId: j.byId ?? {}, allQuests: j.allQuests ?? [] }
+    },
+    { byId: {}, allQuests: [] },
+  )
 }
 
 router.get('/options', (_req: Request, res: Response) => {
@@ -102,11 +97,12 @@ router.get('/', (req: Request, res: Response) => {
     // Filtros
     const {
       search, vocation, world, pvp, sex,
-      minLevel, maxLevel, minMagLevel, maxMagLevel,
-      skillKey, minSkill,
+      minLevel, maxLevel,
+      skills, minSkill, maxSkill,
       minPrice, maxPrice, hasBid,
       minCharm, minBoss, minMounts, minOutfits,
-      charmExpansion, outfits, mounts, oAddon1, oAddon2, quests,
+      charmExpansion, hireling, preySlot, weeklyTask, goldPouch,
+      outfits, mounts, oAddon1, oAddon2, quests,
       page = '1', limit = '25', sortBy = 'auctionEnd', sortOrder = 'asc',
     } = req.query
 
@@ -126,10 +122,17 @@ router.get('/', (req: Request, res: Response) => {
     if (q(pvp)) auctions = auctions.filter((a: any) => WORLD_PVP[a.worldName] === String(pvp))
     if (q(minLevel)) auctions = auctions.filter((a: any) => a.level >= Number(minLevel))
     if (q(maxLevel)) auctions = auctions.filter((a: any) => a.level <= Number(maxLevel))
-    if (q(minMagLevel)) auctions = auctions.filter((a: any) => a.magLevel >= Number(minMagLevel))
-    if (q(maxMagLevel)) auctions = auctions.filter((a: any) => a.magLevel <= Number(maxMagLevel))
-    if (q(skillKey) && q(minSkill)) {
-      auctions = auctions.filter((a: any) => skillValue(a, String(skillKey)) >= Number(minSkill))
+    // Skills (multi): personagem passa se QUALQUER skill marcada estiver em [min, max]
+    if (q(skills) && (q(minSkill) || q(maxSkill))) {
+      const keys = String(skills).split(',').filter(Boolean)
+      const min = q(minSkill) ? Number(minSkill) : -Infinity
+      const max = q(maxSkill) ? Number(maxSkill) : Infinity
+      auctions = auctions.filter((a: any) =>
+        keys.some(k => {
+          const v = skillValue(a, k)
+          return v >= min && v <= max
+        }),
+      )
     }
     if (q(minPrice)) auctions = auctions.filter((a: any) => bidValue(a) >= Number(minPrice))
     if (q(maxPrice)) auctions = auctions.filter((a: any) => bidValue(a) <= Number(maxPrice))
@@ -141,6 +144,10 @@ router.get('/', (req: Request, res: Response) => {
     if (q(minMounts)) auctions = auctions.filter((a: any) => (a.extra?.mountsCount ?? -1) >= Number(minMounts))
     if (q(minOutfits)) auctions = auctions.filter((a: any) => (a.extra?.outfitsCount ?? -1) >= Number(minOutfits))
     if (charmExpansion === 'true') auctions = auctions.filter((a: any) => a.extra?.charmExpansion === true)
+    if (hireling === 'true') auctions = auctions.filter((a: any) => (a.extra?.hirelingCount ?? 0) > 0)
+    if (preySlot === 'true') auctions = auctions.filter((a: any) => a.extra?.thirdPrey === true)
+    if (weeklyTask === 'true') auctions = auctions.filter((a: any) => a.extra?.permanentWeeklyTaskSlot === true)
+    if (goldPouch === 'true') auctions = auctions.filter((a: any) => a.extra?.gpActive === true)
     if (q(quests)) {
       const wantQuests = String(quests).split(',').filter(Boolean)
       auctions = auctions.filter((a: any) => wantQuests.every(qk => (a.questsDone ?? []).includes(qk)))
@@ -169,8 +176,8 @@ router.get('/', (req: Request, res: Response) => {
       })
     }
 
-    // Ordenação
-    auctions.sort((a: any, b: any) => {
+    // Ordenação (sobre cópia: `auctions` pode ser o array em cache do merge)
+    auctions = auctions.slice().sort((a: any, b: any) => {
       let valA, valB
       switch (sortBy) {
         case 'level':      valA = a.level;        valB = b.level;        break

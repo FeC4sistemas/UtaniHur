@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { AuctionFilters, FilterOptions } from '../types'
+import type { AuctionFilters, FilterOptions, SkillKey } from '../types'
 import { EMPTY_FILTERS } from '../types'
 import { CloseIcon, FemaleIcon, MaleIcon, SearchIcon } from './Icons'
 import { WardrobePicker, useWardrobe } from './WardrobePicker'
@@ -41,29 +41,42 @@ function QuestPicker({ all = [], selected, onChange }: { all?: string[]; selecte
   )
 }
 
-const VOCATION_CHIPS = [
-  { id: 8, label: 'EK', title: 'Knight' },
-  { id: 7, label: 'RP', title: 'Paladin' },
-  { id: 5, label: 'MS', title: 'Sorcerer' },
-  { id: 6, label: 'ED', title: 'Druid' },
-  { id: 10, label: 'EM', title: 'Monk' },
+const ICON_BASE = '/sprites/images/'
+// id = vocação promovida (família); o filtro inclui a base via VOCATION_FAMILY.
+// icon = png em public/sprites/images; emoji = fallback quando não há png.
+const VOCATION_CHIPS: Array<{ id: number; label: string; icon?: string; emoji?: string }> = [
+  { id: 0, label: 'None', icon: 'rook.png' },
+  { id: 8, label: 'Knight', icon: 'knight.png' },
+  { id: 7, label: 'Paladin', icon: 'paladin.png' },
+  { id: 5, label: 'Sorcerer', icon: 'sorcerer.png' },
+  { id: 6, label: 'Druid', icon: 'druid.png' },
+  { id: 10, label: 'Monk', emoji: '🥋' },
 ]
 
-const PVP_CHIPS: Array<{ value: NonNullable<AuctionFilters['pvp']>; label: string }> = [
-  { value: 'pvp', label: 'Open PvP' },
-  { value: 'no-pvp', label: 'Optional' },
-  { value: 'pvp-enforced', label: 'Retro' },
+// Itens/features de store confirmados nos dados do leilão (flags do detalhe).
+type StoreBoolKey = 'charmExpansion' | 'hireling' | 'preySlot' | 'weeklyTask' | 'goldPouch'
+const STORE_CHIPS: Array<{ key: StoreBoolKey; label: string }> = [
+  { key: 'charmExpansion', label: 'Charm Expansion' },
+  { key: 'hireling', label: 'Hirelings' },
+  { key: 'preySlot', label: 'Prey Slot' },
+  { key: 'weeklyTask', label: 'Weekly Task Slot' },
+  { key: 'goldPouch', label: 'Gold Pouch' },
 ]
 
-const SKILL_OPTIONS: Array<{ key: NonNullable<AuctionFilters['skillKey']>; label: string }> = [
-  { key: 'magic', label: 'Magic Level' },
-  { key: 'fist', label: 'Fist' },
-  { key: 'club', label: 'Club' },
-  { key: 'sword', label: 'Sword' },
-  { key: 'axe', label: 'Axe' },
-  { key: 'dist', label: 'Distance' },
-  { key: 'shielding', label: 'Shielding' },
-  { key: 'fishing', label: 'Fishing' },
+const PVP_CHIPS: Array<{ value: NonNullable<AuctionFilters['pvp']>; label: string; icon: string }> = [
+  { value: 'no-pvp', label: 'Optional', icon: 'dove.png' },
+  { value: 'pvp', label: 'Open', icon: 'whiteSkull.png' },
+  { value: 'pvp-enforced', label: 'Retro', icon: 'blackSkull.png' },
+]
+
+const SKILL_OPTIONS: Array<{ key: SkillKey; label: string; icon: string }> = [
+  { key: 'magic', label: 'Magic', icon: '🔮' },
+  { key: 'dist', label: 'Distance', icon: '🏹' },
+  { key: 'club', label: 'Club', icon: '🔨' },
+  { key: 'sword', label: 'Sword', icon: '🗡️' },
+  { key: 'axe', label: 'Axe', icon: '🪓' },
+  { key: 'fist', label: 'Fist', icon: '👊' },
+  { key: 'shielding', label: 'Shield', icon: '🛡️' },
 ]
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -232,11 +245,16 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
                 <button
                   key={v.id}
                   type="button"
-                  title={v.title}
+                  title={v.label}
                   aria-pressed={draft.vocation === v.id}
                   onClick={() => set('vocation', draft.vocation === v.id ? null : v.id)}
                   className={chipCls(draft.vocation === v.id)}
                 >
+                  {v.icon ? (
+                    <img src={ICON_BASE + v.icon} alt="" className="pixelated h-4 w-4 object-contain" />
+                  ) : (
+                    <span aria-hidden>{v.emoji}</span>
+                  )}
                   {v.label}
                 </button>
               ))}
@@ -285,10 +303,12 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
                 <button
                   key={p.value}
                   type="button"
+                  title={p.label}
                   aria-pressed={draft.pvp === p.value}
                   onClick={() => set('pvp', draft.pvp === p.value ? null : p.value)}
                   className={chipCls(draft.pvp === p.value)}
                 >
+                  <img src={ICON_BASE + p.icon} alt="" className="pixelated h-4 w-4 object-contain" />
                   {p.label}
                 </button>
               ))}
@@ -318,36 +338,39 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
 
           {tab === 'skills' && (
             <>
-          <Section title="Magic level">
-            <Range minVal={draft.minMagLevel} maxVal={draft.maxMagLevel} onMin={v => set('minMagLevel', v)} onMax={v => set('maxMagLevel', v)} label="Magic level" />
-          </Section>
-
-          <Section title="Skill mínima">
-            <div className="flex items-center gap-2">
-              <select
-                value={draft.skillKey ?? ''}
-                onChange={e => set('skillKey', (e.target.value || null) as AuctionFilters['skillKey'])}
-                className={inputCls}
-              >
-                <option value="">Escolher skill…</option>
-                {SKILL_OPTIONS.map(s => (
-                  <option key={s.key} value={s.key}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="number"
-                min={0}
-                inputMode="numeric"
-                value={draft.minSkill}
-                onChange={e => set('minSkill', e.target.value)}
-                placeholder="Mín."
-                aria-label="Valor mínimo da skill"
-                disabled={!draft.skillKey}
-                className={`${inputCls} w-24 disabled:opacity-40`}
-              />
+          <Section title="Skill">
+            <div className="flex items-end gap-2">
+              <label className="flex flex-1 flex-col gap-1">
+                <span className="text-[10px] font-medium uppercase tracking-wide text-onSurface/45">Min skill</span>
+                <input type="number" min={0} inputMode="numeric" value={draft.minSkill} onChange={e => set('minSkill', e.target.value)} placeholder="Mín." aria-label="Skill mínima" className={inputCls} />
+              </label>
+              <label className="flex flex-1 flex-col gap-1">
+                <span className="text-[10px] font-medium uppercase tracking-wide text-onSurface/45">Max skill</span>
+                <input type="number" min={0} inputMode="numeric" value={draft.maxSkill} onChange={e => set('maxSkill', e.target.value)} placeholder="Máx." aria-label="Skill máxima" className={inputCls} />
+              </label>
             </div>
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              {SKILL_OPTIONS.map(s => {
+                const active = draft.skills.includes(s.key)
+                return (
+                  <button
+                    key={s.key}
+                    type="button"
+                    title={s.label}
+                    aria-pressed={active}
+                    onClick={() =>
+                      set('skills', active ? draft.skills.filter(k => k !== s.key) : [...draft.skills, s.key])
+                    }
+                    className={chipCls(active)}
+                  >
+                    <span aria-hidden>{s.icon}</span> {s.label}
+                  </button>
+                )
+              })}
+            </div>
+            <p className="text-[11px] text-onSurface/45">
+              Mostra quem tem <b>qualquer</b> skill marcada dentro do intervalo. Sem chip marcado, o intervalo é ignorado.
+            </p>
           </Section>
             </>
           )}
@@ -371,15 +394,28 @@ export function FilterDrawer({ open, onClose, filters, onApply, options }: Props
               <LabeledNum label="Mounts" value={draft.minMounts} onChange={v => set('minMounts', v)} />
               <LabeledNum label="Outfits" value={draft.minOutfits} onChange={v => set('minOutfits', v)} />
             </div>
-            <label className="mt-2 flex cursor-pointer items-center gap-2 text-sm text-onSurface/80">
-              <input
-                type="checkbox"
-                checked={draft.charmExpansion}
-                onChange={e => set('charmExpansion', e.target.checked)}
-                className="h-4 w-4 accent-primary"
-              />
-              Com Charm Expansion
-            </label>
+          </Section>
+
+          <Section title="Itens da store">
+            <p className="-mt-1 mb-1 text-[11px] text-onSurface/45">
+              Requer o detalhe (npm run details). Leilões sem esse dado são ocultados quando o filtro é usado.
+            </p>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+              {STORE_CHIPS.map(s => (
+                <label
+                  key={s.key}
+                  className="flex cursor-pointer items-center gap-2 text-sm text-onSurface/80"
+                >
+                  <input
+                    type="checkbox"
+                    checked={draft[s.key]}
+                    onChange={e => set(s.key, e.target.checked)}
+                    className="h-4 w-4 accent-primary"
+                  />
+                  {s.label}
+                </label>
+              ))}
+            </div>
           </Section>
 
           <Section title="Outfits e mounts">

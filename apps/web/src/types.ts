@@ -25,6 +25,9 @@ export interface AuctionExtra {
   thirdHunting?: boolean
   charmExpansion?: boolean
   permanentWeeklyTaskSlot?: boolean
+  /** Gold Pouch ativo (item de store que auto-coleta gold). */
+  gpActive?: boolean
+  gpPoints?: number
 }
 
 export interface HighlightItem {
@@ -105,10 +108,10 @@ export interface AuctionFilters {
   sex: number | null
   minLevel: string
   maxLevel: string
-  minMagLevel: string
-  maxMagLevel: string
-  skillKey: SkillKey | null
+  /** Skills selecionadas (multi). Match = QUALQUER uma dentro de [minSkill, maxSkill]. */
+  skills: SkillKey[]
   minSkill: string
+  maxSkill: string
   minPrice: string
   maxPrice: string
   hasBid: HasBid | null
@@ -116,7 +119,12 @@ export interface AuctionFilters {
   minBoss: string
   minMounts: string
   minOutfits: string
+  /** Itens/features de store (flags do detalhe do leilão). */
   charmExpansion: boolean
+  hireling: boolean
+  preySlot: boolean
+  weeklyTask: boolean
+  goldPouch: boolean
   outfits: string[]
   mounts: string[]
   reqAddon1: boolean
@@ -132,10 +140,9 @@ export const EMPTY_FILTERS: AuctionFilters = {
   sex: null,
   minLevel: '',
   maxLevel: '',
-  minMagLevel: '',
-  maxMagLevel: '',
-  skillKey: null,
+  skills: [],
   minSkill: '',
+  maxSkill: '',
   minPrice: '',
   maxPrice: '',
   hasBid: null,
@@ -144,6 +151,10 @@ export const EMPTY_FILTERS: AuctionFilters = {
   minMounts: '',
   minOutfits: '',
   charmExpansion: false,
+  hireling: false,
+  preySlot: false,
+  weeklyTask: false,
+  goldPouch: false,
   outfits: [],
   mounts: [],
   reqAddon1: false,
