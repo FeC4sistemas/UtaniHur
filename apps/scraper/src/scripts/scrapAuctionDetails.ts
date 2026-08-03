@@ -73,6 +73,7 @@ function extractExtra(body: any) {
       charmExpansion: bool(general.charmExpansion),
       permanentWeeklyTaskSlot: bool(general.permanentWeeklyTaskSlot),
       gpActive: bool(general.gpActive),
+      gpPoints: num(general.gpPoints),
     },
   }
 }
@@ -249,11 +250,21 @@ async function main() {
     fs.writeFileSync(wardrobeFile, JSON.stringify({ outfits, mounts }, null, 0))
   }
 
-  // Re-busca também entradas antigas salvas sem outfits ou sem bosstiary
+  // Re-busca também entradas antigas salvas sem outfits ou sem bosstiary.
+  // REFRESH=1 (ou --refresh) força re-buscar quem ainda não tem os campos de
+  // store mais novos (ex.: gpActive/gpPoints), sem precisar apagar o arquivo.
+  const REFRESH = process.env.REFRESH === '1' || process.argv.includes('--refresh')
   const pending = auctions.filter(
-    a => !byId[a.id] || byId[a.id].outfits === undefined || byId[a.id].bosstiary === undefined,
+    a =>
+      !byId[a.id] ||
+      byId[a.id].outfits === undefined ||
+      byId[a.id].bosstiary === undefined ||
+      (REFRESH && byId[a.id].extra?.gpActive === undefined),
   )
-  console.log(`📋 ${auctions.length} leilões | ${Object.keys(byId).length} já salvos | ${pending.length} a (re)buscar`)
+  console.log(
+    `📋 ${auctions.length} leilões | ${Object.keys(byId).length} já salvos | ${pending.length} a (re)buscar` +
+      (REFRESH ? ' (REFRESH: incluindo quem falta gpActive)' : ''),
+  )
 
   let ok = 0
   let fail = 0

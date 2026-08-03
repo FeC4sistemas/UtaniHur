@@ -27,6 +27,7 @@ export interface AuctionExtra {
   permanentWeeklyTaskSlot?: boolean
   /** Gold Pouch ativo (item de store que auto-coleta gold). */
   gpActive?: boolean
+  gpPoints?: number
 }
 
 export interface HighlightItem {
