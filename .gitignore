@@ -30,3 +30,7 @@ yarn-error.log*
 # Web app build artefacts
 apps/web/dist/
 apps/web/node_modules/
+
+# Dados gerados pelo scraper (regeneráveis; o servidor gera os seus via cron).
+# Manter fora do git evita conflitos de merge no deploy quando o scraper regrava.
+apps/scraper/output/
