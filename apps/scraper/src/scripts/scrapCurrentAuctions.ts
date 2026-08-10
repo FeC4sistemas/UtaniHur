@@ -8,7 +8,8 @@ puppeteer.use(StealthPlugin())
 
 const BASE_URL = 'https://rubinot.com.br/api/bazaar'
 const OUTPUT_FILE = path.resolve(__dirname, '../../output/CurrentAuctions.json')
-const DELAY_MS = 800
+const DELAY_MS = 1200        // pausa base entre páginas (era 800; subiu p/ evitar 429)
+const MAX_RETRIES = 5        // tentativas em caso de 429/5xx
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms))
 
@@ -55,14 +56,30 @@ async function scrapCurrentAuctions() {
     return
   }
 
-  async function fetchPage(pageNum: number): Promise<AuctionListResponse> {
+  async function fetchPage(pageNum: number, attempt = 0): Promise<AuctionListResponse> {
     const url = `${BASE_URL}?page=${pageNum}&limit=25&sortBy=auction_end&sortOrder=asc`
     const result = await page.evaluate(async (fetchUrl: string) => {
-      const res = await fetch(fetchUrl)
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      return res.json()
+      try {
+        const res = await fetch(fetchUrl)
+        return { ok: res.ok, status: res.status, data: res.ok ? await res.json() : null }
+      } catch (e: any) {
+        return { ok: false, status: 0, data: null, error: e.message }
+      }
     }, url)
-    return result as AuctionListResponse
+
+    if (!result.ok) {
+      // 429 (throttle) e 5xx: espera crescente e tenta de novo (3s,6s,12s,24s,48s)
+      if ((result.status === 429 || result.status >= 500 || result.status === 0) && attempt < MAX_RETRIES) {
+        const wait = 3000 * Math.pow(2, attempt)
+        process.stdout.write(
+          `\n⚠️  HTTP ${result.status} na página ${pageNum} — aguardando ${wait / 1000}s e tentando de novo (${attempt + 1}/${MAX_RETRIES})...\n`,
+        )
+        await sleep(wait)
+        return fetchPage(pageNum, attempt + 1)
+      }
+      throw new Error(`HTTP ${result.status} na página ${pageNum} (sem mais tentativas)`)
+    }
+    return result.data as AuctionListResponse
   }
 
   const allAuctions: AuctionListItem[] = []
