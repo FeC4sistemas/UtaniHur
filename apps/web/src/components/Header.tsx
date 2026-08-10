@@ -13,13 +13,22 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 bg-primary shadow-md dark:bg-surface dark:shadow-[0_1px_0_0_rgb(var(--separator))]">
       <div className="mx-auto flex h-14 max-w-7xl items-center gap-6 px-4">
-        <a href="/" className="flex items-center gap-2.5" aria-label="UtaniHur — início">
-          <span className="grid h-8 w-8 place-items-center rounded-md bg-white/15 text-lg font-extrabold text-white dark:bg-primary/20 dark:text-primary">
-            U
-          </span>
-          <span className="text-lg font-bold tracking-tight text-white dark:text-onSurface">
-            Utani<span className="text-primaryVariant dark:text-primary">Hur</span>
-          </span>
+        <a href="/" className="flex items-center gap-0.5" aria-label="UtaniHur — início">
+          <img
+            src="/brand/boots-icon.png"
+            alt=""
+            aria-hidden="true"
+            width={94}
+            height={84}
+            className="h-[42px] w-auto shrink-0"
+          />
+          <img
+            src="/brand/wordmark.png"
+            alt="UtaniHur"
+            width={245}
+            height={48}
+            className="h-6 w-auto shrink-0"
+          />
         </a>
 
         <nav className="hidden items-center gap-1 sm:flex" aria-label="Principal">
