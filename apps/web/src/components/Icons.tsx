@@ -164,18 +164,17 @@ export function FemaleIcon(props: IconProps) {
   )
 }
 
-export function CoinIcon({ size = 16, ...props }: IconProps) {
+// Moeda oficial do bazaar do RubinOT (Tibia Coins). Sprite do jogo (12px),
+// exibido com image-rendering: pixelated para não borrar quando ampliado.
+export function CoinIcon({ size = 16, className }: { size?: number; className?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" {...props}>
-      <circle cx="12" cy="12" r="10" fill="#FBC02D" stroke="#B8860B" strokeWidth="1.5" />
-      <circle cx="12" cy="12" r="6.5" fill="none" stroke="#B8860B" strokeWidth="1.2" strokeDasharray="2 1.5" />
-      <path
-        d="M14.5 9.2c-.5-.6-1.4-1-2.3-1-1.5 0-2.7.9-2.7 2 0 1.2 1 1.6 2.6 2 1.5.3 2.9.8 2.9 2.2 0 1.2-1.3 2.1-2.8 2.1-1.1 0-2.1-.4-2.7-1.1M12 6.8v10.4"
-        stroke="#B8860B"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-      />
-    </svg>
+    <img
+      src="/sprites/images/tibiacoin.png"
+      alt=""
+      aria-hidden="true"
+      className={`pixelated inline-block shrink-0 object-contain${className ? ` ${className}` : ''}`}
+      style={{ width: size, height: size }}
+    />
   )
 }
 
