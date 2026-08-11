@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Header } from './components/Header'
 import { AdSpace } from './components/AdSpace'
 import { AuctionCard } from './components/AuctionCard'
@@ -21,8 +21,6 @@ const SKILL_LABEL: Record<SkillKey, string> = {
   shielding: 'Shield',
   fishing: 'Fishing',
 }
-/** Um espaço de anúncio é inserido na grade a cada N cards. */
-const AD_EVERY = 8
 
 function SkeletonCard({ index }: { index: number }) {
   return (
@@ -41,6 +39,21 @@ export default function App() {
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
   const [page, setPage] = useState(1)
   const [drawerOpen, setDrawerOpen] = useState(false)
+  // Colunas da grade (telas largas): 3 ou 4. Padrão 4, lembrado no localStorage.
+  const [cols, setCols] = useState<3 | 4>(() => {
+    try {
+      return localStorage.getItem('uh-cols') === '3' ? 3 : 4
+    } catch {
+      return 4
+    }
+  })
+  useEffect(() => {
+    try {
+      localStorage.setItem('uh-cols', String(cols))
+    } catch {
+      /* ignora */
+    }
+  }, [cols])
 
   const debouncedFilters = useDebounce(filters, 300)
   const { data, loading, error } = useAuctions({
@@ -132,7 +145,7 @@ export default function App() {
     <div className="flex min-h-screen flex-col">
       <Header />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-10 pt-4">
+      <main className="mx-auto w-full max-w-[1600px] flex-1 px-4 pb-10 pt-4">
         {/* Área de propaganda: banner topo */}
         <div className="mb-4">
           <AdSpace variant="leaderboard" slot="bazaar-top" />
@@ -170,19 +183,37 @@ export default function App() {
           </div>
         )}
 
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {/* Seletor de colunas (só faz diferença em telas largas) */}
+        <div className="mt-3 hidden items-center justify-end gap-2 lg:flex">
+          <span className="text-xs font-medium text-onSurface/50">Colunas</span>
+          <div className="inline-flex overflow-hidden rounded-md border border-onSurface/15">
+            {([3, 4] as const).map(n => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => setCols(n)}
+                aria-pressed={cols === n}
+                title={`${n} colunas`}
+                className={`px-2.5 py-1 text-xs font-semibold transition-colors ${
+                  cols === n
+                    ? 'bg-primary text-white dark:text-background'
+                    : 'text-onSurface/70 hover:bg-black/5 dark:hover:bg-white/5'
+                }`}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div
+          className={`mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 ${
+            cols === 4 ? '2xl:grid-cols-4' : ''
+          }`}
+        >
           {loading
-            ? Array.from({ length: 9 }, (_, i) => <SkeletonCard key={i} index={i} />)
-            : auctions.flatMap((a, i) => {
-                const nodes = [<AuctionCard key={a.id} auction={a} index={i} />]
-                // Área de propaganda: card in-feed no meio da grade
-                if ((i + 1) % AD_EVERY === 0 && i < auctions.length - 1) {
-                  nodes.push(
-                    <AdSpace key={`ad-${i}`} variant="inFeed" slot={`bazaar-feed-${Math.floor(i / AD_EVERY)}`} />,
-                  )
-                }
-                return nodes
-              })}
+            ? Array.from({ length: 12 }, (_, i) => <SkeletonCard key={i} index={i} />)
+            : auctions.map((a, i) => <AuctionCard key={a.id} auction={a} index={i} />)}
         </div>
 
         {data && data.pagination.totalPages > 1 && !loading && (
@@ -208,7 +239,7 @@ export default function App() {
       </main>
 
       <footer className="border-t border-separator/60 bg-surface py-6">
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-1 px-4 text-center text-xs text-onSurface/50">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-center gap-1 px-4 text-center text-xs text-onSurface/50">
           <p>
             <strong className="font-semibold text-onSurface/70">UtaniHur</strong> — bazar de personagens do
             RubinOT. Projeto de fã, sem vínculo com a CipSoft ou RubinOT.

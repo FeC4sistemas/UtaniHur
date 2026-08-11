@@ -78,6 +78,6 @@ export function itemSources(clientId: number): string[] {
 export function auctionUrl(id: number): string {
   const template =
     (import.meta.env.VITE_AUCTION_URL as string | undefined) ??
-    'https://rubinot.com.br/bazaar?auction={id}'
+    'https://rubinot.com.br/bazaar/{id}'
   return template.replace('{id}', String(id))
 }
