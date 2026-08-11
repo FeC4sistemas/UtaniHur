@@ -12,7 +12,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-primary shadow-md dark:bg-surface dark:shadow-[0_1px_0_0_rgb(var(--separator))]">
-      <div className="mx-auto flex h-14 max-w-7xl items-center gap-6 px-4">
+      <div className="mx-auto flex h-14 max-w-[1600px] items-center gap-6 px-4">
         <a href="/" className="flex items-center gap-0.5" aria-label="UtaniHur — início">
           <img
             src="/brand/boots-icon.png"

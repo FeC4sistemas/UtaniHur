@@ -21,8 +21,6 @@ const SKILL_LABEL: Record<SkillKey, string> = {
   shielding: 'Shield',
   fishing: 'Fishing',
 }
-/** Um espaço de anúncio é inserido na grade a cada N cards. */
-const AD_EVERY = 8
 
 function SkeletonCard({ index }: { index: number }) {
   return (
@@ -132,7 +130,7 @@ export default function App() {
     <div className="flex min-h-screen flex-col">
       <Header />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-10 pt-4">
+      <main className="mx-auto w-full max-w-[1600px] flex-1 px-4 pb-10 pt-4">
         {/* Área de propaganda: banner topo */}
         <div className="mb-4">
           <AdSpace variant="leaderboard" slot="bazaar-top" />
@@ -170,19 +168,10 @@ export default function App() {
           </div>
         )}
 
-        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {loading
-            ? Array.from({ length: 9 }, (_, i) => <SkeletonCard key={i} index={i} />)
-            : auctions.flatMap((a, i) => {
-                const nodes = [<AuctionCard key={a.id} auction={a} index={i} />]
-                // Área de propaganda: card in-feed no meio da grade
-                if ((i + 1) % AD_EVERY === 0 && i < auctions.length - 1) {
-                  nodes.push(
-                    <AdSpace key={`ad-${i}`} variant="inFeed" slot={`bazaar-feed-${Math.floor(i / AD_EVERY)}`} />,
-                  )
-                }
-                return nodes
-              })}
+            ? Array.from({ length: 12 }, (_, i) => <SkeletonCard key={i} index={i} />)
+            : auctions.map((a, i) => <AuctionCard key={a.id} auction={a} index={i} />)}
         </div>
 
         {data && data.pagination.totalPages > 1 && !loading && (
@@ -208,7 +197,7 @@ export default function App() {
       </main>
 
       <footer className="border-t border-separator/60 bg-surface py-6">
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-1 px-4 text-center text-xs text-onSurface/50">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-center gap-1 px-4 text-center text-xs text-onSurface/50">
           <p>
             <strong className="font-semibold text-onSurface/70">UtaniHur</strong> — bazar de personagens do
             RubinOT. Projeto de fã, sem vínculo com a CipSoft ou RubinOT.
