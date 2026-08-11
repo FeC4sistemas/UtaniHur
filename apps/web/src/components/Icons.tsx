@@ -169,7 +169,7 @@ export function FemaleIcon(props: IconProps) {
 export function CoinIcon({ size = 16, className }: { size?: number; className?: string }) {
   return (
     <img
-      src="/sprites/images/tibiacoin.png"
+      src="/sprites/images/transferable.png"
       alt=""
       aria-hidden="true"
       className={`pixelated inline-block shrink-0 object-contain${className ? ` ${className}` : ''}`}
