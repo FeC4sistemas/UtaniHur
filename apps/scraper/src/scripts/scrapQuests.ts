@@ -42,7 +42,7 @@ async function main() {
   console.log('🚀 Iniciando navegador com stealth...')
   const browser = await puppeteer.launch({
     headless: false,
-    executablePath: puppeteer.executablePath(),
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath(),
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
     defaultViewport: null,
   })
