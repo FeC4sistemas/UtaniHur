@@ -21,6 +21,53 @@ mesmo domínio (o web usa `fetch('/api/...')` relativo — sem CORS, sem config)
 - Um domínio apontando (registro A) para o IP da VPS.
 - Acesso `sudo`.
 
+---
+
+## ⚠️ Oracle Cloud (ARM / Ampere A1) — leia isto primeiro
+
+Se a VPS é a instância **gratuita Ampere A1** da Oracle (arm64, São Paulo), há
+**três diferenças** em relação ao guia padrão. Aplique-as e siga o resto normal.
+
+### a) Chromium na arm64
+O `puppeteer` (v20) **não baixa** um Chromium para arm64. Instale o do sistema:
+
+```bash
+sudo apt install -y chromium-browser        # Ubuntu; fornece o binário do Chromium
+# confira o caminho (guarde para o passo (b) e para o firewall/cron):
+command -v chromium chromium-browser | head -n1
+```
+
+O `deploy/scrape.sh` já detecta esse binário automaticamente (via
+`PUPPETEER_EXECUTABLE_PATH`), e os scripts foram ajustados para respeitá-lo — no
+x86 nada muda (usa o Chromium empacotado). Se o `command -v` não achar nada,
+instale por outra via (snap: `sudo snap install chromium`, caminho
+`/snap/bin/chromium`) e exporte `PUPPETEER_EXECUTABLE_PATH` com esse caminho.
+
+### b) `npm ci` sem baixar o Chromium (que não existe p/ arm64)
+No passo 2, evite o download que falharia:
+
+```bash
+sudo -u utanihur PUPPETEER_SKIP_DOWNLOAD=true npm ci
+```
+
+### c) Firewall da Oracle — DUAS camadas
+A Oracle bloqueia tudo por padrão em **dois lugares**; abra 80/443 nos dois:
+
+1. **Security List da VCN** (no painel web): *Networking → VCN → Subnet →
+   Security List → Add Ingress Rules*: origem `0.0.0.0/0`, TCP, portas **80** e
+   **443** (regras separadas).
+2. **iptables do Ubuntu** (as imagens Oracle vêm com regras que só liberam SSH):
+
+```bash
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
+sudo netfilter-persistent save     # persiste após reboot (pacote iptables-persistent)
+```
+
+Sem **as duas**, o site fica inacessível de fora mesmo com o nginx rodando.
+
+---
+
 ## 1. Pacotes do sistema
 
 ```bash
@@ -45,6 +92,7 @@ sudo mkdir -p /srv/utanihur && sudo chown utanihur: /srv/utanihur
 sudo -u utanihur git clone <URL_DO_SEU_REPO> /srv/utanihur
 cd /srv/utanihur
 sudo -u utanihur npm ci          # instala tudo (baixa o Chromium do Puppeteer)
+# ⚠️ Na Oracle ARM, use: sudo -u utanihur PUPPETEER_SKIP_DOWNLOAD=true npm ci
 ```
 
 ## 3. Primeira carga de dados (scraper)
