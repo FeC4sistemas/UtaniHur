@@ -22,4 +22,6 @@ export PUPPETEER_EXECUTABLE_PATH="${PUPPETEER_EXECUTABLE_PATH:-$(command -v chro
 
 LOCK="/tmp/utanihur-${TASK}.lock"
 # -n: se já houver uma execução desta task em andamento, sai sem esperar.
-exec flock -n "$LOCK" xvfb-run -a npm run "$TASK" -- "$@"
+# --workspace=apps/scraper: os scripts (current/details/...) vivem no workspace
+# do scraper; a raiz do monorepo não expõe todos eles.
+exec flock -n "$LOCK" xvfb-run -a npm run "$TASK" --workspace=apps/scraper -- "$@"
